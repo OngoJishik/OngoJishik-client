@@ -1,0 +1,24 @@
+{
+  "tabs": {
+    "home": "首页",
+    "search": "搜索",
+    "history": "历史",
+    "community": "社区",
+    "mypage": "我的"
+  },
+  "home": {
+    "todayRecommendation": "今日推荐",
+    "popularFoods": "热门传统美食",
+    "categoryExplore": "探索分类",
+    "searchPlaceholder": "你想了解什么传统美食？"
+  },
+  "detail": {
+    "recipe": "食谱",
+    "ingredients": "食材",
+    "historyStory": "历史故事",
+    "literature": "文献原著",
+    "health": "健康信息",
+    "aiImageDisclaimer": "此为AI生成的示意图，仅供参考",
+    "dataSource": "来源：特许厅 韩国传统知识门户网站"
+  }
+}

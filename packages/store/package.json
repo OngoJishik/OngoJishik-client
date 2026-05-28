@@ -1,0 +1,18 @@
+{
+  "name": "@ongo/store",
+  "version": "1.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "jotai": "^2.8.3"
+  },
+  "devDependencies": {
+    "@ongo/typescript-config": "workspace:*",
+    "@ongo/api-client": "workspace:*",
+    "typescript": "^5.4.5"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "tabs": {
+    "home": "Home",
+    "search": "Search",
+    "history": "History",
+    "community": "Community",
+    "mypage": "My"
+  },
+  "home": {
+    "todayRecommendation": "Today's Recommendation",
+    "popularFoods": "Popular Traditional Foods",
+    "categoryExplore": "Explore Categories",
+    "searchPlaceholder": "What traditional food are you curious about?"
+  },
+  "detail": {
+    "recipe": "Recipe",
+    "ingredients": "Ingredients",
+    "historyStory": "History & Story",
+    "literature": "Classic Literature",
+    "health": "Health & Nutrition",
+    "aiImageDisclaimer": "This is an AI-generated image for illustration purposes",
+    "dataSource": "Source: KIPO Korean Traditional Knowledge Portal"
+  }
+}
