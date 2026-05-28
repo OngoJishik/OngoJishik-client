@@ -1,0 +1,24 @@
+{
+  "tabs": {
+    "home": "ホーム",
+    "search": "検索",
+    "history": "歴史",
+    "community": "コミュニティ",
+    "mypage": "マイ"
+  },
+  "home": {
+    "todayRecommendation": "今日のおすすめ",
+    "popularFoods": "人気の伝統料理",
+    "categoryExplore": "カテゴリー探索",
+    "searchPlaceholder": "どんな伝統料理が気になりますか？"
+  },
+  "detail": {
+    "recipe": "レシピ",
+    "ingredients": "食材",
+    "historyStory": "歴史ストーリー",
+    "literature": "古典文献",
+    "health": "健康情報",
+    "aiImageDisclaimer": "ユーザーの理解を助けるための演出イメージです",
+    "dataSource": "出典：特許庁 韓国伝統知識ポータル"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "tabs": {
+    "home": "홈",
+    "search": "검색",
+    "history": "역사",
+    "community": "커뮤니티",
+    "mypage": "마이"
+  },
+  "home": {
+    "todayRecommendation": "오늘의 추천",
+    "popularFoods": "인기 전통 음식",
+    "categoryExplore": "카테고리 탐색",
+    "searchPlaceholder": "어떤 전통 음식이 궁금하세요?"
+  },
+  "detail": {
+    "recipe": "조리법",
+    "ingredients": "식재료",
+    "historyStory": "역사 이야기",
+    "literature": "문헌 원문",
+    "health": "건강 정보",
+    "aiImageDisclaimer": "사용자 이해를 돕기 위한 연출 이미지입니다",
+    "dataSource": "출처: 특허청 한국전통지식포탈"
+  }
+}
