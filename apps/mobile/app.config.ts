@@ -1,0 +1,36 @@
+import { ExpoConfig, ConfigContext } from 'expo/config';
+
+export default ({ config }: ConfigContext): ExpoConfig => ({
+  ...config,
+  name: '온고지식',
+  slug: 'ongo-jishik',
+  version: '1.0.0',
+  orientation: 'portrait',
+  icon: './assets/icon.png',
+  userInterfaceStyle: 'automatic',
+  splash: {
+    image: './assets/splash.png',
+    resizeMode: 'contain',
+    backgroundColor: '#FAFAF8', // Hanji base color
+  },
+  ios: {
+    supportsTablet: true,
+    bundleIdentifier: 'com.ongo.jishik',
+  },
+  android: {
+    adaptiveIcon: {
+      foregroundImage: './assets/adaptive-icon.png',
+      backgroundColor: '#FAFAF8',
+    },
+    package: 'com.ongo.jishik',
+  },
+  web: {
+    favicon: './assets/favicon.png',
+  },
+  plugins: [
+    'expo-router',
+  ],
+  experiments: {
+    typedRoutes: true,
+  },
+});
