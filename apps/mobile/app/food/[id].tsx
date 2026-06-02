@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Pressable, ScrollView } from 'react-native';
+import { View, StyleSheet, Pressable } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useAtom, useAtomValue } from 'jotai';
+
+import { useFoodDetailQuery, useFoodHistoryStoryQuery } from '@ongo/api-client';
+import { useTranslation } from '@ongo/i18n';
+import { localFavoritesAtom, languageAtom } from '@ongo/store';
 import {
   ScreenLayout,
   Header,
@@ -15,8 +20,9 @@ import {
   Icon,
   useTheme,
 } from '@ongo/ui';
+import { formatFoodName } from '@ongo/utils';
 
-// Mock food detail data
+// Mock food detail data for premium visual layout fallbacks
 const MOCK_DETAILS = {
   id: 'yukgaejang',
   nameKo: '육개장',
@@ -33,30 +39,64 @@ const MOCK_DETAILS = {
   ],
   historyStory: '육개장은 조선 시대 대구 지방의 향토 음식에서 유래한 고기 국물 요리입니다. 삼복더위에 기운을 돋우는 대표적인 보양식으로 즐겼으며 고종황제도 즐겨 먹었던 궁중 보양 음식 중 하나입니다.',
   literature: {
-    sourceName: '시의전서 (是議全書)',
+    sourceName: '시의전서 (Space)',
     quoteOriginal: '육개장(肉芥醬)은 고기를 삶아 짓이겨 온갖 양념을 짜고 파를 많이 넣어 푹 삶는다.',
     quoteTranslation: '소고기를 푹 삶아 가늘게 결대로 찢은 후 갖은 양념에 무쳐 대파를 듬뿍 넣고 깊은 맛이 우러나올 때까지 끓여 낸다.',
     era: '조선 말기',
   },
-  healthBenefits: '소고기의 단백질과 대파의 알리신 성분이 결합하여 피로 회복과 면역력 증진에 도움을 줍니다. 따뜻한 성질의 대파와 고사리는 혈액 순환을 돕고 몸을 따뜻하게 보호합니다.',
+  healthBenefits: '소고기의 단백질 and 대파의 알리신 성분이 결합하여 피로 회복과 면역력 증진에 도움을 줍니다. 따뜻한 성질의 대파와 고사리는 혈액 순환을 돕고 몸을 따뜻하게 보호합니다.',
 };
 
-export default function FoodDetailScreen() {
+/**
+ * 전통 음식의 상세 정보를 다양한 탭과 스토리로 제공하는 화면 컴포넌트
+ * @author Antigravity
+ */
+export const FoodDetailScreen = () => {
   const router = useRouter();
   const { colors } = useTheme();
+  const { t } = useTranslation();
+  const currentLang = useAtomValue(languageAtom);
+  const [favorites, setFavorites] = useAtom(localFavoritesAtom);
+
   const { id } = useLocalSearchParams();
+  const foodId = (id as string) || 'yukgaejang';
+
+  // Fetch from TanStack Query with local mock fallback
+  const { data: foodDetail } = useFoodDetailQuery(foodId);
+  const { data: historyStory } = useFoodHistoryStoryQuery(foodId);
+
+  const detail = foodDetail || MOCK_DETAILS;
+  const storyText = historyStory?.story || detail.historyStory || '';
+
   const [activeTab, setActiveTab] = useState('조리법');
-  const [isFavorite, setIsFavorite] = useState(false);
   const [feedback, setFeedback] = useState<'up' | 'down' | null>(null);
 
-  const tabs = ['조리법', '식재료', '역사이야기', '문헌', '건강'];
+  const isFavorite = favorites.includes(foodId);
+  const displayName = formatFoodName(detail.nameKo, detail.nameLocalized, currentLang);
+
+  const tabs = [
+    t('detail.recipe'),
+    t('detail.ingredients'),
+    t('detail.historyStory'),
+    t('detail.literature'),
+    t('detail.health')
+  ];
+
+  const handleFavoriteToggle = () => {
+    setFavorites((prev) =>
+      prev.includes(foodId) ? prev.filter((favId) => favId !== foodId) : [...prev, foodId]
+    );
+  };
 
   const renderTabContent = () => {
-    switch (activeTab) {
-      case '식재료':
+    // Map internal UI tabs correctly independent of localized tab labels
+    const currentTabName = tabs.indexOf(activeTab);
+
+    switch (currentTabName) {
+      case 1: // 식재료
         return (
           <View style={styles.tabContent}>
-            {MOCK_DETAILS.ingredients.map((ing, index) => (
+            {detail.ingredients.map((ing, index) => (
               <View key={index} style={[styles.ingredientRow, { borderBottomColor: colors.border }]}>
                 <Text style={{ marginRight: 8, color: colors.primary }}>•</Text>
                 <Text variant="body">{ing}</Text>
@@ -64,42 +104,45 @@ export default function FoodDetailScreen() {
             ))}
           </View>
         );
-      case '역사이야기':
+      case 2: // 역사이야기
         return (
           <View style={styles.tabContent}>
-            <HistorySection story={MOCK_DETAILS.historyStory} />
+            <HistorySection story={storyText} />
           </View>
         );
-      case '문헌':
-        return (
-          <View style={styles.tabContent}>
-            <LiteratureQuote
-              sourceName={MOCK_DETAILS.literature.sourceName}
-              quoteOriginal={MOCK_DETAILS.literature.quoteOriginal}
-              quoteTranslation={MOCK_DETAILS.literature.quoteTranslation}
-              era={MOCK_DETAILS.literature.era}
-            />
-          </View>
-        );
-      case '건강':
+      case 3: // 문헌
+        {
+          const literatureData = ('literatureQuotes' in detail && detail.literatureQuotes?.[0]) || MOCK_DETAILS.literature;
+          return (
+            <View style={styles.tabContent}>
+              <LiteratureQuote
+                sourceName={literatureData.sourceName}
+                quoteOriginal={literatureData.quoteOriginal}
+                quoteTranslation={literatureData.quoteTranslation}
+                era={literatureData.era}
+              />
+            </View>
+          );
+        }
+      case 4: // 건강
         return (
           <View style={styles.tabContent}>
             <Text variant="body" style={styles.textBlock}>
-              {MOCK_DETAILS.healthBenefits}
+              {'healthBenefits' in detail ? (detail.healthBenefits as string) : ''}
             </Text>
           </View>
         );
-      case '조리법':
+      case 0: // 조리법
       default:
         return (
           <View style={styles.tabContent}>
-            {MOCK_DETAILS.recipeSteps.map((step) => (
+            {detail.recipeSteps.map((step) => (
               <RecipeStep
                 key={step.stepNumber}
                 stepNumber={step.stepNumber}
                 title={step.title}
                 description={step.description}
-                isLast={step.stepNumber === MOCK_DETAILS.recipeSteps.length}
+                isLast={step.stepNumber === detail.recipeSteps.length}
               />
             ))}
           </View>
@@ -110,22 +153,28 @@ export default function FoodDetailScreen() {
   return (
     <ScreenLayout scrollable>
       <Header
-        title={MOCK_DETAILS.nameKo}
+        title={displayName}
         onBack={() => router.back()}
         rightAction={
-          <Pressable onPress={() => console.log('Share')}>
-            <Icon name="share" size={20} />
+          <Pressable
+            onPress={() => {
+              if (__DEV__) {
+                console.log('Share pressed');
+              }
+            }}
+          >
+            <Icon name="share" size={20} color={colors.text} />
           </Pressable>
         }
       />
 
       <View style={styles.heroSection}>
-        <Text style={styles.largeEmoji}>{MOCK_DETAILS.emoji}</Text>
+        <Text style={styles.largeEmoji}>{detail.emoji}</Text>
         <Text variant="h1" bold style={styles.foodTitle}>
-          {MOCK_DETAILS.nameLocalized} ({MOCK_DETAILS.nameKo})
+          {displayName}
         </Text>
         <View style={styles.tagContainer}>
-          {MOCK_DETAILS.tags.map((tag) => (
+          {detail.tags.map((tag) => (
             <View key={tag} style={[styles.tag, { backgroundColor: colors.primaryLight }]}>
               <Text variant="caption" style={{ color: colors.textSecondary }}>
                 #{tag}
@@ -134,7 +183,7 @@ export default function FoodDetailScreen() {
           ))}
         </View>
         <Text variant="caption" style={[styles.disclaimer, { color: colors.textSecondary }]}>
-          ⚠️ 사용자 이해를 돕기 위한 상징적 이모지 연출입니다.
+          ⚠️ {t('detail.aiImageDisclaimer')}
         </Text>
       </View>
 
@@ -142,7 +191,7 @@ export default function FoodDetailScreen() {
 
       {renderTabContent()}
 
-      <DataSourceTag source={MOCK_DETAILS.source} />
+      <DataSourceTag source={detail.source} />
 
       <FeedbackButtons
         selected={feedback}
@@ -152,20 +201,31 @@ export default function FoodDetailScreen() {
 
       <View style={styles.bottomActions}>
         <Pressable
-          style={[styles.favBtn, { borderColor: isFavorite ? colors.primary : colors.border }]}
-          onPress={() => setIsFavorite(!isFavorite)}
+          style={[
+            styles.favBtn,
+            { borderColor: isFavorite ? colors.primary : colors.border },
+          ]}
+          onPress={handleFavoriteToggle}
         >
-          <Icon name={isFavorite ? 'heart-filled' : 'heart'} size={24} color={isFavorite ? colors.primary : colors.textSecondary} />
+          <Icon
+            name={isFavorite ? 'heart-filled' : 'heart'}
+            size={24}
+            color={isFavorite ? colors.primary : colors.textSecondary}
+          />
         </Pressable>
         <Button
           title="📋 재료 구매처 보기 (전통시장)"
-          onPress={() => console.log('Link to traditional markets')}
+          onPress={() => {
+            if (__DEV__) {
+              console.log('Link to traditional markets');
+            }
+          }}
           style={styles.marketBtn}
         />
       </View>
     </ScreenLayout>
   );
-}
+};
 
 const styles = StyleSheet.create({
   heroSection: {
@@ -227,3 +287,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
+export default FoodDetailScreen;
+
