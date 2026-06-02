@@ -19,4 +19,9 @@ i18next.use(initReactI18next).init({
   interpolation: { escapeValue: false },
 });
 
-export default i18next;
+/**
+ * i18next 다국어 설정 인스턴스
+ * @author Antigravity
+ */
+export const i18n = i18next;
+
