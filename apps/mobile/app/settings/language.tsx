@@ -1,51 +1,69 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import React from 'react';
+import { View, StyleSheet, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useAtom } from 'jotai';
+
+import { useTranslation } from '@ongo/i18n';
+import { languageAtom } from '@ongo/store';
 import {
   ScreenLayout,
   Header,
   Text,
   Icon,
+  useTheme,
 } from '@ongo/ui';
 
-const LANGUAGES = [
-  { key: 'ko', label: '한국어 (Korean)' },
-  { key: 'en', label: 'English (영어)' },
-  { key: 'ja', label: '日本語 (Japanese)' },
-  { key: 'zh', label: '简体中文 (Chinese Simplified)' },
-];
+import type { TLanguage } from '@ongo/store';
 
-export default function LanguageSettingsScreen() {
+const LANGUAGES = [
+  { key: 'ko', translationKey: 'korean' },
+  { key: 'en', translationKey: 'english' },
+  { key: 'ja', translationKey: 'japanese' },
+  { key: 'zh', translationKey: 'chinese' },
+] as const;
+
+/**
+ * 다국어 언어 설정을 변경하는 화면 컴포넌트
+ * @author Antigravity
+ */
+export const LanguageSettingsScreen = () => {
   const router = useRouter();
-  const [selectedLang, setSelectedLang] = useState('ko');
+  const { colors } = useTheme();
+  const { t } = useTranslation();
+  const [currentLang, setCurrentLang] = useAtom(languageAtom);
+
+  const handleLanguageSelect = (langKey: TLanguage) => {
+    setCurrentLang(langKey);
+  };
 
   return (
     <ScreenLayout>
-      <Header title="언어 설정" onBack={() => router.back()} />
+      <Header title={t('settings.languageTitle')} onBack={() => router.back()} />
 
       <View style={styles.list}>
         {LANGUAGES.map((lang) => {
-          const isSelected = selectedLang === lang.key;
+          const isSelected = currentLang === lang.key;
           return (
-            <TouchableOpacity
+            <Pressable
               key={lang.key}
               style={[
                 styles.item,
-                isSelected && styles.activeItem,
+                { borderBottomColor: colors.border },
+                isSelected && { borderBottomColor: colors.primary },
               ]}
-              onPress={() => setSelectedLang(lang.key)}
+              onPress={() => handleLanguageSelect(lang.key)}
             >
               <Text variant="label" bold={isSelected}>
-                {lang.label}
+                {t(`settings.${lang.translationKey}`)}
               </Text>
-              {isSelected && <Icon name="star" size={16} color="#C85A28" />}
-            </TouchableOpacity>
+              {isSelected && <Icon name="star" size={16} color={colors.primary} />}
+            </Pressable>
           );
         })}
       </View>
     </ScreenLayout>
   );
-}
+};
 
 const styles = StyleSheet.create({
   list: {
@@ -57,9 +75,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#E8E4DD',
-  },
-  activeItem: {
-    borderBottomColor: '#C85A28',
   },
 });
+
+export default LanguageSettingsScreen;
+

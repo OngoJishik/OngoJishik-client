@@ -20,5 +20,18 @@
     "health": "健康信息",
     "aiImageDisclaimer": "此为AI生成的示意图，仅供参考",
     "dataSource": "来源：特许厅 韩国传统知识门户网站"
+  },
+  "settings": {
+    "languageTitle": "语言设置",
+    "korean": "한국어 (Korean)",
+    "english": "English (영어)",
+    "japanese": "日本語 (Japanese)",
+    "chinese": "简体中文 (Chinese Simplified)"
+  },
+  "search": {
+    "title": "搜索",
+    "recent": "最近搜索",
+    "recommended": "推荐搜索",
+    "noRecent": "暂无最近搜索历史。"
   }
 }
