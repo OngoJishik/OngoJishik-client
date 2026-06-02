@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { View, ScrollView, StyleSheet, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
+
+import { useTodayRecommendationQuery, usePopularFoodsQuery } from '@ongo/api-client';
+import { useTranslation } from '@ongo/i18n';
+import { localFavoritesAtom, languageAtom } from '@ongo/store';
 import {
   ScreenLayout,
   Header,
@@ -11,10 +15,11 @@ import {
   CategoryChip,
   Text,
   Icon,
+  useTheme,
 } from '@ongo/ui';
-import { FoodCategory, foodCategoryNames } from '@ongo/utils';
+import { FoodCategory } from '@ongo/utils';
 
-// Mock recommended & today's data for premium visual layout
+// Mock recommended & today's data for premium visual layout fallbacks
 const MOCK_RECOMMENDATION = {
   id: 'gujelpan',
   nameKo: '구절판',
@@ -32,7 +37,6 @@ const MOCK_FOODS = [
     emoji: '🫕',
     category: 'soup' as FoodCategory,
     description: '여러 가지 어육과 채소를 신선로틀에 돌려 담고 장국을 부어 끓여 먹는 궁중 전골.',
-    isFavorite: true,
   },
   {
     id: 'mandutguk',
@@ -41,7 +45,6 @@ const MOCK_FOODS = [
     emoji: '🥟',
     category: 'soup' as FoodCategory,
     description: '고기와 야채로 속을 채운 만두를 사골 육수에 끓인 보양 국물 요리.',
-    isFavorite: false,
   },
   {
     id: 'yakgwa',
@@ -50,17 +53,32 @@ const MOCK_FOODS = [
     emoji: '🍯',
     category: 'hangwa' as FoodCategory,
     description: '밀가루에 참기름, 꿀, 술을 넣고 반죽하여 기름에 지져 낸 고소하고 달콤한 한과.',
-    isFavorite: true,
   },
 ];
 
 const CATEGORIES: FoodCategory[] = ['tteok', 'soup', 'grill', 'namul', 'jjim', 'myeon', 'hangwa', 'eumchung'];
 
-export default function HomeScreen() {
+/**
+ * 서비스의 메인 홈 화면 컴포넌트
+ * 오늘의 추천 및 인기 전통 음식을 탐색할 수 있습니다.
+ * @author Antigravity
+ */
+export const HomeScreen = () => {
   const router = useRouter();
+  const { colors } = useTheme();
+  const { t } = useTranslation();
+  const currentLang = useAtomValue(languageAtom);
+  const [favorites, setFavorites] = useAtom(localFavoritesAtom);
+
   const [searchVal, setSearchVal] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<FoodCategory | null>(null);
-  const [favorites, setFavorites] = useState<string[]>(['sinseollo', 'yakgwa']);
+
+  // TanStack Query integration with fallbacks for off-line / no-server grace
+  const { data: todayRecData } = useTodayRecommendationQuery();
+  const { data: popularFoodsData } = usePopularFoodsQuery();
+
+  const todayRecommendation = todayRecData || MOCK_RECOMMENDATION;
+  const popularFoods = popularFoodsData || MOCK_FOODS;
 
   const handleFoodPress = (id: string) => {
     router.push(`/food/${id}`);
@@ -83,8 +101,14 @@ export default function HomeScreen() {
       <Header
         title="🍚 온고지식"
         rightAction={
-          <Pressable onPress={() => console.log('Notifications')}>
-            <Icon name="bell" size={22} />
+          <Pressable
+            onPress={() => {
+              if (__DEV__) {
+                console.log('Notifications pressed');
+              }
+            }}
+          >
+            <Icon name="bell" size={22} color={colors.text} />
           </Pressable>
         }
       />
@@ -93,27 +117,31 @@ export default function HomeScreen() {
         value={searchVal}
         onChangeText={setSearchVal}
         onSearch={handleSearch}
-        onMicPress={() => console.log('Mic Pressed')}
+        onMicPress={() => {
+          if (__DEV__) {
+            console.log('Mic Pressed');
+          }
+        }}
         onClear={() => setSearchVal('')}
       />
 
       <FeaturedCard
-        nameKo={MOCK_RECOMMENDATION.nameKo}
-        nameLocalized={MOCK_RECOMMENDATION.nameLocalized}
-        emoji={MOCK_RECOMMENDATION.emoji}
-        subtitle={MOCK_RECOMMENDATION.subtitle}
-        description={MOCK_RECOMMENDATION.description}
-        onPress={() => handleFoodPress(MOCK_RECOMMENDATION.id)}
+        nameKo={todayRecommendation.nameKo}
+        nameLocalized={todayRecommendation.nameLocalized}
+        emoji={todayRecommendation.emoji}
+        subtitle={'subtitle' in todayRecommendation ? (todayRecommendation.subtitle as string) : t('home.todayRecommendation')}
+        description={todayRecommendation.description}
+        onPress={() => handleFoodPress(todayRecommendation.id)}
       />
 
       <View style={styles.sectionHeader}>
         <Text variant="h3" bold>
-          인기 전통 음식
+          {t('home.popularFoods')}
         </Text>
       </View>
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
-        {MOCK_FOODS.map((food) => (
+        {popularFoods.map((food) => (
           <FoodCard
             key={food.id}
             id={food.id}
@@ -131,7 +159,7 @@ export default function HomeScreen() {
 
       <View style={styles.sectionHeader}>
         <Text variant="h3" bold>
-          카테고리 탐색
+          {t('home.categoryExplore')}
         </Text>
       </View>
 
@@ -147,9 +175,7 @@ export default function HomeScreen() {
       </View>
     </ScreenLayout>
   );
-}
-
-
+};
 
 const styles = StyleSheet.create({
   sectionHeader: {
@@ -163,3 +189,6 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
 });
+
+export default HomeScreen;
+
