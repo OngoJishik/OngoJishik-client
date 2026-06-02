@@ -27,12 +27,14 @@ ongo-jishik/
 │   │   │   │   ├── community.tsx    # 커뮤니티 피드
 │   │   │   │   └── mypage.tsx       # 마이페이지
 │   │   │   ├── food/
-│   │   │   │   └── [id].tsx         # 음식 상세 화면 (탭: 조리법/식재료/역사/문헌/건강)
+│   │   │   │   └── [id].tsx         # 음식 상세 화면 (탭: 조리법/식재료/역사/문헌)
 │   │   │   ├── search/
 │   │   │   │   └── results.tsx      # 검색 결과 화면
 │   │   │   ├── community/
 │   │   │   │   ├── [postId].tsx     # 게시글 상세
 │   │   │   │   └── write.tsx        # 게시글 작성
+│   │   │   ├── favorites.tsx        # 즐겨찾기 목록
+│   │   │   ├── my-posts.tsx         # 내 게시글 목록
 │   │   │   ├── settings/
 │   │   │   │   ├── language.tsx     # 언어 설정
 │   │   │   │   └── notifications.tsx
@@ -62,17 +64,20 @@ ongo-jishik/
 │   │   │   │   ├── FoodCard.tsx          # 음식 카드 (이미지+이름+설명+좋아요)
 │   │   │   │   ├── FoodResultCard.tsx    # 검색 결과 카드 (가로 레이아웃)
 │   │   │   │   ├── FeaturedCard.tsx      # 오늘의 추천 카드
-│   │   │   │   ├── CategoryChip.tsx      # 카테고리 아이콘 칩
-│   │   │   │   ├── RecipeStep.tsx        # 조리법 단계 표시
-│   │   │   │   ├── HistorySection.tsx    # 역사 이야기 섹션
-│   │   │   │   ├── LiteratureQuote.tsx   # 문헌 인용 블록
+│   │   │   │   ├── PopularFoods.tsx      # 인기 전통 음식 섹션 (가로 스크롤)
+│   │   │   │   ├── AIAnalysisBadge.tsx   # AI 분석 결과 표시 (검색 결과 화면)
+│   │   │   │   ├── RecipeStep.tsx        # 조리법 단계 표시 (번호+연결선)
+│   │   │   │   ├── HistorySection.tsx    # 역사 이야기 섹션 (유래/문헌/의례)
+│   │   │   │   ├── LiteratureQuote.tsx   # 문헌 인용 블록 (왼쪽 바+인용문)
 │   │   │   │   ├── PostCard.tsx          # 커뮤니티 게시글 카드
-│   │   │   │   ├── CommentInput.tsx      # 댓글 입력
+│   │   │   │   ├── PostDetail.tsx        # 게시글 상세 (사진갤러리+본문)
+│   │   │   │   ├── PhotoGallery.tsx      # 사진 갤러리 (스와이프+페이지 인디케이터)
+│   │   │   │   ├── RecipeLink.tsx        # 레시피 연결 링크 (게시글 내)
+│   │   │   │   ├── CommentInput.tsx      # 댓글 입력 (입력창+전송버튼)
 │   │   │   │   ├── TabBar.tsx            # 상세 화면 탭 바
-│   │   │   │   ├── AIAnalysisBadge.tsx   # AI 분석 결과 표시
 │   │   │   │   ├── DataSourceTag.tsx     # 출처 표시 태그
-│   │   │   │   ├── FeedbackButtons.tsx   # 👍👎 피드백 버튼
-│   │   │   │   └── MenuItem.tsx          # 마이페이지 메뉴 아이템
+│   │   │   │   ├── FeedbackButtons.tsx   # 👍👎 피드백 버튼 (역사/문헌 탭 하단)
+│   │   │   │   └── MenuItem.tsx          # 마이페이지 메뉴 아이템 (아이콘+제목+설명)
 │   │   │   ├── layouts/              # 레이아웃 컴포넌트
 │   │   │   │   ├── ScreenLayout.tsx
 │   │   │   │   ├── Header.tsx
@@ -168,7 +173,7 @@ ongo-jishik/
 
 ## 3. 화면-컴포넌트 매핑 (Figma 기반)
 
-Figma 와이어프레임에서 도출한 7개 주요 화면과 각 화면에 사용되는 컴포넌트 구성입니다.
+Figma 와이어프레임에서 도출한 13개 화면과 각 화면에 사용되는 컴포넌트 구성입니다.
 
 ### 3.1 홈 화면 (`(tabs)/index.tsx`)
 
@@ -178,13 +183,11 @@ Figma 와이어프레임에서 도출한 7개 주요 화면과 각 화면에 사
 ├─ SearchBar ──────────────────────────┤
 │  🔍 어떤 전통 음식이 궁금하세요?  🎤  │
 ├─ FeaturedCard ───────────────────────┤
-│  오늘의 추천 전통 음식                │
-│  구절판 (九節板)                      │
+│  오늘의 추천 전통 음식     더보기 →    │
+│  구절판 (九節板)  [궁중 요리]         │
 │  "아홉 가지 재료를 담은 궁중 요리"    │
-├─ FoodCard × N (가로 스크롤) ─────────┤
+├─ PopularFoods (FoodCard × N 가로) ──┤
 │  [신선로] [만두] [약과] [송편] →      │
-├─ CategoryChip × 8 ──────────────────┤
-│  떡류 국/탕 구이 나물 찜/조림 ...     │
 ├─ BottomNav ──────────────────────────┤
 │  🏠홈  🔍검색  📖역사  💬커뮤니티  👤마이│
 └──────────────────────────────────────┘
@@ -196,14 +199,14 @@ Figma 와이어프레임에서 도출한 7개 주요 화면과 각 화면에 사
 ┌─ Header (← 검색) ───────────────────┐
 ├─ SearchBar (active, 입력 중) ────────┤
 │  🔍 매콤하고 빨간 국물 요리      ✕   │
-├─ AIAnalysisBadge ────────────────────┤
-│  🤖 맛: 매운맛 · 색: 빨강 · 형태: 국/탕│
 ├─ 최근 검색어 리스트 ─────────────────┤
+│  최근 검색어              전체삭제    │
 │  🕐 설날에 먹는 음식              ✕   │
 │  🕐 궁중 요리 추천                ✕   │
 │  🕐 I saw a colorful layered ...  ✕   │
-├─ 추천 검색어 Chip 그리드 ────────────┤
-│  #떡국  #김치찌개  #비빔밥  #약과      │
+│  🕐 お正月に食べる料理            ✕   │
+│  🕐 손님 올 때 격식 있는 상차림    ✕   │
+├─ BottomNav ──────────────────────────┤
 └──────────────────────────────────────┘
 ```
 
@@ -211,42 +214,90 @@ Figma 와이어프레임에서 도출한 7개 주요 화면과 각 화면에 사
 
 ```
 ┌─ Header (← 검색 결과) ──────────────┐
-├─ Query Bar (검색어 표시) ────────────┤
-├─ 정렬/필터 바 ───────────────────────┤
+├─ Query Bar ──────────────────────────┤
+│  🔍 "매콤하고 빨간 국물 요리"        │
+├─ Sort Filter (결과 수) ─────────────┤
+│  3개 결과                            │
+├─ AIAnalysisBadge ────────────────────┤
+│  🤖 AI 분석 결과                     │
+│  맛: 매운맛 · 색: 빨강 · 형태: 국/탕  │
+│  3개의 전통 음식을 찾았습니다         │
 ├─ FoodResultCard × N ─────────────────┤
 │  ┌────┬──────────────────────┐       │
 │  │ 🍲 │ 육개장 Yukgaejang     │       │
 │  │    │ [국/탕류] 매콤한 소고기│       │
-│  │조선 │ 국물에 고사리...   →  │       │
+│  │    │ 국물에 고사리...   →  │       │
 │  └────┴──────────────────────┘       │
 ├─ DataSourceTag ──────────────────────┤
 │  📋 출처: 특허청 한국전통지식포탈      │
+├─ BottomNav ──────────────────────────┤
 └──────────────────────────────────────┘
 ```
 
-### 3.4 음식 상세 화면 (`food/[id].tsx`)
+### 3.4 음식 상세 화면 — 조리법 탭 (`food/[id].tsx`)
 
 ```
-┌─ Hero Image (뒤로가기/공유/좋아요) ──┐
-│         🍲 (연출 이미지)              │
+┌─ Hero Image ─────────────────────────┐
+│  [←]       🍲 (연출 이미지)     [♡]  │
+│  ※ 사용자 이해를 돕기 위한 연출 이미지│
 ├─ Food Info ──────────────────────────┤
-│  육개장  Yukgaejang · 肉개醬          │
+│  육개장                              │
+│  Yukgaejang · 肉개醬                 │
 │  [국/탕류] [매운맛] [보양식] [소고기]  │
 │  출처: 특허청 전통지식포탈             │
 ├─ TabBar ─────────────────────────────┤
-│  조리법 │ 식재료 │ 역사이야기 │ 문헌 │ 건강│
-├─ Tab Content ────────────────────────┤
-│  (RecipeStep / 식재료목록 / History / │
-│   LiteratureQuote / 건강정보)         │
+│  [조리법] │ 식재료 │ 역사이야기 │ 문헌│
+├─ Recipe Content ─────────────────────┤
+│  조리법                              │
+│  📖 산림경제 기반 전통 조리법          │
+│  ①─ 재료 준비                        │
+│  │  소고기(양지) 300g, 고사리 100g... │
+│  ②─ 소고기 삶기                      │
+│  │  소고기를 찬물에 넣고 충분히 삶아...│
+│  ③─ 양념 볶기                        │
+│  │  고춧가루, 간장, 다진 마늘...      │
+│  ④  끓이기                           │
+│     육수를 붓고 센 불에서 끓인 후...   │
 ├─ Bottom Action ──────────────────────┤
 │  [♡]  [📋 재료 구매처 보기 (전통시장)]│
 └──────────────────────────────────────┘
 ```
 
-### 3.5 커뮤니티 화면 (`(tabs)/community.tsx`)
+### 3.5 음식 상세 화면 — 역사 이야기 탭 (`food/[id].tsx`, 탭 전환)
 
 ```
-┌─ Header (커뮤니티   ✏️) ─────────────┐
+┌─ Header (← 육개장          ♡) ──────┐
+├─ TabBar ─────────────────────────────┤
+│  조리법 │ 식재료 │ [역사이야기] │ 문헌│
+├─ History Content ────────────────────┤
+│  📜 유래 이야기                      │
+│  육개장은 본래 조선시대 궁중에서      │
+│  여름철 보양식으로 즐겨 먹던 음식...  │
+│                                      │
+│  📚 문헌 기록                        │
+│  ┌─────────────────────────────┐    │
+│  │"산림경제(山林經濟)에 기록된    │    │
+│  │ 개장국(개醬國)의 조리법..."    │    │
+│  └─────────────────────────────┘    │
+│  출전: 산림경제·홍만선·1715년경       │
+│                        원문 보기 →   │
+│                                      │
+│  🎎 의례와의 연결                    │
+│  복날 보양식, 제사 음식으로도...      │
+├─ Bottom Feedback ────────────────────┤
+│  이 역사 정보가 도움이 되었나요? 👍👎│
+└──────────────────────────────────────┘
+```
+
+### 3.6 음식 상세 화면 — 문헌 원문 탭 (`food/[id].tsx`, 탭 전환)
+
+역사 이야기 탭과 동일 구조, 탭 선택만 "문헌"으로 변경.
+하단에 동일하게 피드백 버튼(👍👎) 표시.
+
+### 3.7 커뮤니티 화면 (`(tabs)/community.tsx`)
+
+```
+┌─ Header (커뮤니티           ✏️) ─────┐
 ├─ Filter Tabs ────────────────────────┤
 │  [전체] [조리 후기] [나만의 레시피] [Q&A]│
 ├─ PostCard × N ───────────────────────┤
@@ -255,40 +306,96 @@ Figma 와이어프레임에서 도출한 7개 주요 화면과 각 화면에 사
 │  📋 육개장 레시피                     │
 │  "할머니 레시피로 만든 육개장! ..."    │
 │  ❤️128  💬23  ↗공유                  │
+├─ BottomNav ──────────────────────────┤
 └──────────────────────────────────────┘
 ```
 
-### 3.6 게시글 작성 (`community/write.tsx`)
+### 3.8 게시글 상세 (`community/[postId].tsx`)
+
+```
+┌─ Header (← 게시글           ⋯) ─────┐
+├─ Author ─────────────────────────────┤
+│  전통요리사_하나                      │
+│  2시간 전 · 조리 후기                 │
+├─ PhotoGallery (스와이프) ────────────┤
+│           🍲                         │
+│                              1/3     │
+├─ Engagement ─────────────────────────┤
+│  ❤️ 128   💬 23                      │
+├─ Post Content ───────────────────────┤
+│  할머니 레시피로 만든 육개장! 🥰      │
+│  고사리를 듬뿍 넣으니 진짜 옛날 맛... │
+├─ RecipeLink ─────────────────────────┤
+│  🍲 육개장 레시피 보기            →   │
+│     산림경제 기반 전통 조리법 · 4단계  │
+├─ Comments Preview ───────────────────┤
+│  💬 댓글 23개                        │
+├─ CommentInput ───────────────────────┤
+│  [댓글을 입력하세요...]         [↑]   │
+└──────────────────────────────────────┘
+```
+
+### 3.9 게시글 작성 (`community/write.tsx`)
 
 ```
 ┌─ Header (✕  게시글 작성  [등록]) ────┐
 ├─ Category Selector ──────────────────┤
 │  [조리 후기] [나만의 레시피] [질문/답변]│
 ├─ Recipe Tag ─────────────────────────┤
-│  📋 레시피 태그 → [🍲 육개장 ✕]       │
+│  📋 레시피 태그                      │
+│  사용한 레시피를 연결하세요  [🍲 육개장 ✕]│
 ├─ Photo Upload ───────────────────────┤
-│  [📷추가] [사진1] [사진2]             │
+│  사진  최대 5장                       │
+│  [📷추가] [사진1 ✕] [사진2 ✕]        │
 ├─ Text Input ─────────────────────────┤
-│  (본문 입력 영역)  124/1000           │
+│  (본문 입력 영역)        124 / 1000   │
 └──────────────────────────────────────┘
 ```
 
-### 3.7 마이페이지 (`(tabs)/mypage.tsx`)
+### 3.10 마이페이지 (`(tabs)/mypage.tsx`)
 
 ```
-┌─ Header (마이페이지  ⚙) ─────────────┐
+┌─ 마이페이지 ─────────────────────────┐
 ├─ Profile ────────────────────────────┤
-│  전통요리사_하나 / hana@gmail.com     │
-├─ Stats (가로 3열) ───────────────────┤
-│  12즐겨찾기 │ 5게시글 │ 28검색       │
+│  전통요리사_하나                      │
+│  hana@gmail.com                      │
+│  한국어 · 가입일 2024.03              │
+├─ Stats (가로 4열) ───────────────────┤
+│  12     │ 5      │ 28     │ 3       │
+│  즐겨찾기│ 내게시글│ 검색기록│ 도전기록│
 ├─ MenuItem × 3 ───────────────────────┤
-│  ♡ 즐겨찾기 목록  →                   │
-│  🕐 검색 기록      →                   │
-│  📝 내 게시글      →                   │
-├─ 설정 영역 ──────────────────────────┤
-│  🌐 언어 설정   한국어 →              │
-│  🔔 알림 설정   켜짐   →              │
-│  ℹ️ 앱 정보    v1.0.0 →              │
+│  ♡ 즐겨찾기 목록                      │
+│     저장한 전통 음식 12개          →  │
+│  🕐 검색 기록                         │
+│     최근 검색어 및 결과            →  │
+│  📝 내 게시글                         │
+│     조리 후기 및 레시피 5개        →  │
+├─ 설정 ──────────────────────────────┤
+│  🌐 언어 설정       한국어  →        │
+│  🔔 알림 설정       켜짐    →        │
+│  ℹ️ 앱 정보        v1.0.0  →        │
+├─ BottomNav ──────────────────────────┤
+└──────────────────────────────────────┘
+```
+
+### 3.11 즐겨찾기 목록 화면 (`favorites.tsx`)
+
+```
+┌─ Header (← 즐겨찾기 목록) ──────────┐
+├─ FoodResultCard × N ─────────────────┤
+│  (검색 결과 카드와 동일 레이아웃)      │
+├─ BottomNav ──────────────────────────┤
+└──────────────────────────────────────┘
+```
+
+### 3.12 내 게시글 화면 (`my-posts.tsx`)
+
+```
+┌─ Header (커뮤니티           ✏️) ─────┐
+├─ Filter Tabs ────────────────────────┤
+│  [전체] [조리 후기] [나만의 레시피] [Q&A]│
+├─ PostCard × N (내 게시글만) ─────────┤
+├─ BottomNav ──────────────────────────┤
 └──────────────────────────────────────┘
 ```
 
@@ -376,7 +483,7 @@ packages/i18n
 
 ## 7. 내비게이션 구조
 
-Expo Router 파일 기반 라우팅으로, Figma 와이어프레임의 내비게이션 흐름을 정확히 반영합니다.
+Expo Router 파일 기반 라우팅으로, Figma 와이어프레임의 13개 화면을 반영합니다.
 
 ```
 app/
@@ -384,17 +491,19 @@ app/
 ├── (tabs)/
 │   ├── _layout.tsx          ← Tab Navigator (5탭: 홈/검색/역사/커뮤니티/마이)
 │   ├── index.tsx            ← 🏠 홈
-│   ├── search.tsx           ← 🔍 검색 (입력 + 최근 + 추천)
+│   ├── search.tsx           ← 🔍 검색 (입력 + 최근 검색어)
 │   ├── history.tsx          ← 📖 역사 탐색
 │   ├── community.tsx        ← 💬 커뮤니티 피드
 │   └── mypage.tsx           ← 👤 마이페이지
 ├── food/
-│   └── [id].tsx             ← 음식 상세 (Stack 푸시)
+│   └── [id].tsx             ← 음식 상세 (조리법/식재료/역사/문헌 탭)
 ├── search/
-│   └── results.tsx          ← 검색 결과 (Stack 푸시)
+│   └── results.tsx          ← 검색 결과 (AI 분석 + 결과 카드)
 ├── community/
-│   ├── [postId].tsx         ← 게시글 상세
-│   └── write.tsx            ← 게시글 작성 (Modal 프레젠테이션)
+│   ├── [postId].tsx         ← 게시글 상세 (사진갤러리 + 댓글)
+│   └── write.tsx            ← 게시글 작성 (Modal)
+├── favorites.tsx            ← 즐겨찾기 목록 (마이페이지에서 진입)
+├── my-posts.tsx             ← 내 게시글 목록 (마이페이지에서 진입)
 ├── settings/
 │   ├── language.tsx
 │   └── notifications.tsx
@@ -402,7 +511,16 @@ app/
     └── login.tsx            ← 로그인 (Google OAuth)
 ```
 
-**탭 구성 (Figma Bottom Navigation 기반):**
+**상세 화면 탭 구성 (Figma TabBar 컴포넌트 기반):**
+
+| 순서 | 탭 라벨 | 내용 | 하단 영역 |
+|------|--------|------|---------|
+| 1 | 조리법 | 단계별 조리 과정 (RecipeStep) | 재료 구매처 보기 |
+| 2 | 식재료 | 필요 재료 목록 | 재료 구매처 보기 |
+| 3 | 역사이야기 | 유래/문헌기록/의례 (HistorySection) | 피드백 👍👎 |
+| 4 | 문헌 | 출전 문헌 원문 | 피드백 👍👎 |
+
+**Bottom Navigation (5탭):**
 
 | 순서 | 아이콘 | 라벨 | 경로 |
 |------|--------|------|------|
@@ -619,71 +737,287 @@ main 병합
 
 ---
 
-## 13. 디자인 토큰 (한국 전통색 기반)
+## 13. 디자인 토큰 (Figma 추출 색상 시스템)
 
-기획서의 전통 음식 테마에 맞춘 색상 시스템입니다.
+Figma 와이어프레임 컴포넌트에서 추출한 실제 색상 시스템입니다.
 
 ```typescript
 // packages/ui/tokens/colors.ts
 export const colors = {
-  // 주요 색상 — 한국 전통색에서 착안
+  // ── 브랜드 (적갈색 — 한국 전통 적토·단청 색) ──
   primary: {
-    50:  '#FFF5F0',
-    100: '#FFE4D6',
-    200: '#FFC4A8',
-    300: '#FF9E73',  // 고추장 색
-    400: '#E8723A',
-    500: '#C85A28',  // 메인 브랜드 컬러
-    600: '#A04420',
-    700: '#7A3218',
-  },
-  
-  // 보조 색상 — 자연의 색
-  secondary: {
-    50:  '#F0F7F0',
-    100: '#D4E8D4',
-    300: '#7CB87C',
-    500: '#4A8C4A',  // 나물/산채 초록
-    700: '#2D5E2D',
+    DEFAULT: '#962E22',   // 메인 브랜드: TabBar active, 레시피 태그 배경, AI 분석 제목
+    dark:    '#6B241A',   // FeaturedCard 그라데이션 끝
   },
 
-  // 중성 색상
-  neutral: {
-    0:   '#FFFFFF',
-    50:  '#FAFAF8',  // 한지 색
-    100: '#F5F3EF',
-    200: '#E8E4DD',
-    300: '#D4CFC6',
-    500: '#8C8578',
-    700: '#4A463E',
-    900: '#1C1A16',
+  // ── 자연 초록 (산림·나물 색) ──
+  green: {
+    DEFAULT: '#345237',   // 시대 태그 배경, AI 분석 결과 강조 텍스트
   },
 
-  // 의미 색상
+  // ── 따뜻한 중성색 (한지·흙·옻 계열) ──
+  surface: {
+    base:    '#FDFBF7',   // 카드 배경 (FoodCard, ResultCard, PostCard)
+    light:   '#F9F6F0',   // 화면/섹션 배경 (TabBar 배경)
+    muted:   '#F2EDE3',   // 이미지 영역 배경, 카테고리 칩 배경
+  },
+
+  border: {
+    DEFAULT: '#E0D9CE',   // 카드 border, 구분선, BottomNav 상단선
+  },
+
+  text: {
+    primary:   '#261E17', // 제목, 음식 이름 (가장 진한 색)
+    secondary: '#665C51', // 본문, 설명, 카테고리 라벨
+    tertiary:  '#9E9487', // 비활성 탭, 날짜, 화살표, 좋아요 아이콘
+  },
+
+  // ── AI 분석 영역 (보라 계열 — 다른 영역과 시각적 구분) ──
+  ai: {
+    background: '#F2F0F7',
+    border:     '#D9D1E5',
+  },
+
+  // ── FeaturedCard 전용 (적갈색 그라데이션 위의 텍스트) ──
+  featured: {
+    subtitle:    '#FFD9BF', // "오늘의 추천 전통 음식", 한자명
+    description: '#FFE5D9', // 설명 텍스트
+    tagBg:       'rgba(255, 255, 255, 0.2)', // 카테고리 태그 배경
+  },
+
+  // ── 시스템 ──
+  white:   '#FFFFFF',
+  black:   '#000000',
+
+  // ── 의미 색상 (추후 정의) ──
   semantic: {
     error:   '#D32F2F',
     success: '#2E7D32',
     warning: '#F9A825',
     info:    '#1565C0',
   },
+};
+```
 
-  // 카테고리 색상
-  category: {
-    tteok:    '#E8A87C', // 떡류 — 떡 색
-    soup:     '#C85A28', // 국/탕 — 붉은 국물
-    grill:    '#8B5E3C', // 구이 — 숯불
-    namul:    '#4A8C4A', // 나물 — 초록
-    jjim:     '#B85C38', // 찜/조림
-    myeon:    '#D4CFC6', // 면류
-    hangwa:   '#E8C87C', // 한과 — 꿀색
-    eumchung: '#7CB87C', // 음청류 — 연한 초록
+---
+
+## 14. 컴포넌트별 색상 매핑
+
+Figma 컴포넌트에서 추출한 색상을 컴포넌트별로 정리합니다.
+
+### 14.1 Bottom Navigation
+
+```
+┌─────────────────────────────────────────┐
+│  배경: white                            │
+│  상단 border: border.DEFAULT (#E0D9CE)  │
+│                                         │
+│  활성 탭:  text primary.DEFAULT (#962E22)│
+│  비활성 탭: text tertiary (#9E9487)      │
+│  아이콘: 22px / 라벨: 10px semibold     │
+└─────────────────────────────────────────┘
+```
+
+### 14.2 TabBar (상세 화면 탭)
+
+```
+┌─────────────────────────────────────────┐
+│  배경: surface.light (#F9F6F0)          │
+│  하단 구분선: border.DEFAULT (#E0D9CE)  │
+│                                         │
+│  선택 탭: text primary.DEFAULT (#962E22)│
+│           + 하단 인디케이터 3px bar      │
+│             (primary.DEFAULT)           │
+│  미선택: text tertiary (#9E9487)        │
+│  폰트: 14px, 선택=Bold, 미선택=Medium  │
+└─────────────────────────────────────────┘
+```
+
+### 14.3 FeaturedCard (오늘의 추천)
+
+```
+┌─────────────────────────────────────────┐
+│  배경: linear-gradient                  │
+│    from primary.DEFAULT (#962E22)       │
+│    to   primary.dark (#6B241A)          │
+│                                         │
+│  라벨 "오늘의 추천": featured.subtitle  │
+│                       (#FFD9BF) 12px    │
+│  음식 이름: white, 28px Bold            │
+│  한자명: featured.subtitle (#FFD9BF)    │
+│  설명: featured.description (#FFE5D9)   │
+│  태그: white text + featured.tagBg 배경 │
+│  라운딩: 16px                           │
+└─────────────────────────────────────────┘
+```
+
+### 14.4 FoodCard (인기 음식 카드)
+
+```
+┌─────────────────────────────────────────┐
+│  배경: surface.base (#FDFBF7)           │
+│  border: 1px border.DEFAULT (#E0D9CE)   │
+│  라운딩: 14px                           │
+│                                         │
+│  이미지 영역 배경: surface.muted (#F2EDE3)│
+│  카테고리 태그: green (#345237) + white │
+│    라운딩: 10px, 10px 패딩, 10px 폰트   │
+│                                         │
+│  음식 이름: text.primary (#261E17) 16px │
+│  설명: text.secondary (#665C51) 12px    │
+│  좋아요 아이콘: text.tertiary (#9E9487) │
+└─────────────────────────────────────────┘
+```
+
+### 14.5 FoodResultCard (검색 결과 카드)
+
+```
+┌─────────────────────────────────────────┐
+│  배경: surface.base (#FDFBF7)           │
+│  border: 1px border.DEFAULT (#E0D9CE)   │
+│  라운딩: 16px                           │
+│                                         │
+│  좌측 이미지 영역: surface.muted (#F2EDE3)│
+│    시대 태그: green (#345237) + white   │
+│    라운딩: 11px                         │
+│                                         │
+│  음식 이름: text.primary (#261E17) 20px │
+│  로마자 표기: text.tertiary (#9E9487) 12px│
+│  카테고리 칩: surface.muted 배경        │
+│    + text.secondary (#665C51) 11px      │
+│  설명: text.secondary (#665C51) 12px    │
+│  화살표: text.tertiary (#9E9487) 18px   │
+└─────────────────────────────────────────┘
+```
+
+### 14.6 AIAnalysisBadge (AI 분석 결과)
+
+```
+┌─────────────────────────────────────────┐
+│  배경: ai.background (#F2F0F7)          │
+│  border: 1px ai.border (#D9D1E5)        │
+│  라운딩: 12px                           │
+│                                         │
+│  제목 "AI 분석 결과":                   │
+│    primary.DEFAULT (#962E22) 13px Semi  │
+│  분석 내용 "맛: 매운맛 · 색: 빨강":    │
+│    text.secondary (#665C51) 12px        │
+│  결과 강조 "3개의 전통 음식을 찾았습니다":│
+│    green (#345237) 12px SemiBold        │
+└─────────────────────────────────────────┘
+```
+
+### 14.7 PostCard (커뮤니티 게시글)
+
+```
+┌─────────────────────────────────────────┐
+│  배경: surface.base (#FDFBF7)           │
+│  border: 1px border.DEFAULT (#E0D9CE)   │
+│  라운딩: 16px                           │
+│                                         │
+│  작성자: text.primary (#261E17) 14px Semi│
+│  시간: text.tertiary (#9E9487) 11px     │
+│  더보기 ⋯: text.tertiary (#9E9487) 20px│
+│                                         │
+│  사진 영역: surface.muted (#F2EDE3)     │
+│                                         │
+│  레시피 태그: primary.DEFAULT (#962E22) │
+│    배경 + white 텍스트 11px, 라운딩 12px│
+│                                         │
+│  본문: text.secondary (#665C51) 13px    │
+│  좋아요/댓글: text.secondary (#665C51)  │
+│    13px Medium                          │
+└─────────────────────────────────────────┘
+```
+
+### 14.8 Tag (범용 태그 컴포넌트)
+
+| 용도 | 배경 | 텍스트 | 라운딩 | 폰트 |
+|------|------|--------|--------|------|
+| 시대 태그 (조선시대) | green (#345237) | white | 11px | 10px Medium |
+| 카테고리 태그 (국/탕류) | surface.muted (#F2EDE3) | text.secondary (#665C51) | 11px | 11px Medium |
+| 레시피 태그 (게시글) | primary (#962E22) | white | 12px | 11px Medium |
+| FeaturedCard 태그 | rgba(255,255,255,0.2) | white | 12px | 12px SemiBold |
+| 상세 화면 태그 | green (#345237) | white | 11px | 10px Medium |
+
+### 14.9 SearchBar
+
+```
+┌─────────────────────────────────────────┐
+│  배경: surface.muted (#F2EDE3)          │
+│  라운딩: 25px (pill shape)              │
+│  높이: 50px                             │
+│                                         │
+│  placeholder: text.tertiary (#9E9487)   │
+│  입력 텍스트: text.primary (#261E17)    │
+│  아이콘 🔍🎤: text.secondary (#665C51) │
+└─────────────────────────────────────────┘
+```
+
+### 14.10 기타 공통 요소
+
+| 요소 | 색상 | 비고 |
+|------|------|------|
+| 화면 배경 | white (#FFFFFF) | 모든 화면 기본 배경 |
+| 헤더 제목 | text.primary (#261E17) | 24px Bold |
+| 헤더 뒤로가기 ← | text.primary (#261E17) | 29px |
+| 좋아요 ♡ (비활성) | text.tertiary (#9E9487) | |
+| 구분선 | border.DEFAULT (#E0D9CE) | 1px |
+| 출처 태그 영역 | surface.muted (#F2EDE3) | 13px, text.secondary |
+| 피드백 👍👎 버튼 | border.DEFAULT (#E0D9CE) border | 라운딩 8px |
+| 댓글 입력 필드 | border.DEFAULT (#E0D9CE) border | 라운딩 18px |
+| 댓글 전송 버튼 | primary.DEFAULT (#962E22) 배경 | white ↑ 아이콘 |
+| 마이페이지 Stats 구분선 | border.DEFAULT (#E0D9CE) | 1px 세로선 |
+| 마이페이지 Stats 숫자 | text.primary (#261E17) | 29px Bold |
+| 마이페이지 Stats 라벨 | text.secondary (#665C51) | 15px |
+| MenuItem 아이콘 원형 | surface.muted (#F2EDE3) | 36×36 원형 배경 |
+| 설정 항목 값 | text.secondary (#665C51) | "한국어", "켜짐" 등 |
+
+---
+
+## 15. 타이포그래피 시스템
+
+Figma에서 추출한 폰트 스케일입니다.
+
+```typescript
+// packages/ui/tokens/typography.ts
+export const typography = {
+  // 제목
+  display: {
+    fontSize: 28,
+    fontWeight: '700', // Bold
+    // FeaturedCard 음식 이름
+  },
+  heading: {
+    large: { fontSize: 24, fontWeight: '700' },  // 헤더 제목
+    medium: { fontSize: 20, fontWeight: '700' },  // ResultCard 음식 이름
+  },
+
+  // 본문
+  body: {
+    large:  { fontSize: 16, fontWeight: '700' },  // FoodCard 음식 이름
+    medium: { fontSize: 14, fontWeight: '600' },  // PostCard 작성자, TabBar 선택
+    small:  { fontSize: 13, fontWeight: '500' },  // PostCard 본문, AI 제목
+  },
+
+  // 캡션/라벨
+  caption: {
+    medium: { fontSize: 12, fontWeight: '400' },  // 로마자 표기, 설명, 날짜
+    small:  { fontSize: 11, fontWeight: '500' },  // 태그 텍스트, PostCard 시간
+    tiny:   { fontSize: 10, fontWeight: '500' },  // BottomNav 라벨, Tag
+  },
+
+  // 폰트 패밀리
+  fontFamily: {
+    sans: 'Inter',   // 기본 (Figma 기준)
+    // 프로덕션에서는 Pretendard 또는 Noto Sans KR 적용 검토
   },
 };
 ```
 
 ---
 
-## 14. 주요 컴포넌트 인터페이스
+## 16. 주요 컴포넌트 인터페이스
 
 ```typescript
 // packages/ui/src/composites/FoodCard.tsx
@@ -713,6 +1047,14 @@ interface FoodResultCardProps {
   onPress: () => void;
 }
 
+// packages/ui/src/composites/AIAnalysisBadge.tsx
+interface AIAnalysisBadgeProps {
+  taste?: string;              // "매운맛"
+  color?: string;              // "빨강"
+  form?: string;               // "국/탕"
+  resultCount: number;         // 3
+}
+
 // packages/ui/src/composites/RecipeStep.tsx
 interface RecipeStepProps {
   stepNumber: number;
@@ -721,11 +1063,24 @@ interface RecipeStepProps {
   isLast: boolean;             // 연결선 표시 여부
 }
 
+// packages/ui/src/composites/HistorySection.tsx
+interface HistorySectionProps {
+  type: "origin" | "literature" | "ritual";  // 유래/문헌/의례
+  icon: string;                // "📜" | "📚" | "🎎"
+  title: string;               // "유래 이야기"
+  content: string;
+  citation?: {                 // 문헌 기록일 때만
+    quote: string;
+    source: string;            // "산림경제 · 홍만선 · 1715년경"
+    onViewOriginal: () => void;
+  };
+}
+
 // packages/ui/src/composites/PostCard.tsx
 interface PostCardProps {
   author: { name: string; avatarUrl?: string };
   createdAt: string;
-  language?: string;           // "English"
+  category: string;            // "조리 후기"
   images: string[];
   linkedRecipe?: { id: string; nameKo: string; emoji: string };
   content: string;
@@ -736,8 +1091,45 @@ interface PostCardProps {
   onLike: () => void;
   onShare: () => void;
 }
+
+// packages/ui/src/composites/PhotoGallery.tsx
+interface PhotoGalleryProps {
+  images: string[];
+  currentIndex: number;
+  onIndexChange: (index: number) => void;
+}
+
+// packages/ui/src/composites/RecipeLink.tsx
+interface RecipeLinkProps {
+  foodId: string;
+  nameKo: string;
+  emoji: string;               // "🍲"
+  description: string;         // "산림경제 기반 전통 조리법 · 4단계"
+  onPress: () => void;
+}
+
+// packages/ui/src/composites/CommentInput.tsx
+interface CommentInputProps {
+  placeholder?: string;
+  onSubmit: (text: string) => void;
+}
+
+// packages/ui/src/composites/FeedbackButtons.tsx
+interface FeedbackButtonsProps {
+  label: string;               // "이 역사 정보가 도움이 되었나요?"
+  onPositive: () => void;
+  onNegative: () => void;
+}
+
+// packages/ui/src/composites/MenuItem.tsx
+interface MenuItemProps {
+  icon: string;                // "♡"
+  title: string;               // "즐겨찾기 목록"
+  description: string;         // "저장한 전통 음식 12개"
+  onPress: () => void;
+}
 ```
 
 ---
 
-이 설계는 기획서의 모든 화면(8개 화면)과 기능 요구사항을 반영하며, Turborepo의 패키지 분리를 통해 향후 웹 관리자, 키오스크, 디자인 시스템 문서 등으로의 확장이 자연스럽게 이루어질 수 있는 구조입니다.
+이 설계는 Figma 와이어프레임의 13개 화면과 기획서의 기능 요구사항을 반영하며, Turborepo의 패키지 분리를 통해 향후 웹 관리자, 키오스크, 디자인 시스템 문서 등으로의 확장이 자연스럽게 이루어질 수 있는 구조입니다.
