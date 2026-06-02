@@ -14,11 +14,16 @@ export function formatNumber(num: number): string {
 }
 
 /**
- * Format food name localized as per guidelines: {nameLocalized} ({nameKo})
+ * 음식 이름을 다국어 설정에 맞게 포맷팅 (항상 한국어 병기)
+ * ko: "육개장"
+ * en: "Yukgaejang 육개장"
+ * ja: "ユッケジャン 육개장"
+ * @author Antigravity
  */
-export function formatFoodName(nameKo: string, nameLocalized?: string): string {
-  if (!nameLocalized || nameLocalized === nameKo) {
+export function formatFoodName(nameKo: string, nameLocalized?: string, lang: string = 'ko'): string {
+  if (!nameLocalized || lang === 'ko' || nameLocalized === nameKo) {
     return nameKo;
   }
-  return `${nameLocalized} (${nameKo})`;
+  return `${nameLocalized} ${nameKo}`;
 }
+
