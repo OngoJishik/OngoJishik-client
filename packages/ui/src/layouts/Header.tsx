@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Pressable, StyleSheet } from 'react-native';
 import { Text } from '../primitives/Text';
 import { Icon } from '../primitives/Icon';
 import { useTheme } from '../../theme/useTheme';
@@ -11,6 +11,10 @@ interface HeaderProps {
   rightAction?: React.ReactNode;
 }
 
+/**
+ * 앱의 최상단에서 제목과 네비게이션 액션을 제어하는 헤더 레이아웃 컴포넌트
+ * @author Antigravity
+ */
 export const Header: React.FC<HeaderProps> = ({ title, onBack, rightAction }) => {
   const { colors } = useTheme();
 
@@ -18,9 +22,15 @@ export const Header: React.FC<HeaderProps> = ({ title, onBack, rightAction }) =>
     <View style={[styles.container, { borderBottomColor: colors.border }]}>
       <View style={styles.left}>
         {onBack && (
-          <TouchableOpacity onPress={onBack} style={styles.backBtn} activeOpacity={0.7}>
+          <Pressable
+            onPress={onBack}
+            style={({ pressed }) => [
+              styles.backBtn,
+              pressed && { opacity: 0.7 },
+            ]}
+          >
             <Icon name="back" size={22} color={colors.text} />
-          </TouchableOpacity>
+          </Pressable>
         )}
         <Text variant="h2" bold numberOfLines={1}>
           {title}

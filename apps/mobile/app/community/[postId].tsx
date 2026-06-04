@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, FlatList, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, StyleSheet, FlatList, KeyboardAvoidingView, Platform } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+
+import { useTranslation } from '@ongo/i18n';
 import {
   ScreenLayout,
   Header,
@@ -8,43 +10,27 @@ import {
   CommentInput,
   Text,
   Avatar,
+  useTheme,
 } from '@ongo/ui';
 import { formatDate } from '@ongo/utils';
 
-const MOCK_POST = {
-  id: 'post1',
-  author: { name: '전통요리사_하나', avatarUrl: undefined },
-  createdAt: '2026-05-27T08:00:00Z',
-  language: 'Korean',
-  images: [],
-  linkedRecipe: { id: 'yukgaejang', nameKo: '육개장', emoji: '🍲' },
-  content: '대구식 정통 육개장 끓여봤어요! 할머니 대부터 전해 내려온 비법은 다름 아닌 잘 볶은 고추기름과 듬뿍 넣은 대파입니다. 푹 끓여내니 국물이 시원하고 정말 보신이 되네요. 다들 이번 주말 점심으로 얼큰한 육개장 어떠세요?',
-  likeCount: 128,
-  commentCount: 2,
-  isLiked: true,
-};
+import { MOCK_POSTS, MOCK_COMMENTS } from '../../mocks';
 
-const MOCK_COMMENTS = [
-  {
-    id: 'c1',
-    author: { name: 'KimCook', avatarUrl: undefined },
-    createdAt: '2026-05-27T08:15:00Z',
-    content: '우와, 정말 칼칼하고 시원해보여요! 고춧기름 내는 비결이 궁금하네요.',
-  },
-  {
-    id: 'c2',
-    author: { name: '전통매니아', avatarUrl: undefined },
-    createdAt: '2026-05-27T09:00:00Z',
-    content: '대파를 푹 끓이면 은은한 단맛도 돌아서 국물 맛이 일품이죠. 멋진 레시피 후기 감사드립니다!',
-  },
-];
-
-export default function PostDetailScreen() {
+/**
+ * 커뮤니티 게시글 상세 및 댓글 조회/등록 화면 컴포넌트
+ * @author Antigravity
+ */
+export const PostDetailScreen = () => {
   const router = useRouter();
-  const { postId } = useLocalSearchParams();
+  const { colors } = useTheme();
+  const { t } = useTranslation();
+  const { postId } = useLocalSearchParams<{ postId: string }>();
   const [commentVal, setCommentVal] = useState('');
   const [comments, setComments] = useState(MOCK_COMMENTS);
-  const [post, setPost] = useState(MOCK_POST);
+  
+  // Find the post from shared mock posts or fall back to the first one
+  const initialPost = MOCK_POSTS.find((p) => p.id === postId) || MOCK_POSTS[0];
+  const [post, setPost] = useState(initialPost);
 
   const handleAddComment = () => {
     if (!commentVal.trim()) return;
@@ -78,7 +64,7 @@ export default function PostDetailScreen() {
       style={{ flex: 1 }}
     >
       <ScreenLayout>
-        <Header title="게시글 상세" onBack={() => router.back()} />
+        <Header title={t('community.postDetail')} onBack={() => router.back()} />
 
         <FlatList
           data={comments}
@@ -88,7 +74,7 @@ export default function PostDetailScreen() {
               <PostCard
                 author={post.author}
                 createdAt={post.createdAt}
-                language={post.language}
+                category={post.category}
                 images={post.images}
                 linkedRecipe={post.linkedRecipe}
                 content={post.content}
@@ -97,10 +83,14 @@ export default function PostDetailScreen() {
                 isLiked={post.isLiked}
                 onPress={() => {}}
                 onLike={handleLike}
-                onShare={() => console.log('Share')}
+                onShare={() => {
+                  if (__DEV__) {
+                    console.log('Share');
+                  }
+                }}
               />
               <Text variant="h3" bold style={styles.commentHeader}>
-                댓글 {post.commentCount}개
+                {t('community.commentsCount', { count: post.commentCount })}
               </Text>
             </View>
           }
@@ -133,7 +123,9 @@ export default function PostDetailScreen() {
       </ScreenLayout>
     </KeyboardAvoidingView>
   );
-}
+};
+
+export default PostDetailScreen;
 
 const styles = StyleSheet.create({
   commentHeader: {

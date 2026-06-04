@@ -83,7 +83,7 @@ export type { FoodCardProps } from "./FoodCard";
 - 외부에서 style prop으로 확장 가능하게
 
 ### 금지
-- `export default`
+- `export default` (단, Expo Router의 화면 및 레이아웃 파일인 `apps/mobile/app/` 하위 파일은 프레임워크 요구사항이므로 예외로 허용)
 - 인라인 스타일 (일회성 레이아웃 제외)
 - 컴포넌트 내부에서 API 직접 호출 (훅을 통해)
 

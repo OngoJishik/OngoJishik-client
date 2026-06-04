@@ -29,7 +29,7 @@ export const SearchBar = ({
   const { colors } = useTheme();
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.card, borderColor: colors.border }]}>
+    <View style={[styles.container, { backgroundColor: colors.primaryLight, height: 50, borderRadius: 25, borderWidth: 0 }]}>
       <Icon name="search" size={20} color={colors.textSecondary} style={styles.searchIcon} />
       <TextInput
         value={value}

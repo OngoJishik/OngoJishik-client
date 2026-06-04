@@ -6,10 +6,7 @@ export const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1,
-    borderRadius: radius.full,
     paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
     marginVertical: spacing.md,
   },
   searchIcon: {

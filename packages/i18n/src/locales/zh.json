@@ -33,5 +33,75 @@
     "recent": "最近搜索",
     "recommended": "推荐搜索",
     "noRecent": "暂无最近搜索历史。"
+  },
+  "community": {
+    "title": "社区",
+    "all": "全部",
+    "cookingReview": "烹饪心得",
+    "myRecipe": "我的食谱",
+    "qna": "问答",
+    "postDetail": "帖子详情",
+    "comments": "评论",
+    "commentsCount": "{{count}} 条评论"
+  },
+  "write": {
+    "title": "发布帖子",
+    "register": "发布",
+    "categorySelect": "选择分类",
+    "recipeTag": "食谱标签",
+    "photoAdd": "添加照片 (最多3张)",
+    "add": "添加",
+    "placeholder": "分享你今天的烹饪心得或小贴士吧！ (最多1000字)"
+  },
+  "mypage": {
+    "title": "个人中心",
+    "favorites": "收藏夹",
+    "posts": "帖子列表",
+    "searchHistory": "搜索历史",
+    "favoritesList": "收藏列表",
+    "myPosts": "我的帖子",
+    "settingsTitle": "设置与信息",
+    "language": "语言设置",
+    "notifications": "推送设置",
+    "appInfo": "应用信息",
+    "korean": "韩语"
+  },
+  "favorites": {
+    "title": "收藏列表",
+    "empty": "你还没有收藏任何美食。"
+  },
+  "myPosts": {
+    "title": "我的帖子",
+    "empty": "你还没有发布过帖子。"
+  },
+  "history": {
+    "title": "历史探索",
+    "introTitle": "岁月中沉淀的味道",
+    "introDesc": "探索我们独特传统美食的历史与文献起源，内容精选自知识数据库和古典文献记录。",
+    "literatureQuotes": "古典文献原著引用"
+  },
+  "notifications": {
+    "title": "通知设置",
+    "pushTitle": "接收推送通知",
+    "pushDesc": "应用的重要通知及消息推送",
+    "favoriteTitle": "收藏美食推荐提醒",
+    "favoriteDesc": "已收藏传统美食的推荐及历史故事推送",
+    "marketingTitle": "接收营销信息",
+    "marketingDesc": "活动、优惠福利及传统美食探索相关信息提醒"
+  },
+  "results": {
+    "title": "搜索结果",
+    "queryPrefix": "输入的关键词:"
+  },
+  "food": {
+    "marketButton": "📋 查看食材购买处 (传统市场)"
+  },
+  "common": {
+    "like": "点赞",
+    "share": "分享",
+    "cancel": "取消",
+    "confirm": "确定",
+    "loading": "加载中...",
+    "on": "开启"
   }
 }

@@ -59,9 +59,10 @@ export const SearchScreen = () => {
 
       {showAIBadge && (
         <AIAnalysisBadge
-          flavor="매운맛"
+          taste="매운맛"
           color="빨간색"
-          category="국/탕류"
+          form="국/탕류"
+          resultCount={3}
         />
       )}
 

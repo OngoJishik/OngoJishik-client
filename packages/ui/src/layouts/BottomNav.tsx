@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Pressable, StyleSheet } from 'react-native';
 import { Text } from '../primitives/Text';
 import { Icon, IconProps } from '../primitives/Icon';
 import { useTheme } from '../../theme/useTheme';
@@ -17,6 +17,10 @@ interface BottomNavProps {
   onSelect: (key: string) => void;
 }
 
+/**
+ * 하단 내비게이션 바 레이아웃 컴포넌트
+ * @author Antigravity
+ */
 export const BottomNav: React.FC<BottomNavProps> = ({ items, activeKey, onSelect }) => {
   const { colors } = useTheme();
 
@@ -26,11 +30,13 @@ export const BottomNav: React.FC<BottomNavProps> = ({ items, activeKey, onSelect
         const isActive = item.key === activeKey;
         const color = isActive ? colors.primary : colors.textSecondary;
         return (
-          <TouchableOpacity
+          <Pressable
             key={item.key}
-            style={styles.tab}
+            style={({ pressed }) => [
+              styles.tab,
+              pressed && { opacity: 0.8 },
+            ]}
             onPress={() => onSelect(item.key)}
-            activeOpacity={0.8}
           >
             <Icon name={item.iconName} size={22} color={color} />
             <Text
@@ -40,7 +46,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ items, activeKey, onSelect
             >
               {item.label}
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         );
       })}
     </View>

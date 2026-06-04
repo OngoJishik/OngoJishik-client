@@ -33,5 +33,75 @@
     "recent": "Recent Searches",
     "recommended": "Recommended",
     "noRecent": "No recent search history."
+  },
+  "community": {
+    "title": "Community",
+    "all": "All",
+    "cookingReview": "Cooking Reviews",
+    "myRecipe": "My Recipe",
+    "qna": "Q&A",
+    "postDetail": "Post Detail",
+    "comments": "Comments",
+    "commentsCount": "Comments ({{count}})"
+  },
+  "write": {
+    "title": "Create Post",
+    "register": "Post",
+    "categorySelect": "Select Category",
+    "recipeTag": "Recipe Tag",
+    "photoAdd": "Add Photos (Max 3)",
+    "add": "Add",
+    "placeholder": "Share your cooking review or tips! (Max 1000 chars)"
+  },
+  "mypage": {
+    "title": "My Page",
+    "favorites": "Favorites",
+    "posts": "Posts",
+    "searchHistory": "History",
+    "favoritesList": "Favorites List",
+    "myPosts": "My Posts",
+    "settingsTitle": "Settings & Info",
+    "language": "Language Settings",
+    "notifications": "Notifications",
+    "appInfo": "App Info",
+    "korean": "Korean"
+  },
+  "favorites": {
+    "title": "Favorites List",
+    "empty": "No favorite foods found."
+  },
+  "myPosts": {
+    "title": "My Posts",
+    "empty": "No posts written."
+  },
+  "history": {
+    "title": "Explore History",
+    "introTitle": "Our Flavors Through Time",
+    "introDesc": "Explore the history and literary origins of our unique traditional foods, carefully selected from databases and classic records.",
+    "literatureQuotes": "Quotes from Classical Literature"
+  },
+  "notifications": {
+    "title": "Notification Settings",
+    "pushTitle": "Receive Push Notifications",
+    "pushDesc": "Important announcements and notifications from the app",
+    "favoriteTitle": "Favorite Recommendation Alerts",
+    "favoriteDesc": "Traditional food recommendations and historical story alerts for favorites",
+    "marketingTitle": "Receive Marketing Info",
+    "marketingDesc": "Alerts for events, benefits, and traditional food exploration info"
+  },
+  "results": {
+    "title": "Search Results",
+    "queryPrefix": "Entered search term:"
+  },
+  "food": {
+    "marketButton": "📋 View Ingredient Markets (Traditional Market)"
+  },
+  "common": {
+    "like": "Like",
+    "share": "Share",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "loading": "Loading...",
+    "on": "On"
   }
 }

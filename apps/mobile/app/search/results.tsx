@@ -1,49 +1,57 @@
 import React from 'react';
 import { View, StyleSheet, FlatList } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+
+import { useTranslation } from '@ongo/i18n';
 import {
   ScreenLayout,
   Header,
   FoodResultCard,
   DataSourceTag,
+  AIAnalysisBadge,
   Text,
+  useTheme,
 } from '@ongo/ui';
-import { FoodCategory } from '@ongo/utils';
+import { colors as designColors } from '@ongo/ui';
 
-const MOCK_RESULTS = [
-  {
-    id: 'yukgaejang',
-    nameKo: '육개장',
-    nameLocalized: 'Yukgaejang',
-    emoji: '🍲',
-    category: 'soup' as FoodCategory,
-    era: '조선시대',
-    description: '매콤하고 깊은 맛의 소고기 국물 요리로 대파와 고사리를 듬뿍 넣어 푹 끓여낸 대표적인 전통 보양식.',
-  },
-  {
-    id: 'gujelpan',
-    nameKo: '구절판',
-    nameLocalized: 'Gujeolpan',
-    emoji: '🍱',
-    category: 'tteok' as FoodCategory, // Categorized under generic decorative/wheat wrappers
-    era: '조선시대',
-    description: '아홉 가지 재료를 둥근 목기에 담아내어 얇은 밀전병에 정성스럽게 싸 먹는 품격 높은 궁중 요리.',
-  },
-];
+import { MOCK_RESULTS } from '../../mocks';
 
-export default function SearchResultsScreen() {
+/**
+ * 전통 음식 검색 결과를 보여주는 화면 컴포넌트
+ * 입력된 쿼리에 근거해 AI 분석 배지 및 검색 결과를 정렬 렌더링합니다.
+ * @author Antigravity
+ */
+export const SearchResultsScreen = () => {
   const router = useRouter();
-  const { q } = useLocalSearchParams();
+  const { colors } = useTheme();
+  const { t } = useTranslation();
+  const { q } = useLocalSearchParams<{ q: string }>();
+
+  const queryStr = q || '';
+
+  // Extract mock values based on search terms
+  const hasTaste = queryStr.includes('매콤') || queryStr.includes('매운') || queryStr.includes('빨간');
+  const hasColor = queryStr.includes('빨간') || queryStr.includes('빨강');
+  const hasForm = queryStr.includes('국물') || queryStr.includes('탕') || queryStr.includes('찌개');
 
   return (
     <ScreenLayout>
-      <Header title="검색 결과" onBack={() => router.back()} />
+      <Header title={t('results.title')} onBack={() => router.back()} />
 
-      <View style={styles.queryBar}>
-        <Text variant="body" bold style={{ color: '#8C8578' }}>
-          입력한 검색어: <Text variant="body" bold style={{ color: '#C85A28' }}>"{q}"</Text>
+      <View style={[styles.queryBar, { borderBottomColor: colors.border }]}>
+        <Text variant="body" bold style={{ color: colors.textSecondary }}>
+          {t('results.queryPrefix')} <Text variant="body" bold style={{ color: designColors.primary.DEFAULT }}>"{queryStr}"</Text>
         </Text>
       </View>
+
+      {(hasTaste || hasColor || hasForm) && (
+        <AIAnalysisBadge
+          taste={hasTaste ? '매운맛' : undefined}
+          color={hasColor ? '빨강' : undefined}
+          form={hasForm ? '국/탕' : undefined}
+          resultCount={MOCK_RESULTS.length}
+        />
+      )}
 
       <FlatList
         data={MOCK_RESULTS}
@@ -61,18 +69,19 @@ export default function SearchResultsScreen() {
             onPress={() => router.push(`/food/${item.id}`)}
           />
         )}
-        ListFooterComponent={<DataSourceTag />}
+        ListFooterComponent={<DataSourceTag source="특허청 한국전통지식포탈" />}
         contentContainerStyle={styles.listContainer}
       />
     </ScreenLayout>
   );
-}
+};
+
+export default SearchResultsScreen;
 
 const styles = StyleSheet.create({
   queryBar: {
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#E8E4DD',
     marginBottom: 16,
   },
   listContainer: {

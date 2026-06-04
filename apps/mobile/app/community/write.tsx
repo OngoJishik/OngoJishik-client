@@ -1,54 +1,76 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, TextInput, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
+
+import { useTranslation } from '@ongo/i18n';
 import {
   ScreenLayout,
   Header,
-  Button,
   Chip,
   Text,
   Icon,
+  useTheme,
 } from '@ongo/ui';
+import { colors as designColors } from '@ongo/ui';
 
-const CATEGORIES = ['조리 후기', '나만의 레시피', '질문/답변'];
+const CATEGORIES = [
+  { id: 'cookingReview', labelKey: 'community.cookingReview', value: '조리 후기' },
+  { id: 'myRecipe', labelKey: 'community.myRecipe', value: '나만의 레시피' },
+  { id: 'qna', labelKey: 'community.qna', value: '질문/답변' },
+];
 
-export default function WritePostScreen() {
+/**
+ * 커뮤니티 게시글 작성 화면 컴포넌트
+ * 카테고리 선택, 레시피 연계 태그 설정, 본문 작성 기능을 제공합니다.
+ * @author Antigravity
+ */
+export const WritePostScreen = () => {
   const router = useRouter();
+  const { colors } = useTheme();
+  const { t } = useTranslation();
   const [selectedCat, setSelectedCat] = useState('조리 후기');
   const [content, setContent] = useState('');
   const [linkedRecipe, setLinkedRecipe] = useState('🍲 육개장');
 
   const handleRegister = () => {
     if (!content.trim()) return;
-    console.log('Register post:', { selectedCat, content, linkedRecipe });
+    if (__DEV__) {
+      console.log('Register post:', { selectedCat, content, linkedRecipe });
+    }
     router.back();
   };
+
+  const isContentEmpty = !content.trim();
 
   return (
     <ScreenLayout>
       <Header
-        title="게시글 작성"
+        title={t('write.title')}
         onBack={() => router.back()}
         rightAction={
-          <TouchableOpacity onPress={handleRegister} disabled={!content.trim()}>
-            <Text variant="label" bold style={{ color: content.trim() ? '#C85A28' : '#D4CFC6' }}>
-              등록
+          <Pressable onPress={handleRegister} disabled={isContentEmpty}>
+            <Text
+              variant="label"
+              bold
+              style={{ color: isContentEmpty ? colors.textSecondary : designColors.primary.DEFAULT }}
+            >
+              {t('write.register')}
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         }
       />
 
       <View style={styles.section}>
-        <Text variant="caption" bold style={styles.sectionTitle}>
-          카테고리 선택
+        <Text variant="caption" bold style={[styles.sectionTitle, { color: colors.textSecondary }]}>
+          {t('write.categorySelect')}
         </Text>
         <View style={styles.row}>
           {CATEGORIES.map((cat) => (
             <Chip
-              key={cat}
-              label={cat}
-              selected={selectedCat === cat}
-              onPress={() => setSelectedCat(cat)}
+              key={cat.id}
+              label={t(cat.labelKey)}
+              selected={selectedCat === cat.value}
+              onPress={() => setSelectedCat(cat.value)}
             />
           ))}
         </View>
@@ -56,31 +78,31 @@ export default function WritePostScreen() {
 
       {linkedRecipe && (
         <View style={styles.section}>
-          <Text variant="caption" bold style={styles.sectionTitle}>
-            레시피 태그
+          <Text variant="caption" bold style={[styles.sectionTitle, { color: colors.textSecondary }]}>
+            {t('write.recipeTag')}
           </Text>
-          <View style={styles.recipeTag}>
-            <Text variant="body" style={{ fontSize: 13 }}>
+          <View style={[styles.recipeTag, { backgroundColor: colors.primaryLight, borderColor: colors.border }]}>
+            <Text variant="body" style={{ fontSize: 13, color: colors.text }}>
               {linkedRecipe}
             </Text>
-            <TouchableOpacity onPress={() => setLinkedRecipe('')}>
-              <Icon name="close" size={14} color="#8C8578" style={{ marginLeft: 8 }} />
-            </TouchableOpacity>
+            <Pressable onPress={() => setLinkedRecipe('')}>
+              <Icon name="close" size={14} color={colors.textSecondary} style={{ marginLeft: 8 }} />
+            </Pressable>
           </View>
         </View>
       )}
 
       <View style={styles.section}>
-        <Text variant="caption" bold style={styles.sectionTitle}>
-          사진 추가 (최대 3장)
+        <Text variant="caption" bold style={[styles.sectionTitle, { color: colors.textSecondary }]}>
+          {t('write.photoAdd')}
         </Text>
         <View style={styles.row}>
-          <TouchableOpacity style={styles.uploadBtn}>
-            <Icon name="write" size={20} color="#8C8578" />
-            <Text variant="caption" style={{ color: '#8C8578', marginTop: 4 }}>
-              추가
+          <Pressable style={[styles.uploadBtn, { borderColor: colors.border }]}>
+            <Icon name="write" size={20} color={colors.textSecondary} />
+            <Text variant="caption" style={{ color: colors.textSecondary, marginTop: 4 }}>
+              {t('write.add')}
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </View>
 
@@ -88,26 +110,27 @@ export default function WritePostScreen() {
         <TextInput
           value={content}
           onChangeText={setContent}
-          placeholder="오늘 요리한 후기나 요리 팁을 들려주세요! (최대 1000자)"
-          placeholderTextColor="#8C8578"
+          placeholder={t('write.placeholder')}
+          placeholderTextColor={colors.textSecondary}
           multiline
           maxLength={1000}
-          style={styles.editor}
+          style={[styles.editor, { color: colors.text }]}
         />
-        <Text variant="caption" style={styles.counter}>
+        <Text variant="caption" style={[styles.counter, { color: colors.textSecondary }]}>
           {content.length}/1000
         </Text>
       </View>
     </ScreenLayout>
   );
-}
+};
+
+export default WritePostScreen;
 
 const styles = StyleSheet.create({
   section: {
     marginTop: 20,
   },
   sectionTitle: {
-    color: '#8C8578',
     marginBottom: 8,
   },
   row: {
@@ -117,8 +140,6 @@ const styles = StyleSheet.create({
   recipeTag: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFF5F0',
-    borderColor: '#FFE4D6',
     borderWidth: 1,
     paddingHorizontal: 12,
     paddingVertical: 6,
@@ -130,7 +151,6 @@ const styles = StyleSheet.create({
     height: 64,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#D4CFC6',
     borderStyle: 'dashed',
     justifyContent: 'center',
     alignItems: 'center',
@@ -144,7 +164,6 @@ const styles = StyleSheet.create({
   },
   counter: {
     alignSelf: 'flex-end',
-    color: '#8C8578',
     marginBottom: 24,
   },
 });

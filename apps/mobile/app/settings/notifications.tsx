@@ -1,71 +1,92 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Switch } from 'react-native';
 import { useRouter } from 'expo-router';
+
+import { useTranslation } from '@ongo/i18n';
 import {
   ScreenLayout,
   Header,
   Text,
+  useTheme,
 } from '@ongo/ui';
+import { colors as designColors } from '@ongo/ui';
 
-export default function NotificationSettingsScreen() {
+/**
+ * 알림 설정 화면 컴포넌트
+ * 푸시 알림, 즐겨찾기 알림, 마케팅 알림 설정을 관리하며 토글 스위치 형태의 UI를 제공합니다.
+ * @author Antigravity
+ */
+export const NotificationSettingsScreen = () => {
   const router = useRouter();
+  const { colors } = useTheme();
+  const { t } = useTranslation();
   const [pushEnabled, setPushEnabled] = useState(true);
   const [favoriteAlerts, setFavoriteAlerts] = useState(true);
   const [marketingAlerts, setMarketingAlerts] = useState(false);
 
+  // Switch Colors aligned with Figma spec (active: brand primary red, inactive: grey/border)
+  const trackColorConfig = {
+    false: designColors.toggle.trackInactive,
+    true: designColors.toggle.trackActive,
+  };
+  const thumbColorConfig = (value: boolean) => 
+    value ? designColors.primary.DEFAULT : designColors.toggle.thumbInactive;
+
   return (
     <ScreenLayout>
-      <Header title="알림 설정" onBack={() => router.back()} />
+      <Header title={t('notifications.title')} onBack={() => router.back()} />
 
       <View style={styles.list}>
-        <View style={styles.item}>
+        <View style={[styles.item, { borderBottomColor: colors.border }]}>
           <View style={styles.meta}>
             <Text variant="label" bold>
-              푸시 알림 받기
+              {t('notifications.pushTitle')}
             </Text>
-            <Text variant="caption">앱에서 보내는 중요 공지 및 푸시 알림</Text>
+            <Text variant="caption" style={{ color: colors.textSecondary }}>{t('notifications.pushDesc')}</Text>
           </View>
           <Switch
             value={pushEnabled}
             onValueChange={setPushEnabled}
-            trackColor={{ false: '#D4CFC6', true: '#FFC4A8' }}
-            thumbColor={pushEnabled ? '#C85A28' : '#F5F3EF'}
+            trackColor={trackColorConfig}
+            thumbColor={thumbColorConfig(pushEnabled)}
           />
         </View>
 
-        <View style={styles.item}>
+        <View style={[styles.item, { borderBottomColor: colors.border }]}>
           <View style={styles.meta}>
             <Text variant="label" bold>
-              즐겨찾기 보양 알림
+              {t('notifications.favoriteTitle')}
             </Text>
-            <Text variant="caption">즐겨찾기한 전통 요리 추천 및 역사 스토리 알림</Text>
+            <Text variant="caption" style={{ color: colors.textSecondary }}>{t('notifications.favoriteDesc')}</Text>
           </View>
           <Switch
             value={favoriteAlerts}
             onValueChange={setFavoriteAlerts}
-            trackColor={{ false: '#D4CFC6', true: '#FFC4A8' }}
-            thumbColor={favoriteAlerts ? '#C85A28' : '#F5F3EF'}
+            trackColor={trackColorConfig}
+            thumbColor={thumbColorConfig(favoriteAlerts)}
           />
         </View>
 
-        <View style={styles.item}>
+        <View style={[styles.item, { borderBottomColor: colors.border }]}>
           <View style={styles.meta}>
             <Text variant="label" bold>
-              마케팅 정보 수신
+              {t('notifications.marketingTitle')}
             </Text>
-            <Text variant="caption">이벤트, 혜택 정보 및 전통 요리 탐구 정보 알림</Text>
+            <Text variant="caption" style={{ color: colors.textSecondary }}>{t('notifications.marketingDesc')}</Text>
           </View>
           <Switch
             value={marketingAlerts}
             onValueChange={setMarketingAlerts}
-            trackColor={{ false: '#D4CFC6', true: '#FFC4A8' }}
-            thumbColor={marketingAlerts ? '#C85A28' : '#F5F3EF'}
+            trackColor={trackColorConfig}
+            thumbColor={thumbColorConfig(marketingAlerts)}
           />
         </View>
       </View>
     </ScreenLayout>
   );
-}
+};
+
+export default NotificationSettingsScreen;
 
 const styles = StyleSheet.create({
   list: {
@@ -77,7 +98,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#E8E4DD',
   },
   meta: {
     flex: 1,

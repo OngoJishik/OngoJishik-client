@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, StyleSheet, ViewStyle } from 'react-native';
+import { Pressable, StyleSheet, ViewStyle } from 'react-native';
 import { Text } from './Text';
 import { useTheme } from '../../theme/useTheme';
 import { radius } from '../../tokens/radius';
@@ -12,20 +12,24 @@ export interface ChipProps {
   style?: ViewStyle;
 }
 
+/**
+ * 키워드 선택 또는 태그 표시에 사용하는 칩 프리미티브 컴포넌트
+ * @author Antigravity
+ */
 export const Chip: React.FC<ChipProps> = ({ label, selected = false, onPress, style }) => {
   const { colors } = useTheme();
 
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={onPress}
       disabled={!onPress}
-      activeOpacity={0.8}
-      style={[
+      style={({ pressed }) => [
         styles.chip,
         {
           backgroundColor: selected ? colors.primary : colors.card,
           borderColor: selected ? colors.primary : colors.border,
         },
+        pressed && { opacity: 0.8 },
         style,
       ]}
     >
@@ -36,7 +40,7 @@ export const Chip: React.FC<ChipProps> = ({ label, selected = false, onPress, st
       >
         {label}
       </Text>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 

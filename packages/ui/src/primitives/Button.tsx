@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, StyleSheet, ActivityIndicator, ViewStyle } from 'react-native';
+import { Pressable, StyleSheet, ActivityIndicator, ViewStyle } from 'react-native';
 import { Text } from './Text';
 import { useTheme } from '../../theme/useTheme';
 import { radius } from '../../tokens/radius';
@@ -14,6 +14,10 @@ export interface ButtonProps {
   style?: ViewStyle;
 }
 
+/**
+ * 프로젝트 전반에서 사용되는 범용 버튼 프리미티브 컴포넌트
+ * @author Antigravity
+ */
 export const Button: React.FC<ButtonProps> = ({
   title,
   onPress,
@@ -56,11 +60,14 @@ export const Button: React.FC<ButtonProps> = ({
   const buttonStyles = getStyles();
 
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={onPress}
       disabled={disabled || loading}
-      style={[buttonStyles.view, style]}
-      activeOpacity={0.8}
+      style={({ pressed }) => [
+        buttonStyles.view,
+        pressed && { opacity: 0.8 },
+        style,
+      ]}
     >
       {loading ? (
         <ActivityIndicator color={buttonStyles.text.color} size="small" />
@@ -69,6 +76,6 @@ export const Button: React.FC<ButtonProps> = ({
           {title}
         </Text>
       )}
-    </TouchableOpacity>
+    </Pressable>
   );
 };

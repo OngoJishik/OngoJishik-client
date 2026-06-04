@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, ScrollView, StyleSheet, Pressable } from 'react-native';
+import { View, StyleSheet, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAtom, useAtomValue } from 'jotai';
 
@@ -12,6 +12,7 @@ import {
   SearchBar,
   FeaturedCard,
   FoodCard,
+  PopularFoods,
   CategoryChip,
   Text,
   Icon,
@@ -19,42 +20,7 @@ import {
 } from '@ongo/ui';
 import { FoodCategory } from '@ongo/utils';
 
-// Mock recommended & today's data for premium visual layout fallbacks
-const MOCK_RECOMMENDATION = {
-  id: 'gujelpan',
-  nameKo: '구절판',
-  nameLocalized: 'Gujeolpan',
-  emoji: '🍱',
-  subtitle: '아홉 가지 재료를 담은 궁중 요리',
-  description: '밀전병을 중심에 두고 주위에 여덟 가지 고명(고기, 미나리, 버섯, 지단 등)을 채워 가며 싸 먹는 호화로운 조선 시대 궁중 음식입니다.',
-};
-
-const MOCK_FOODS = [
-  {
-    id: 'sinseollo',
-    nameKo: '신선로',
-    nameLocalized: 'Sinseollo',
-    emoji: '🫕',
-    category: 'soup' as FoodCategory,
-    description: '여러 가지 어육과 채소를 신선로틀에 돌려 담고 장국을 부어 끓여 먹는 궁중 전골.',
-  },
-  {
-    id: 'mandutguk',
-    nameKo: '만두국',
-    nameLocalized: 'Mandutguk',
-    emoji: '🥟',
-    category: 'soup' as FoodCategory,
-    description: '고기와 야채로 속을 채운 만두를 사골 육수에 끓인 보양 국물 요리.',
-  },
-  {
-    id: 'yakgwa',
-    nameKo: '약과',
-    nameLocalized: 'Yakgwa',
-    emoji: '🍯',
-    category: 'hangwa' as FoodCategory,
-    description: '밀가루에 참기름, 꿀, 술을 넣고 반죽하여 기름에 지져 낸 고소하고 달콤한 한과.',
-  },
-];
+import { MOCK_RECOMMENDATION, MOCK_FOODS } from '../../mocks';
 
 const CATEGORIES: FoodCategory[] = ['tteok', 'soup', 'grill', 'namul', 'jjim', 'myeon', 'hangwa', 'eumchung'];
 
@@ -134,28 +100,13 @@ export const HomeScreen = () => {
         onPress={() => handleFoodPress(todayRecommendation.id)}
       />
 
-      <View style={styles.sectionHeader}>
-        <Text variant="h3" bold>
-          {t('home.popularFoods')}
-        </Text>
-      </View>
-
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
-        {popularFoods.map((food) => (
-          <FoodCard
-            key={food.id}
-            id={food.id}
-            nameKo={food.nameKo}
-            nameLocalized={food.nameLocalized}
-            emoji={food.emoji}
-            category={food.category}
-            description={food.description}
-            isFavorite={favorites.includes(food.id)}
-            onPress={() => handleFoodPress(food.id)}
-            onFavoriteToggle={() => handleFavoriteToggle(food.id)}
-          />
-        ))}
-      </ScrollView>
+      <PopularFoods
+        title={t('home.popularFoods')}
+        foods={popularFoods}
+        favorites={favorites}
+        onFoodPress={handleFoodPress}
+        onFavoriteToggle={handleFavoriteToggle}
+      />
 
       <View style={styles.sectionHeader}>
         <Text variant="h3" bold>
