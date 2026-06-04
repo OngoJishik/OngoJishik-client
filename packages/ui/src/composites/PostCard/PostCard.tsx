@@ -14,7 +14,7 @@ import { formatDate } from '@ongo/utils';
 export type PostCardProps = {
   author: { name: string; avatarUrl?: string };
   createdAt: string;
-  language?: string;
+  category?: string;
   images: string[];
   linkedRecipe?: { id: string; nameKo: string; emoji: string };
   content: string;
@@ -33,7 +33,7 @@ export type PostCardProps = {
 export const PostCard = ({
   author,
   createdAt,
-  language,
+  category,
   images,
   linkedRecipe,
   content,
@@ -56,7 +56,7 @@ export const PostCard = ({
               {author.name}
             </Text>
             <Text variant="caption">
-              {formatDate(createdAt)} {language ? `• ${language}` : ''}
+              {formatDate(createdAt)} {category ? `• ${category}` : ''}
             </Text>
           </View>
         </View>

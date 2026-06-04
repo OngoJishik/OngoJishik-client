@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, StyleSheet, Pressable } from 'react-native';
+import { Image } from 'expo-image';
 import { Text } from '../primitives/Text';
 import { Card } from '../primitives/Card';
-import { Badge } from '../primitives/Badge';
 import { useTheme } from '../../theme/useTheme';
 import { FoodCategory, foodCategoryNames, formatFoodName } from '@ongo/utils';
 import { radius } from '../../tokens/radius';
@@ -20,6 +20,10 @@ export interface FoodResultCardProps {
   onPress: () => void;
 }
 
+/**
+ * 음식 검색 결과 목록 또는 즐겨찾기 목록에서 사용되는 가로형 카드 컴포넌트
+ * @author Antigravity
+ */
 export const FoodResultCard: React.FC<FoodResultCardProps> = ({
   nameKo,
   nameLocalized,
@@ -36,12 +40,12 @@ export const FoodResultCard: React.FC<FoodResultCardProps> = ({
   const displayName = formatFoodName(nameKo, nameLocalized);
 
   return (
-    <TouchableOpacity onPress={onPress} activeOpacity={0.8} style={styles.container}>
+    <Pressable onPress={onPress} style={styles.container}>
       <Card style={styles.card} bordered>
         <View style={styles.row}>
           <View style={[styles.imageWrapper, { backgroundColor: colors.primaryLight }]}>
             {imageUrl ? (
-              <Image source={{ uri: imageUrl }} style={styles.image} />
+              <Image source={{ uri: imageUrl }} style={styles.image} contentFit="cover" transition={200} />
             ) : (
               <Text style={styles.emoji}>{emoji}</Text>
             )}
@@ -66,7 +70,7 @@ export const FoodResultCard: React.FC<FoodResultCardProps> = ({
           </View>
         </View>
       </Card>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
@@ -94,7 +98,6 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: '100%',
-    resizeMode: 'cover',
   },
   emoji: {
     fontSize: 28,

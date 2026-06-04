@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { Text } from '../primitives/Text';
 import { useTheme } from '../../theme/useTheme';
 import { FoodCategory, foodCategoryNames, foodCategoryEmojis } from '@ongo/utils';
@@ -13,6 +13,11 @@ interface CategoryChipProps {
   onPress: () => void;
 }
 
+/**
+ * 카테고리별 요리를 선택할 때 사용하는 카테고리 칩 컴포넌트
+ * 이모지와 한국어 카테고리명을 결합하여 카드 선택 피드백을 제공합니다.
+ * @author Antigravity
+ */
 export const CategoryChip: React.FC<CategoryChipProps> = ({ category, selected = false, onPress }) => {
   const { colors } = useTheme();
 
@@ -21,15 +26,15 @@ export const CategoryChip: React.FC<CategoryChipProps> = ({ category, selected =
   const categoryColor = designColors.category[category] || colors.primary;
 
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={onPress}
-      activeOpacity={0.8}
-      style={[
+      style={({ pressed }) => [
         styles.chip,
         {
           backgroundColor: selected ? categoryColor : colors.card,
           borderColor: selected ? categoryColor : colors.border,
         },
+        pressed && { opacity: 0.8 },
       ]}
     >
       <View style={styles.content}>
@@ -42,7 +47,7 @@ export const CategoryChip: React.FC<CategoryChipProps> = ({ category, selected =
           {info?.ko}
         </Text>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 

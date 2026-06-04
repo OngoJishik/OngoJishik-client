@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, ScrollView, Pressable, StyleSheet } from 'react-native';
 import { Text } from '../primitives/Text';
 import { useTheme } from '../../theme/useTheme';
 import { spacing } from '../../tokens/spacing';
@@ -19,14 +19,13 @@ export const TabBar: React.FC<TabBarProps> = ({ tabs, activeTab, onTabChange }) 
         {tabs.map((tab) => {
           const isActive = tab === activeTab;
           return (
-            <TouchableOpacity
+            <Pressable
               key={tab}
               onPress={() => onTabChange(tab)}
               style={[
                 styles.tab,
-                isActive && { borderBottomColor: colors.primary },
+                isActive && { borderBottomColor: colors.primary, borderBottomWidth: 3 },
               ]}
-              activeOpacity={0.8}
             >
               <Text
                 variant="label"
@@ -35,7 +34,7 @@ export const TabBar: React.FC<TabBarProps> = ({ tabs, activeTab, onTabChange }) 
               >
                 {tab}
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           );
         })}
       </ScrollView>
@@ -54,7 +53,8 @@ const styles = StyleSheet.create({
   tab: {
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.md,
-    borderBottomWidth: 2,
+    borderBottomWidth: 3,
     borderBottomColor: 'transparent',
   },
 });
+

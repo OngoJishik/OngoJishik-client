@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { Text } from '../primitives/Text';
 import { Icon, IconProps } from '../primitives/Icon';
 import { useTheme } from '../../theme/useTheme';
@@ -21,10 +21,9 @@ export const MenuItem: React.FC<MenuItemProps> = ({
   const { colors } = useTheme();
 
   return (
-    <TouchableOpacity
+    <Pressable
       style={[styles.container, { borderBottomColor: colors.border }]}
       onPress={onPress}
-      activeOpacity={0.7}
     >
       <View style={styles.leftRow}>
         <Icon name={iconName} size={18} color={colors.primary} style={styles.icon} />
@@ -36,7 +35,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({
         {rightElement}
         <Icon name="chevron-right" size={16} color={colors.textSecondary} style={styles.chevron} />
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
@@ -63,3 +62,4 @@ const styles = StyleSheet.create({
     marginLeft: spacing.sm,
   },
 });
+

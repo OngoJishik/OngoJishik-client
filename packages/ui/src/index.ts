@@ -26,6 +26,7 @@ export * from './composites/SearchBar';
 export * from './composites/FoodCard';
 export * from './composites/FoodResultCard';
 export * from './composites/FeaturedCard';
+export * from './composites/PopularFoods';
 export * from './composites/CategoryChip';
 export * from './composites/RecipeStep';
 export * from './composites/HistorySection';
