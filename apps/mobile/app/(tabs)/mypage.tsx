@@ -1,6 +1,8 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
+
+import { useTranslation } from '@ongo/i18n';
 import {
   ScreenLayout,
   Header,
@@ -8,23 +10,32 @@ import {
   MenuItem,
   Text,
   Icon,
+  useTheme,
 } from '@ongo/ui';
+import { colors as designColors } from '@ongo/ui';
 
-export default function MyPageScreen() {
+/**
+ * 마이페이지 화면 컴포넌트
+ * 사용자 정보, 요약 통계(즐겨찾기, 내 게시글, 검색 기록), 그리고 설정 메뉴들을 표시합니다.
+ * @author Antigravity
+ */
+export const MyPageScreen = () => {
   const router = useRouter();
-
-  const handleMenuPress = (route: string) => {
-    router.push(route as any);
-  };
+  const { colors } = useTheme();
+  const { t } = useTranslation();
 
   return (
     <ScreenLayout scrollable>
       <Header
-        title="👤 마이페이지"
+        title={`👤 ${t('mypage.title')}`}
         rightAction={
-          <TouchableOpacity onPress={() => console.log('Settings')}>
-            <Icon name="settings" size={22} />
-          </TouchableOpacity>
+          <Pressable onPress={() => {
+            if (__DEV__) {
+              console.log('Settings pressed');
+            }
+          }}>
+            <Icon name="settings" size={22} color={colors.text} />
+          </Pressable>
         }
       />
 
@@ -34,78 +45,84 @@ export default function MyPageScreen() {
           <Text variant="h3" bold>
             전통요리사_하나
           </Text>
-          <Text variant="caption">hana@gmail.com</Text>
+          <Text variant="caption" style={{ color: colors.textSecondary }}>hana@gmail.com</Text>
         </View>
       </View>
 
-      <View style={styles.statsBar}>
+      <View style={[styles.statsBar, { backgroundColor: colors.primaryLight }]}>
         <View style={styles.statCol}>
-          <Text variant="h2" bold style={styles.statVal}>
+          <Text variant="h2" bold style={[styles.statVal, { color: designColors.primary.DEFAULT }]}>
             12
           </Text>
-          <Text variant="caption">즐겨찾기</Text>
+          <Text variant="caption" style={{ color: colors.textSecondary }}>{t('mypage.favorites')}</Text>
         </View>
-        <View style={[styles.statCol, styles.statDivider]}>
-          <Text variant="h2" bold style={styles.statVal}>
+        <View style={[styles.statCol, styles.statDivider, { borderColor: colors.border }]}>
+          <Text variant="h2" bold style={[styles.statVal, { color: designColors.primary.DEFAULT }]}>
             5
           </Text>
-          <Text variant="caption">게시글</Text>
+          <Text variant="caption" style={{ color: colors.textSecondary }}>{t('mypage.posts')}</Text>
         </View>
         <View style={styles.statCol}>
-          <Text variant="h2" bold style={styles.statVal}>
+          <Text variant="h2" bold style={[styles.statVal, { color: designColors.primary.DEFAULT }]}>
             28
           </Text>
-          <Text variant="caption">검색 기록</Text>
+          <Text variant="caption" style={{ color: colors.textSecondary }}>{t('mypage.searchHistory')}</Text>
         </View>
       </View>
 
       <View style={styles.menuContainer}>
         <MenuItem
-          label="즐겨찾기 목록"
+          label={t('mypage.favoritesList')}
           iconName="heart"
-          onPress={() => console.log('Favorites List')}
+          onPress={() => router.push('/favorites' as any)}
         />
         <MenuItem
-          label="검색 기록"
+          label={t('mypage.searchHistory')}
           iconName="search"
-          onPress={() => console.log('Search History')}
+          onPress={() => router.push('/(tabs)/search' as any)}
         />
         <MenuItem
-          label="내 게시글"
+          label={t('mypage.myPosts')}
           iconName="community"
-          onPress={() => console.log('My Posts')}
+          onPress={() => router.push('/my-posts' as any)}
         />
       </View>
 
       <View style={styles.settingsHeader}>
-        <Text variant="caption" bold style={{ color: '#8C8578' }}>
-          설정 및 정보
+        <Text variant="caption" bold style={{ color: colors.textSecondary }}>
+          {t('mypage.settingsTitle')}
         </Text>
       </View>
 
       <View style={styles.menuContainer}>
         <MenuItem
-          label="언어 설정"
+          label={t('mypage.language')}
           iconName="settings"
-          rightElement={<Text variant="caption">한국어</Text>}
-          onPress={() => handleMenuPress('/settings/language')}
+          rightElement={<Text variant="caption" style={{ color: colors.textSecondary }}>{t('mypage.korean')}</Text>}
+          onPress={() => router.push('/settings/language' as any)}
         />
         <MenuItem
-          label="알림 설정"
+          label={t('mypage.notifications')}
           iconName="bell"
-          rightElement={<Text variant="caption">켜짐</Text>}
-          onPress={() => handleMenuPress('/settings/notifications')}
+          rightElement={<Text variant="caption" style={{ color: colors.textSecondary }}>{t('common.on')}</Text>}
+          onPress={() => router.push('/settings/notifications' as any)}
         />
         <MenuItem
-          label="앱 정보"
+          label={t('mypage.appInfo')}
           iconName="info"
-          rightElement={<Text variant="caption">v1.0.0</Text>}
-          onPress={() => console.log('App Info')}
+          rightElement={<Text variant="caption" style={{ color: colors.textSecondary }}>v1.0.0</Text>}
+          onPress={() => {
+            if (__DEV__) {
+              console.log('App Info pressed');
+            }
+          }}
         />
       </View>
     </ScreenLayout>
   );
-}
+};
+
+export default MyPageScreen;
 
 const styles = StyleSheet.create({
   profileSection: {
@@ -118,7 +135,6 @@ const styles = StyleSheet.create({
   },
   statsBar: {
     flexDirection: 'row',
-    backgroundColor: '#F5F3EF',
     borderRadius: 12,
     paddingVertical: 16,
     marginBottom: 24,
@@ -129,13 +145,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   statVal: {
-    color: '#C85A28', // Primary
     marginBottom: 4,
   },
   statDivider: {
     borderLeftWidth: 1,
     borderRightWidth: 1,
-    borderColor: '#D4CFC6',
   },
   menuContainer: {
     marginBottom: 16,
