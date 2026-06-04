@@ -4,17 +4,18 @@ import { Theme } from './light';
 export const darkTheme: Theme = {
   dark: true,
   colors: {
-    background: colors.neutral[900], // Deep charcoal
-    card: colors.neutral[700],        // Muted gray-brown card
-    text: colors.neutral[50],         // Hanji paper-white text
-    textSecondary: colors.neutral[300],
-    border: colors.neutral[500],
-    primary: colors.primary[300],     // Softer orange-red
-    primaryLight: colors.primary[700],
-    secondary: colors.secondary[300], // Soft green
+    background: '#1C1A16',          // 옻칠/전통 한지 어두운 배경색
+    card: '#2C2520',                // 어두운 목재 톤 카드 배경
+    text: '#F5F3EF',                // 밝은 한지 미색 텍스트
+    textSecondary: '#A69E92',       // 중간 밝기 텍스트
+    border: '#453E35',              // 어두운 테두리 및 구분선
+    primary: '#E57373',             // 다크모드용 소프트 적갈색
+    primaryLight: '#3C1E1A',        // 어두운 적갈색 배경색
+    secondary: '#81C784',           // 다크모드용 소프트 자연 초록
     success: colors.semantic.success,
     error: colors.semantic.error,
     warning: colors.semantic.warning,
     info: colors.semantic.info,
   },
 };
+
