@@ -33,5 +33,75 @@
     "recent": "최근 검색어",
     "recommended": "추천 검색어",
     "noRecent": "최근 검색 기록이 없습니다."
+  },
+  "community": {
+    "title": "커뮤니티",
+    "all": "전체",
+    "cookingReview": "조리 후기",
+    "myRecipe": "나만의 레시피",
+    "qna": "질문/답변",
+    "postDetail": "게시글 상세",
+    "comments": "댓글",
+    "commentsCount": "댓글 {{count}}개"
+  },
+  "write": {
+    "title": "게시글 작성",
+    "register": "등록",
+    "categorySelect": "카테고리 선택",
+    "recipeTag": "레시피 태그",
+    "photoAdd": "사진 추가 (최대 3장)",
+    "add": "추가",
+    "placeholder": "오늘 요리한 후기나 요리 팁을 들려주세요! (최대 1000자)"
+  },
+  "mypage": {
+    "title": "마이페이지",
+    "favorites": "즐겨찾기",
+    "posts": "게시글",
+    "searchHistory": "검색 기록",
+    "favoritesList": "즐겨찾기 목록",
+    "myPosts": "내 게시글",
+    "settingsTitle": "설정 및 정보",
+    "language": "언어 설정",
+    "notifications": "알림 설정",
+    "appInfo": "앱 정보",
+    "korean": "한국어"
+  },
+  "favorites": {
+    "title": "즐겨찾기 목록",
+    "empty": "즐겨찾기한 음식이 없습니다."
+  },
+  "myPosts": {
+    "title": "내 게시글",
+    "empty": "작성한 게시글이 없습니다."
+  },
+  "history": {
+    "title": "역사 탐색",
+    "introTitle": "시간을 담은 우리의 맛",
+    "introDesc": "전통 지식 데이터베이스와 고문헌 기록을 바탕으로 엄선한 우리 고유 음식의 역사와 문헌적 유래를 확인하세요.",
+    "literatureQuotes": "고문헌 속 원문 인용"
+  },
+  "notifications": {
+    "title": "알림 설정",
+    "pushTitle": "푸시 알림 받기",
+    "pushDesc": "앱에서 보내는 중요 공지 및 푸시 알림",
+    "favoriteTitle": "즐겨찾기 보양 알림",
+    "favoriteDesc": "즐겨찾기한 전통 요리 추천 및 역사 스토리 알림",
+    "marketingTitle": "마케팅 정보 수신",
+    "marketingDesc": "이벤트, 혜택 정보 및 전통 요리 탐구 정보 알림"
+  },
+  "results": {
+    "title": "검색 결과",
+    "queryPrefix": "입력한 검색어:"
+  },
+  "food": {
+    "marketButton": "📋 재료 구매처 보기 (전통시장)"
+  },
+  "common": {
+    "like": "좋아요",
+    "share": "공유",
+    "cancel": "취소",
+    "confirm": "확인",
+    "loading": "로딩 중...",
+    "on": "켜짐"
   }
 }

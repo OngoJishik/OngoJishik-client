@@ -33,5 +33,75 @@
     "recent": "最近の検索",
     "recommended": "おすすめの検索",
     "noRecent": "最近の検索履歴はありません。"
+  },
+  "community": {
+    "title": "コミュニティ",
+    "all": "すべて",
+    "cookingReview": "調理レビュー",
+    "myRecipe": "マイレシピ",
+    "qna": "質問/回答",
+    "postDetail": "投稿詳細",
+    "comments": "コメント",
+    "commentsCount": "コメント {{count}}件"
+  },
+  "write": {
+    "title": "新規投稿",
+    "register": "登録",
+    "categorySelect": "カテゴリー選択",
+    "recipeTag": "レシピタグ",
+    "photoAdd": "写真追加 (最大3枚)",
+    "add": "追加",
+    "placeholder": "今日の料理の感想やコツを教えてください！ (最大1000文字)"
+  },
+  "mypage": {
+    "title": "マイページ",
+    "favorites": "お気に入り",
+    "posts": "投稿リスト",
+    "searchHistory": "検索履歴",
+    "favoritesList": "お気に入り一覧",
+    "myPosts": "マイ投稿",
+    "settingsTitle": "設定と情報",
+    "language": "言語設定",
+    "notifications": "通知設定",
+    "appInfo": "アプリ情報",
+    "korean": "韓国語"
+  },
+  "favorites": {
+    "title": "お気に入り一覧",
+    "empty": "お気に入り登録された料理はありません。"
+  },
+  "myPosts": {
+    "title": "マイ投稿",
+    "empty": "作成された投稿はありません。"
+  },
+  "history": {
+    "title": "歴史探索",
+    "introTitle": "時の流れをたたえた私たちの味",
+    "introDesc": "伝統知識データベースと古典文献の記録に基づき、厳選された独自料理の歴史と文献的な由来をご確認ください。",
+    "literatureQuotes": "古典文献からの引用"
+  },
+  "notifications": {
+    "title": "通知設定",
+    "pushTitle": "プッシュ通知の受信",
+    "pushDesc": "アプリの重要なお知らせやプッシュ通知",
+    "favoriteTitle": "お気に入りおすすめ通知",
+    "favoriteDesc": "お気に入り登録した伝統料理の推薦および歴史ストーリー通知",
+    "marketingTitle": "マーケティング情報の受信",
+    "marketingDesc": "イベント、特典情報、および伝統料理の探求情報に関するお知らせ"
+  },
+  "results": {
+    "title": "検索結果",
+    "queryPrefix": "入力された検索語:"
+  },
+  "food": {
+    "marketButton": "📋 材料の購入先を見る (伝統市場)"
+  },
+  "common": {
+    "like": "いいね",
+    "share": "共有",
+    "cancel": "キャンセル",
+    "confirm": "確認",
+    "loading": "読み込み中...",
+    "on": "オン"
   }
 }
