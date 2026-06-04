@@ -16,7 +16,7 @@
 ## 핵심 규칙 (항상 준수)
 
 ### 필수
-- Named Export만 사용 (`export default` 금지)
+- Named Export만 사용 (`export default` 금지. 단, Expo Router의 화면 및 레이아웃 파일인 `apps/mobile/app/` 하위 파일은 프레임워크 요구사항이므로 예외로 허용)
 - JSDoc + `@author` — 모든 공개 함수, 컴포넌트, 훅
 - 타입에 `T` 접두사 — `TFood`, `TSearchRequest` (Props는 예외: `FoodCardProps`)
 - 서버 상태 → TanStack Query / 클라이언트 상태 → Jotai (혼용 금지)
