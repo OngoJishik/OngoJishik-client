@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   StyleSheet,
   FlatList,
-  Dimensions,
+  useWindowDimensions,
   NativeSyntheticEvent,
   NativeScrollEvent,
 } from 'react-native';
@@ -11,9 +11,6 @@ import { Image } from 'expo-image';
 
 import { useTheme } from '../../theme/useTheme';
 import { Text } from '../primitives/Text';
-
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const GALLERY_WIDTH = SCREEN_WIDTH - 32;
 
 export interface PhotoGalleryProps {
   images: string[];
@@ -26,20 +23,22 @@ export interface PhotoGalleryProps {
 export const PhotoGallery: React.FC<PhotoGalleryProps> = ({ images }) => {
   const { colors } = useTheme();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const { width: screenWidth } = useWindowDimensions();
+  const galleryWidth = screenWidth - 32;
 
   if (!images || images.length === 0) {
     return null;
   }
 
-  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+  const handleScroll = useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const contentOffsetX = event.nativeEvent.contentOffset.x;
     const viewSize = event.nativeEvent.layoutMeasurement.width;
     const index = Math.round(contentOffsetX / viewSize);
     setCurrentIndex(index);
-  };
+  }, []);
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.primaryLight }]}>
+    <View style={[styles.container, { backgroundColor: colors.primaryLight, width: galleryWidth }]}>
       <FlatList
         data={images}
         keyExtractor={(item, index) => `${item}-${index}`}
@@ -51,7 +50,7 @@ export const PhotoGallery: React.FC<PhotoGalleryProps> = ({ images }) => {
         renderItem={({ item }) => (
           <Image
             source={{ uri: item }}
-            style={styles.image}
+            style={[styles.image, { width: galleryWidth }]}
             contentFit="cover"
           />
         )}
@@ -67,7 +66,6 @@ export const PhotoGallery: React.FC<PhotoGalleryProps> = ({ images }) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: GALLERY_WIDTH,
     height: 240,
     borderRadius: 12,
     overflow: 'hidden',
@@ -75,7 +73,6 @@ const styles = StyleSheet.create({
     marginVertical: 12,
   },
   image: {
-    width: GALLERY_WIDTH,
     height: 240,
   },
   indicator: {
