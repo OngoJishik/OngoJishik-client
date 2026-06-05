@@ -7,7 +7,7 @@ export const MOCK_POSTS = [
     id: 'post1',
     author: { name: '전통요리사_하나', avatarUrl: undefined },
     createdAt: '2026-05-27T08:00:00Z',
-    category: '조리 후기',
+    category: 'review',
     images: [
       'https://images.unsplash.com/photo-1546069901-ba9599a7e63c',
       'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38'
@@ -22,7 +22,7 @@ export const MOCK_POSTS = [
     id: 'post2',
     author: { name: 'GourmetTraveler', avatarUrl: undefined },
     createdAt: '2026-05-26T15:30:00Z',
-    category: '나만의 레시피',
+    category: 'recipe',
     images: [],
     linkedRecipe: { id: 'gujelpan', nameKo: '구절판', emoji: '🍱' },
     content: 'I tried Gujeolpan for the first time in a royal palace restaurant in Seoul. The presentation is so artistic with 9 different colorful ingredients! Rolling them inside the small thin wheat crepes was an interactive and delightful dining experience. Highly recommend!',
@@ -37,7 +37,7 @@ export const MOCK_MY_POSTS = [
     id: 'my-post1',
     author: { name: '전통요리사_하나', avatarUrl: undefined },
     createdAt: '2026-05-27T08:00:00Z',
-    category: '조리 후기',
+    category: 'review',
     images: [],
     linkedRecipe: { id: 'yukgaejang', nameKo: '육개장', emoji: '🍲' },
     content: '대구식 정통 육개장 끓여봤어요! 할머니 대부터 전해 내려온 비법은 다름 아닌 잘 볶은 고추기름과 듬뿍 넣은 대파입니다. 푹 끓여내니 국물이 시원하고 정말 보신이 되네요. 다들 이번 주말 점심으로 얼큰한 육개장 어떠세요?',

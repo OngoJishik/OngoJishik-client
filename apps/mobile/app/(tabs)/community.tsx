@@ -16,10 +16,10 @@ import { colors as designColors } from '@ongo/ui';
 import { MOCK_POSTS } from '../../mocks';
 
 const FILTER_CATEGORIES = [
-  { id: 'all', labelKey: 'community.all', value: '전체' },
-  { id: 'cookingReview', labelKey: 'community.cookingReview', value: '조리 후기' },
-  { id: 'myRecipe', labelKey: 'community.myRecipe', value: '나만의 레시피' },
-  { id: 'qna', labelKey: 'community.qna', value: '질문/답변' },
+  { id: 'all', labelKey: 'community.all' },
+  { id: 'review', labelKey: 'community.cookingReview' },
+  { id: 'recipe', labelKey: 'community.myRecipe' },
+  { id: 'qna', labelKey: 'community.qna' },
 ];
 
 /**
@@ -31,7 +31,7 @@ export const CommunityScreen = () => {
   const router = useRouter();
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const [selectedFilter, setSelectedFilter] = useState('전체');
+  const [selectedFilter, setSelectedFilter] = useState('all');
   const [posts, setPosts] = useState(MOCK_POSTS);
 
   const handlePostPress = (postId: string) => {
@@ -52,8 +52,8 @@ export const CommunityScreen = () => {
     );
   };
 
-  const filteredPosts = selectedFilter === '전체' 
-    ? posts 
+  const filteredPosts = selectedFilter === 'all'
+    ? posts
     : posts.filter((post) => post.category === selectedFilter);
 
   return (
@@ -74,16 +74,16 @@ export const CommunityScreen = () => {
             style={[
               styles.filterTab,
               { backgroundColor: colors.primaryLight },
-              selectedFilter === filter.value && { backgroundColor: designColors.primary.DEFAULT },
+              selectedFilter === filter.id && { backgroundColor: designColors.primary.DEFAULT },
             ]}
-            onPress={() => setSelectedFilter(filter.value)}
+            onPress={() => setSelectedFilter(filter.id)}
           >
             <Text
               variant="caption"
-              bold={selectedFilter === filter.value}
+              bold={selectedFilter === filter.id}
               style={[
                 { color: colors.textSecondary },
-                selectedFilter === filter.value && { color: designColors.white },
+                selectedFilter === filter.id && { color: designColors.white },
               ]}
             >
               {t(filter.labelKey)}
