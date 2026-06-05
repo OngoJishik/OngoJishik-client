@@ -86,7 +86,7 @@ export const NotificationSettingsScreen = () => {
   );
 };
 
-export default NotificationSettingsScreen;
+export { NotificationSettingsScreen as default };
 
 const styles = StyleSheet.create({
   list: {

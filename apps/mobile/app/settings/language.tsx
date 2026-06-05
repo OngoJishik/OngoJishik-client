@@ -78,5 +78,5 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LanguageSettingsScreen;
+export { LanguageSettingsScreen as default };
 

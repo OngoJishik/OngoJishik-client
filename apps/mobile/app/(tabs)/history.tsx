@@ -50,6 +50,7 @@ export const HistoryTabScreen = () => {
             quoteOriginal={quote.quoteOriginal}
             quoteTranslation={quote.quoteTranslation}
             era={quote.era}
+            translationLabel={t('history.modernTranslation')}
           />
         ))}
       </View>
@@ -57,7 +58,7 @@ export const HistoryTabScreen = () => {
   );
 };
 
-export default HistoryTabScreen;
+export { HistoryTabScreen as default };
 
 const styles = StyleSheet.create({
   content: {

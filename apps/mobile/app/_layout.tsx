@@ -41,7 +41,7 @@ function I18nInitializer({ children }: { children: React.ReactNode }) {
  * 모바일 앱 최상위 Root Layout 컴포넌트
  * @author Antigravity
  */
-export default function RootLayout() {
+export function RootLayout() {
   return (
     <JotaiProvider>
       <QueryClientProvider client={queryClient}>
@@ -54,4 +54,6 @@ export default function RootLayout() {
     </JotaiProvider>
   );
 }
+
+export { RootLayout as default };
 

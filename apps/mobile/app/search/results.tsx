@@ -44,12 +44,21 @@ export const SearchResultsScreen = () => {
         </Text>
       </View>
 
+      <Text variant="caption" style={[styles.resultCount, { color: colors.textSecondary }]}>
+        {t('results.count', { count: MOCK_RESULTS.length })}
+      </Text>
+
       {(hasTaste || hasColor || hasForm) && (
         <AIAnalysisBadge
           taste={hasTaste ? '매운맛' : undefined}
           color={hasColor ? '빨강' : undefined}
           form={hasForm ? '국/탕' : undefined}
           resultCount={MOCK_RESULTS.length}
+          title={t('ai.analysisTitle')}
+          tasteLabel={t('ai.taste')}
+          colorLabel={t('ai.color')}
+          formLabel={t('ai.form')}
+          resultText={t('ai.resultCount', { count: MOCK_RESULTS.length })}
         />
       )}
 
@@ -76,15 +85,19 @@ export const SearchResultsScreen = () => {
   );
 };
 
-export default SearchResultsScreen;
-
 const styles = StyleSheet.create({
   queryBar: {
     paddingVertical: 12,
     borderBottomWidth: 1,
     marginBottom: 16,
   },
+  resultCount: {
+    marginBottom: 8,
+    fontSize: 14,
+  },
   listContainer: {
     paddingBottom: 32,
   },
 });
+
+export { SearchResultsScreen as default };

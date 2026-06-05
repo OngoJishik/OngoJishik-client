@@ -9,14 +9,10 @@ import {
   ScreenLayout,
   Header,
   SearchBar,
-  AIAnalysisBadge,
   Text,
-  Chip,
   Icon,
   useTheme,
 } from '@ongo/ui';
-
-const RECOMMEND_TAGS = ['#떡국', '#김치찌개', '#비빔밥', '#약과', '#삼계탕', '#구절판'];
 
 /**
  * 전통 음식을 검색하는 탭 화면 컴포넌트
@@ -43,8 +39,9 @@ export const SearchScreen = () => {
     setRecentSearches((prev) => prev.filter((s) => s !== item));
   };
 
-  // Mock AI matching: if query contains specific terms, show flavor badge
-  const showAIBadge = searchVal.includes('매콤') || searchVal.includes('빨간') || searchVal.includes('국물');
+  const clearAllRecent = () => {
+    setRecentSearches([]);
+  };
 
   return (
     <ScreenLayout>
@@ -54,24 +51,25 @@ export const SearchScreen = () => {
         value={searchVal}
         onChangeText={setSearchVal}
         onSearch={() => handleSearch(searchVal)}
+        placeholder={t('home.searchPlaceholder')}
         onClear={() => setSearchVal('')}
       />
 
-      {showAIBadge && (
-        <AIAnalysisBadge
-          taste="매운맛"
-          color="빨간색"
-          form="국/탕류"
-          resultCount={3}
-        />
-      )}
-
       <View style={styles.section}>
-        <Text variant="h3" bold style={styles.sectionTitle}>
-          {t('search.recent')}
-        </Text>
+        <View style={styles.historyHeader}>
+          <Text variant="h3" bold style={styles.sectionTitle}>
+            {t('search.recent')}
+          </Text>
+          {recentSearches.length > 0 && (
+            <Pressable onPress={clearAllRecent}>
+              <Text variant="caption" style={{ color: colors.textTertiary }}>
+                {t('search.clearAll')}
+              </Text>
+            </Pressable>
+          )}
+        </View>
         {recentSearches.length === 0 ? (
-          <Text variant="caption">{t('search.noRecent')}</Text>
+          <Text variant="caption" style={{ color: colors.textSecondary }}>{t('search.noRecent')}</Text>
         ) : (
           recentSearches.map((item, index) => (
             <View key={index} style={[styles.historyItem, { borderBottomColor: colors.border }]}>
@@ -87,25 +85,6 @@ export const SearchScreen = () => {
           ))
         )}
       </View>
-
-      <View style={styles.section}>
-        <Text variant="h3" bold style={styles.sectionTitle}>
-          {t('search.recommended')}
-        </Text>
-        <View style={styles.chipGrid}>
-          {RECOMMEND_TAGS.map((tag) => (
-            <Chip
-              key={tag}
-              label={tag}
-              onPress={() => {
-                const cleaned = tag.replace('#', '');
-                setSearchVal(cleaned);
-                handleSearch(cleaned);
-              }}
-            />
-          ))}
-        </View>
-      </View>
     </ScreenLayout>
   );
 };
@@ -114,8 +93,14 @@ const styles = StyleSheet.create({
   section: {
     marginTop: 24,
   },
-  sectionTitle: {
+  historyHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: 12,
+  },
+  sectionTitle: {
+    marginBottom: 0,
   },
   historyItem: {
     flexDirection: 'row',
@@ -127,11 +112,7 @@ const styles = StyleSheet.create({
   historyText: {
     fontSize: 14,
   },
-  chipGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
 });
 
-export default SearchScreen;
+export { SearchScreen as default };
 

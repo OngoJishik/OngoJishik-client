@@ -68,11 +68,6 @@ export const MyPostsScreen = () => {
               isLiked={item.isLiked}
               onPress={() => handlePostPress(item.id)}
               onLike={() => handleLike(item.id)}
-              onShare={() => {
-                if (__DEV__) {
-                  console.log('Share post', item.id);
-                }
-              }}
             />
           )}
           contentContainerStyle={styles.listContent}
@@ -82,7 +77,7 @@ export const MyPostsScreen = () => {
   );
 };
 
-export default MyPostsScreen;
+export { MyPostsScreen as default };
 
 const styles = StyleSheet.create({
   emptyContainer: {

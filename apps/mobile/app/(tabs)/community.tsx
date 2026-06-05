@@ -109,11 +109,6 @@ export const CommunityScreen = () => {
             isLiked={item.isLiked}
             onPress={() => handlePostPress(item.id)}
             onLike={() => handleLike(item.id)}
-            onShare={() => {
-              if (__DEV__) {
-                console.log('Share post', item.id);
-              }
-            }}
           />
         )}
         contentContainerStyle={styles.listContent}
@@ -122,7 +117,7 @@ export const CommunityScreen = () => {
   );
 };
 
-export default CommunityScreen;
+export { CommunityScreen as default };
 
 const styles = StyleSheet.create({
   filterBar: {

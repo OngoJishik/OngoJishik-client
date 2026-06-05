@@ -1,16 +1,20 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
+
+import { useTranslation } from '@ongo/i18n';
 import { BottomNav, NavItem } from '@ongo/ui';
 
-const navItems: NavItem[] = [
-  { key: 'index', label: '홈', iconName: 'home' },
-  { key: 'search', label: '검색', iconName: 'search' },
-  { key: 'history', label: '역사', iconName: 'history' },
-  { key: 'community', label: '커뮤니티', iconName: 'community' },
-  { key: 'mypage', label: '마이', iconName: 'mypage' },
-];
+export function TabLayout() {
+  const { t } = useTranslation();
 
-export default function TabLayout() {
+  const navItems: NavItem[] = [
+    { key: 'index', label: t('tabs.home'), iconName: 'home' },
+    { key: 'search', label: t('tabs.search'), iconName: 'search' },
+    { key: 'history', label: t('tabs.history'), iconName: 'history' },
+    { key: 'community', label: t('tabs.community'), iconName: 'community' },
+    { key: 'mypage', label: t('tabs.mypage'), iconName: 'mypage' },
+  ];
+
   return (
     <Tabs
       screenOptions={{
@@ -49,3 +53,5 @@ export default function TabLayout() {
     </Tabs>
   );
 }
+
+export { TabLayout as default };

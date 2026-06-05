@@ -46,6 +46,9 @@ export const MyPageScreen = () => {
             전통요리사_하나
           </Text>
           <Text variant="caption" style={{ color: colors.textSecondary }}>hana@gmail.com</Text>
+          <Text variant="caption" style={{ color: colors.textTertiary, marginTop: 4 }}>
+            {t('mypage.profileSubText', { defaultValue: '한국어 · 가입일 2024.03' })}
+          </Text>
         </View>
       </View>
 
@@ -72,18 +75,21 @@ export const MyPageScreen = () => {
 
       <View style={styles.menuContainer}>
         <MenuItem
-          label={t('mypage.favoritesList')}
-          iconName="heart"
+          title={t('mypage.favoritesList')}
+          icon="♡"
+          description={t('mypage.favoritesDesc', { defaultValue: '즐겨찾기한 음식 목록' })}
           onPress={() => router.push('/favorites' as any)}
         />
         <MenuItem
-          label={t('mypage.searchHistory')}
-          iconName="search"
+          title={t('mypage.searchHistory')}
+          icon="🔍"
+          description={t('mypage.searchHistoryDesc', { defaultValue: '최근 검색 기록 관리' })}
           onPress={() => router.push('/(tabs)/search' as any)}
         />
         <MenuItem
-          label={t('mypage.myPosts')}
-          iconName="community"
+          title={t('mypage.myPosts')}
+          icon="💬"
+          description={t('mypage.myPostsDesc', { defaultValue: '내가 작성한 커뮤니티 글' })}
           onPress={() => router.push('/my-posts' as any)}
         />
       </View>
@@ -96,20 +102,23 @@ export const MyPageScreen = () => {
 
       <View style={styles.menuContainer}>
         <MenuItem
-          label={t('mypage.language')}
-          iconName="settings"
+          title={t('mypage.language')}
+          icon="⚙️"
+          description={t('mypage.languageDesc', { defaultValue: '앱 표시 언어 변경' })}
           rightElement={<Text variant="caption" style={{ color: colors.textSecondary }}>{t('mypage.korean')}</Text>}
           onPress={() => router.push('/settings/language' as any)}
         />
         <MenuItem
-          label={t('mypage.notifications')}
-          iconName="bell"
+          title={t('mypage.notifications')}
+          icon="🔔"
+          description={t('mypage.notificationsDesc', { defaultValue: '푸시 및 알림 수신 설정' })}
           rightElement={<Text variant="caption" style={{ color: colors.textSecondary }}>{t('common.on')}</Text>}
           onPress={() => router.push('/settings/notifications' as any)}
         />
         <MenuItem
-          label={t('mypage.appInfo')}
-          iconName="info"
+          title={t('mypage.appInfo')}
+          icon="ℹ️"
+          description={t('mypage.appInfoDesc', { defaultValue: '버전 정보 및 이용약관' })}
           rightElement={<Text variant="caption" style={{ color: colors.textSecondary }}>v1.0.0</Text>}
           onPress={() => {
             if (__DEV__) {
@@ -122,7 +131,7 @@ export const MyPageScreen = () => {
   );
 };
 
-export default MyPageScreen;
+export { MyPageScreen as default };
 
 const styles = StyleSheet.create({
   profileSection: {

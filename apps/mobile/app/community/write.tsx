@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, TextInput, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
+import { Image } from 'expo-image';
 
 import { useTranslation } from '@ongo/i18n';
 import {
@@ -31,13 +32,30 @@ export const WritePostScreen = () => {
   const [selectedCat, setSelectedCat] = useState('조리 후기');
   const [content, setContent] = useState('');
   const [linkedRecipe, setLinkedRecipe] = useState('🍲 육개장');
+  const [photos, setPhotos] = useState<string[]>([
+    'https://images.unsplash.com/photo-1546069901-ba9599a7e63c',
+    'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38',
+  ]);
 
   const handleRegister = () => {
     if (!content.trim()) return;
     if (__DEV__) {
-      console.log('Register post:', { selectedCat, content, linkedRecipe });
+      console.log('Register post:', { selectedCat, content, linkedRecipe, photos });
     }
     router.back();
+  };
+
+  const addMockPhoto = () => {
+    if (photos.length < 5) {
+      setPhotos((prev) => [
+        ...prev,
+        `https://images.unsplash.com/photo-1546069901-ba9599a7e63c?sig=${Date.now()}`
+      ]);
+    }
+  };
+
+  const removePhoto = (index: number) => {
+    setPhotos((prev) => prev.filter((_, i) => i !== index));
   };
 
   const isContentEmpty = !content.trim();
@@ -47,6 +65,7 @@ export const WritePostScreen = () => {
       <Header
         title={t('write.title')}
         onBack={() => router.back()}
+        backIcon="close"
         rightAction={
           <Pressable onPress={handleRegister} disabled={isContentEmpty}>
             <Text
@@ -76,11 +95,14 @@ export const WritePostScreen = () => {
         </View>
       </View>
 
-      {linkedRecipe && (
-        <View style={styles.section}>
-          <Text variant="caption" bold style={[styles.sectionTitle, { color: colors.textSecondary }]}>
-            {t('write.recipeTag')}
-          </Text>
+      <View style={styles.section}>
+        <Text variant="caption" bold style={[styles.sectionTitle, { color: colors.textSecondary }]}>
+          {t('write.recipeTag')}
+        </Text>
+        <Text variant="caption" style={{ color: colors.textTertiary, marginBottom: 8 }}>
+          {t('write.recipeTagGuide')}
+        </Text>
+        {linkedRecipe ? (
           <View style={[styles.recipeTag, { backgroundColor: colors.primaryLight, borderColor: colors.border }]}>
             <Text variant="body" style={{ fontSize: 13, color: colors.text }}>
               {linkedRecipe}
@@ -89,20 +111,30 @@ export const WritePostScreen = () => {
               <Icon name="close" size={14} color={colors.textSecondary} style={{ marginLeft: 8 }} />
             </Pressable>
           </View>
-        </View>
-      )}
+        ) : null}
+      </View>
 
       <View style={styles.section}>
         <Text variant="caption" bold style={[styles.sectionTitle, { color: colors.textSecondary }]}>
           {t('write.photoAdd')}
         </Text>
         <View style={styles.row}>
-          <Pressable style={[styles.uploadBtn, { borderColor: colors.border }]}>
-            <Icon name="write" size={20} color={colors.textSecondary} />
-            <Text variant="caption" style={{ color: colors.textSecondary, marginTop: 4 }}>
-              {t('write.add')}
-            </Text>
-          </Pressable>
+          {photos.length < 5 && (
+            <Pressable style={[styles.uploadBtn, { borderColor: colors.border }]} onPress={addMockPhoto}>
+              <Icon name="write" size={20} color={colors.textSecondary} />
+              <Text variant="caption" style={{ color: colors.textSecondary, marginTop: 4 }}>
+                {t('write.add')}
+              </Text>
+            </Pressable>
+          )}
+          {photos.map((uri, index) => (
+            <View key={index} style={[styles.photoContainer, { borderColor: colors.border }]}>
+              <Image source={{ uri }} style={styles.photo} contentFit="cover" />
+              <Pressable style={styles.photoCloseBtn} onPress={() => removePhoto(index)}>
+                <Icon name="close" size={10} color="#FFFFFF" />
+              </Pressable>
+            </View>
+          ))}
         </View>
       </View>
 
@@ -123,8 +155,6 @@ export const WritePostScreen = () => {
     </ScreenLayout>
   );
 };
-
-export default WritePostScreen;
 
 const styles = StyleSheet.create({
   section: {
@@ -154,6 +184,33 @@ const styles = StyleSheet.create({
     borderStyle: 'dashed',
     justifyContent: 'center',
     alignItems: 'center',
+    marginRight: 8,
+    marginBottom: 8,
+  },
+  photoContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: 8,
+    borderWidth: 1,
+    position: 'relative',
+    marginRight: 8,
+    marginBottom: 8,
+  },
+  photo: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 7,
+  },
+  photoCloseBtn: {
+    position: 'absolute',
+    top: -4,
+    right: -4,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   editor: {
     flex: 1,
@@ -167,3 +224,5 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
 });
+
+export { WritePostScreen as default };
