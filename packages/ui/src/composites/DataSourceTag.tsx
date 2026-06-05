@@ -8,18 +8,20 @@ import { colors as designColors } from '../../tokens/colors';
 
 interface DataSourceTagProps {
   source?: string;
+  label?: string;
 }
 
 export const DataSourceTag: React.FC<DataSourceTagProps> = ({
   source = '특허청 한국전통지식포탈',
+  label = '출처',
 }) => {
   const { colors } = useTheme();
 
   return (
     <View style={[styles.container, { backgroundColor: designColors.neutral[100], borderColor: colors.border }]}>
       <Text style={styles.icon}>📋</Text>
-      <Text variant="caption" bold style={{ color: colors.textSecondary }}>
-        출처: {source}
+      <Text variant="caption" bold style={[styles.text, { color: colors.textSecondary }]}>
+        {label}: {source}
       </Text>
     </View>
   );
@@ -38,6 +40,9 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginRight: spacing.xs,
+    fontSize: 12,
+  },
+  text: {
     fontSize: 12,
   },
 });

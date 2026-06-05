@@ -50,4 +50,14 @@ export const styles = StyleSheet.create({
     fontSize: 11,
     marginTop: spacing.xs,
   },
+  categoryBadge: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: radius.sm,
+    alignSelf: 'flex-start',
+  },
+  categoryBadgeText: {
+    fontSize: 10,
+    fontWeight: 'bold',
+  },
 });

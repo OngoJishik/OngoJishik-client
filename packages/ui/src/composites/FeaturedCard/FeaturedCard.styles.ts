@@ -38,4 +38,10 @@ export const styles = StyleSheet.create({
   emoji: {
     fontSize: 48,
   },
+  title: {
+    fontSize: 28,
+  },
+  subtitle: {
+    marginVertical: spacing.xs,
+  },
 });

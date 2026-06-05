@@ -19,6 +19,7 @@ export type FeaturedCardProps = {
   imageUrl?: string;
   description: string;
   subtitle: string;
+  badgeLabel?: string;
   onPress: () => void;
 };
 
@@ -33,6 +34,7 @@ export const FeaturedCard = ({
   imageUrl,
   description,
   subtitle,
+  badgeLabel = '오늘의 추천 전통 음식',
   onPress,
 }: FeaturedCardProps) => {
   const { colors } = useTheme();
@@ -50,11 +52,11 @@ export const FeaturedCard = ({
         >
           <View style={styles.row}>
             <View style={styles.textContainer}>
-              <Badge label="오늘의 추천 전통 음식" variant="secondary" style={styles.badge} />
-              <Text variant="h1" bold style={{ color: '#FFFFFF', fontSize: 28 }}>
+              <Badge label={badgeLabel} variant="secondary" style={styles.badge} />
+              <Text variant="h1" bold style={[styles.title, { color: designColors.white }]}>
                 {displayName}
               </Text>
-              <Text variant="caption" style={{ color: designColors.featured.subtitle, marginVertical: spacing.xs }}>
+              <Text variant="caption" style={[styles.subtitle, { color: designColors.featured.subtitle }]}>
                 "{subtitle}"
               </Text>
               <Text variant="caption" numberOfLines={2} style={{ color: designColors.featured.description }}>

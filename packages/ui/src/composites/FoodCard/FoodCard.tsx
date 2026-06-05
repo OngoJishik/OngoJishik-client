@@ -9,6 +9,8 @@ import { Icon } from '../../primitives/Icon';
 import { Text } from '../../primitives/Text';
 import { styles } from './FoodCard.styles';
 
+import { colors as designColors } from '../../../tokens/colors';
+
 import type { FoodCategory } from '@ongo/utils';
 
 export type FoodCardProps = {
@@ -68,14 +70,16 @@ export const FoodCard = ({
             <Icon
               name={isFavorite ? 'heart-filled' : 'heart'}
               size={18}
-              color={isFavorite ? colors.primary : colors.textSecondary}
+              color={isFavorite ? colors.primary : colors.textTertiary}
             />
           </Pressable>
         </View>
         <View style={styles.infoContainer}>
-          <Text variant="caption" style={{ color: colors.primary }} bold>
-            {categoryName}
-          </Text>
+          <View style={[styles.categoryBadge, { backgroundColor: colors.secondary }]}>
+            <Text variant="caption" style={[styles.categoryBadgeText, { color: designColors.white }]}>
+              {categoryName}
+            </Text>
+          </View>
           <Text variant="label" bold numberOfLines={1} style={styles.title}>
             {displayName}
           </Text>

@@ -11,6 +11,8 @@ import { styles } from './PostCard.styles';
 import { spacing } from '../../../tokens/spacing';
 import { formatDate } from '@ongo/utils';
 
+import { colors as designColors } from '../../../tokens/colors';
+
 export type PostCardProps = {
   author: { name: string; avatarUrl?: string };
   createdAt: string;
@@ -23,7 +25,6 @@ export type PostCardProps = {
   isLiked: boolean;
   onPress: () => void;
   onLike: () => void;
-  onShare: () => void;
 };
 
 /**
@@ -42,7 +43,6 @@ export const PostCard = ({
   isLiked,
   onPress,
   onLike,
-  onShare,
 }: PostCardProps) => {
   const { colors } = useTheme();
 
@@ -52,27 +52,14 @@ export const PostCard = ({
         <View style={styles.header}>
           <Avatar name={author.name} sourceUrl={author.avatarUrl} size={36} />
           <View style={styles.authorInfo}>
-            <Text variant="label" bold>
+            <Text variant="label" bold style={{ color: colors.text }}>
               {author.name}
             </Text>
-            <Text variant="caption">
+            <Text variant="caption" style={[styles.authorSubtext, { color: colors.textTertiary }]}>
               {formatDate(createdAt)} {category ? `• ${category}` : ''}
             </Text>
           </View>
         </View>
-
-        {linkedRecipe && (
-          <View style={[styles.recipeTag, { backgroundColor: colors.primaryLight }]}>
-            <Text style={{ marginRight: spacing.xs }}>{linkedRecipe.emoji}</Text>
-            <Text variant="caption" bold style={{ color: colors.primary }}>
-              {linkedRecipe.nameKo} 레시피 연계
-            </Text>
-          </View>
-        )}
-
-        <Text variant="body" style={styles.content} numberOfLines={3}>
-          {content}
-        </Text>
 
         {images.length > 0 && (
           <Image
@@ -82,27 +69,33 @@ export const PostCard = ({
             transition={200}
           />
         )}
+
+        {linkedRecipe && (
+          <View style={[styles.recipeTag, { backgroundColor: colors.primary }]}>
+            <Text style={{ marginRight: spacing.xs }}>{linkedRecipe.emoji}</Text>
+            <Text variant="caption" style={[styles.recipeTagText, { color: designColors.white }]}>
+              {linkedRecipe.nameKo} 레시피 연계
+            </Text>
+          </View>
+        )}
+
+        <Text variant="body" style={[styles.content, { color: colors.text }]} numberOfLines={3}>
+          {content}
+        </Text>
       </Pressable>
 
       <View style={[styles.footer, { borderTopColor: colors.border }]}>
         <Pressable style={styles.footerBtn} onPress={onLike}>
-          <Icon name={isLiked ? 'heart-filled' : 'heart'} size={18} color={isLiked ? colors.primary : colors.textSecondary} />
-          <Text variant="caption" style={styles.footerBtnText}>
+          <Icon name={isLiked ? 'heart-filled' : 'heart'} size={18} color={isLiked ? colors.primary : colors.textTertiary} />
+          <Text variant="caption" style={[styles.footerBtnText, { color: colors.textSecondary }]}>
             {likeCount}
           </Text>
         </Pressable>
 
         <Pressable style={styles.footerBtn} onPress={onPress}>
           <Icon name="community" size={18} color={colors.textSecondary} />
-          <Text variant="caption" style={styles.footerBtnText}>
+          <Text variant="caption" style={[styles.footerBtnText, { color: colors.textSecondary }]}>
             {commentCount}
-          </Text>
-        </Pressable>
-
-        <Pressable style={styles.footerBtn} onPress={onShare}>
-          <Icon name="share" size={18} color={colors.textSecondary} />
-          <Text variant="caption" style={styles.footerBtnText}>
-            공유
           </Text>
         </Pressable>
       </View>

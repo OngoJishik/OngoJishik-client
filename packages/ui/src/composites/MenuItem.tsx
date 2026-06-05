@@ -6,15 +6,17 @@ import { useTheme } from '../../theme/useTheme';
 import { spacing } from '../../tokens/spacing';
 
 interface MenuItemProps {
-  label: string;
-  iconName: IconProps['name'];
+  icon: string;      // 이모지 (♡, 🕐, 📝 등)
+  title: string;
+  description: string;
   rightElement?: React.ReactNode;
   onPress: () => void;
 }
 
 export const MenuItem: React.FC<MenuItemProps> = ({
-  label,
-  iconName,
+  icon,
+  title,
+  description,
   rightElement,
   onPress,
 }) => {
@@ -26,10 +28,17 @@ export const MenuItem: React.FC<MenuItemProps> = ({
       onPress={onPress}
     >
       <View style={styles.leftRow}>
-        <Icon name={iconName} size={18} color={colors.primary} style={styles.icon} />
-        <Text variant="label" bold>
-          {label}
-        </Text>
+        <View style={[styles.iconContainer, { backgroundColor: colors.primaryLight }]}>
+          <Text style={styles.iconText}>{icon}</Text>
+        </View>
+        <View style={styles.textContainer}>
+          <Text variant="label" bold style={{ color: colors.text }}>
+            {title}
+          </Text>
+          <Text variant="caption" style={{ color: colors.textSecondary, marginTop: 2 }}>
+            {description}
+          </Text>
+        </View>
       </View>
       <View style={styles.rightRow}>
         {rightElement}
@@ -51,8 +60,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  icon: {
+  iconContainer: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
     marginRight: spacing.md,
+  },
+  iconText: {
+    fontSize: 18,
+  },
+  textContainer: {
+    flexDirection: 'column',
   },
   rightRow: {
     flexDirection: 'row',
