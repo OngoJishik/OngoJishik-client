@@ -15,6 +15,10 @@ export const styles = StyleSheet.create({
   authorInfo: {
     marginLeft: spacing.sm,
   },
+  authorSubtext: {
+    fontSize: 11,
+    marginTop: 2,
+  },
   recipeTag: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -23,6 +27,10 @@ export const styles = StyleSheet.create({
     borderRadius: radius.sm,
     alignSelf: 'flex-start',
     marginBottom: spacing.sm,
+  },
+  recipeTagText: {
+    fontSize: 12,
+    fontWeight: 'bold',
   },
   content: {
     fontSize: 14,

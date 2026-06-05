@@ -12,6 +12,11 @@ export interface AIAnalysisBadgeProps {
   color?: string;        // "빨강"
   form?: string;         // "국/탕"
   resultCount: number;   // 3
+  title?: string;
+  tasteLabel?: string;
+  colorLabel?: string;
+  formLabel?: string;
+  resultText?: string;
 }
 
 /**
@@ -23,21 +28,28 @@ export const AIAnalysisBadge: React.FC<AIAnalysisBadgeProps> = ({
   color,
   form,
   resultCount,
+  title = '🤖 AI 분석 결과',
+  tasteLabel = '맛',
+  colorLabel = '색',
+  formLabel = '형태',
+  resultText,
 }) => {
   const { colors } = useTheme();
+  
+  const displayResultText = resultText || `${resultCount}개의 전통 음식을 찾았습니다.`;
 
   return (
     <View style={[styles.container, { backgroundColor: designColors.ai.background, borderColor: designColors.ai.border }]}>
       <Text variant="caption" bold style={[styles.robot, { color: designColors.primary.DEFAULT }]}>
-        🤖 AI 분석 결과
+        {title}
       </Text>
       <View style={styles.badgeRow}>
-        {taste && <Badge label={`맛: ${taste}`} variant="info" style={styles.badge} />}
-        {color && <Badge label={`색: ${color}`} variant="warning" style={styles.badge} />}
-        {form && <Badge label={`형태: ${form}`} variant="success" style={styles.badge} />}
+        {taste && <Badge label={`${tasteLabel}: ${taste}`} variant="info" style={styles.badge} />}
+        {color && <Badge label={`${colorLabel}: ${color}`} variant="warning" style={styles.badge} />}
+        {form && <Badge label={`${formLabel}: ${form}`} variant="success" style={styles.badge} />}
       </View>
       <Text style={[styles.resultText, { color: designColors.green.DEFAULT }]}>
-        {resultCount}개의 전통 음식을 찾았습니다.
+        {displayResultText}
       </Text>
     </View>
   );

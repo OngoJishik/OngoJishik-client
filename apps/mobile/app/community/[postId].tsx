@@ -6,7 +6,7 @@ import { useTranslation } from '@ongo/i18n';
 import {
   ScreenLayout,
   Header,
-  PostCard,
+  PostDetail,
   CommentInput,
   Text,
   Avatar,
@@ -25,21 +25,18 @@ export const PostDetailScreen = () => {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { postId } = useLocalSearchParams<{ postId: string }>();
-  const [commentVal, setCommentVal] = useState('');
   const [comments, setComments] = useState(MOCK_COMMENTS);
   
   // Find the post from shared mock posts or fall back to the first one
   const initialPost = MOCK_POSTS.find((p) => p.id === postId) || MOCK_POSTS[0];
   const [post, setPost] = useState(initialPost);
 
-  const handleAddComment = () => {
-    if (!commentVal.trim()) return;
-
+  const handleAddComment = (text: string) => {
     const newComment = {
       id: `c${Date.now()}`,
       author: { name: '나의계정', avatarUrl: undefined },
       createdAt: new Date().toISOString(),
-      content: commentVal,
+      content: text,
     };
 
     setComments((prev) => [...prev, newComment]);
@@ -47,7 +44,6 @@ export const PostDetailScreen = () => {
       ...prev,
       commentCount: prev.commentCount + 1,
     }));
-    setCommentVal('');
   };
 
   const handleLike = () => {
@@ -71,21 +67,20 @@ export const PostDetailScreen = () => {
           keyExtractor={(item) => item.id}
           ListHeaderComponent={
             <View style={{ marginBottom: 16 }}>
-              <PostCard
+              <PostDetail
                 author={post.author}
                 createdAt={post.createdAt}
                 category={post.category}
                 images={post.images}
-                linkedRecipe={post.linkedRecipe}
                 content={post.content}
                 likeCount={post.likeCount}
                 commentCount={post.commentCount}
                 isLiked={post.isLiked}
-                onPress={() => {}}
+                linkedRecipe={post.linkedRecipe}
                 onLike={handleLike}
-                onShare={() => {
-                  if (__DEV__) {
-                    console.log('Share');
+                onRecipePress={() => {
+                  if (post.linkedRecipe?.id) {
+                    router.push(`/food/${post.linkedRecipe.id}`);
                   }
                 }}
               />
@@ -116,16 +111,13 @@ export const PostDetailScreen = () => {
         />
 
         <CommentInput
-          value={commentVal}
-          onChangeText={setCommentVal}
           onSubmit={handleAddComment}
+          placeholder={t('comment.placeholder')}
         />
       </ScreenLayout>
     </KeyboardAvoidingView>
   );
 };
-
-export default PostDetailScreen;
 
 const styles = StyleSheet.create({
   commentHeader: {
@@ -160,3 +152,5 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
 });
+
+export { PostDetailScreen as default };

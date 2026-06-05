@@ -12,6 +12,7 @@ interface LiteratureQuoteProps {
   quoteOriginal: string;
   quoteTranslation?: string;
   era: string;
+  translationLabel?: string;
 }
 
 export const LiteratureQuote: React.FC<LiteratureQuoteProps> = ({
@@ -19,18 +20,19 @@ export const LiteratureQuote: React.FC<LiteratureQuoteProps> = ({
   quoteOriginal,
   quoteTranslation,
   era,
+  translationLabel = '현대어 풀이',
 }) => {
   const { colors } = useTheme();
 
   return (
     <Card style={StyleSheet.flatten([styles.card, { backgroundColor: designColors.neutral[100] }])} bordered>
       <View style={styles.header}>
-        <View style={[styles.badge, { backgroundColor: colors.primary }]}>
-          <Text style={{ color: colors.background, fontSize: 10 }} bold>
+        <View style={[styles.badge, { backgroundColor: colors.secondary }]}>
+          <Text style={[styles.badgeText, { color: designColors.white }]} bold>
             {era}
           </Text>
         </View>
-        <Text variant="label" bold style={styles.source}>
+        <Text variant="label" bold style={[styles.source, { color: colors.text }]}>
           {sourceName}
         </Text>
       </View>
@@ -40,7 +42,7 @@ export const LiteratureQuote: React.FC<LiteratureQuoteProps> = ({
         </Text>
         {quoteTranslation && (
           <Text variant="caption" style={StyleSheet.flatten([styles.translation, { color: colors.textSecondary }])}>
-            현대어 풀이: {quoteTranslation}
+            {translationLabel}: {quoteTranslation}
           </Text>
         )}
       </View>
@@ -63,6 +65,9 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: radius.sm,
     marginRight: spacing.sm,
+  },
+  badgeText: {
+    fontSize: 10,
   },
   source: {
     fontSize: 14,

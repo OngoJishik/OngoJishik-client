@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, TextInput, Pressable } from 'react-native';
 
 import { useTheme } from '../../../theme/useTheme';
@@ -7,9 +7,7 @@ import { styles } from './CommentInput.styles';
 import { colors as designColors } from '../../../tokens/colors';
 
 export type CommentInputProps = {
-  value: string;
-  onChangeText: (text: string) => void;
-  onSubmit: () => void;
+  onSubmit: (text: string) => void;
   placeholder?: string;
 };
 
@@ -18,26 +16,32 @@ export type CommentInputProps = {
  * @author Antigravity
  */
 export const CommentInput = ({
-  value,
-  onChangeText,
   onSubmit,
   placeholder = '댓글을 입력하세요...',
 }: CommentInputProps) => {
   const { colors } = useTheme();
+  const [text, setText] = useState('');
+
+  const handleSend = () => {
+    if (text.trim()) {
+      onSubmit(text);
+      setText('');
+    }
+  };
 
   return (
     <View style={[styles.container, { backgroundColor: colors.card, borderTopColor: colors.border }]}>
       <TextInput
-        value={value}
-        onChangeText={onChangeText}
+        value={text}
+        onChangeText={setText}
         placeholder={placeholder}
         placeholderTextColor={colors.textSecondary}
         style={[styles.input, { color: colors.text, backgroundColor: designColors.neutral[100] }]}
       />
       <Pressable
-        style={[styles.sendBtn, { backgroundColor: value.trim() ? colors.primary : colors.border }]}
-        disabled={!value.trim()}
-        onPress={onSubmit}
+        style={[styles.sendBtn, { backgroundColor: text.trim() ? colors.primary : colors.border }]}
+        disabled={!text.trim()}
+        onPress={handleSend}
       >
         <Icon name="chevron-right" size={16} color={colors.background} />
       </Pressable>

@@ -11,18 +11,13 @@ import {
   Header,
   SearchBar,
   FeaturedCard,
-  FoodCard,
   PopularFoods,
-  CategoryChip,
   Text,
   Icon,
   useTheme,
 } from '@ongo/ui';
-import { FoodCategory } from '@ongo/utils';
 
 import { MOCK_RECOMMENDATION, MOCK_FOODS } from '../../mocks';
-
-const CATEGORIES: FoodCategory[] = ['tteok', 'soup', 'grill', 'namul', 'jjim', 'myeon', 'hangwa', 'eumchung'];
 
 /**
  * 서비스의 메인 홈 화면 컴포넌트
@@ -37,7 +32,6 @@ export const HomeScreen = () => {
   const [favorites, setFavorites] = useAtom(localFavoritesAtom);
 
   const [searchVal, setSearchVal] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<FoodCategory | null>(null);
 
   // TanStack Query integration with fallbacks for off-line / no-server grace
   const { data: todayRecData } = useTodayRecommendationQuery();
@@ -83,6 +77,7 @@ export const HomeScreen = () => {
         value={searchVal}
         onChangeText={setSearchVal}
         onSearch={handleSearch}
+        placeholder={t('home.searchPlaceholder')}
         onMicPress={() => {
           if (__DEV__) {
             console.log('Mic Pressed');
@@ -97,6 +92,7 @@ export const HomeScreen = () => {
         emoji={todayRecommendation.emoji}
         subtitle={'subtitle' in todayRecommendation ? (todayRecommendation.subtitle as string) : t('home.todayRecommendation')}
         description={todayRecommendation.description}
+        badgeLabel={t('featured.todayRecommendation')}
         onPress={() => handleFoodPress(todayRecommendation.id)}
       />
 
@@ -107,39 +103,15 @@ export const HomeScreen = () => {
         onFoodPress={handleFoodPress}
         onFavoriteToggle={handleFavoriteToggle}
       />
-
-      <View style={styles.sectionHeader}>
-        <Text variant="h3" bold>
-          {t('home.categoryExplore')}
-        </Text>
-      </View>
-
-      <View style={styles.categoryGrid}>
-        {CATEGORIES.map((cat) => (
-          <CategoryChip
-            key={cat}
-            category={cat}
-            selected={selectedCategory === cat}
-            onPress={() => setSelectedCategory(selectedCategory === cat ? null : cat)}
-          />
-        ))}
-      </View>
     </ScreenLayout>
   );
 };
 
 const styles = StyleSheet.create({
-  sectionHeader: {
-    marginVertical: 16,
-  },
   horizontalScroll: {
     paddingBottom: 8,
   },
-  categoryGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
 });
 
-export default HomeScreen;
+export { HomeScreen as default };
 

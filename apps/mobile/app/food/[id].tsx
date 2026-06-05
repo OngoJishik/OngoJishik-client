@@ -2,18 +2,17 @@ import React, { useState } from 'react';
 import { View, StyleSheet, Pressable } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useAtom, useAtomValue } from 'jotai';
+import { Image } from 'expo-image';
 
 import { useFoodDetailQuery, useFoodHistoryStoryQuery } from '@ongo/api-client';
 import { useTranslation } from '@ongo/i18n';
 import { localFavoritesAtom, languageAtom } from '@ongo/store';
 import {
   ScreenLayout,
-  Header,
   TabBar,
   RecipeStep,
   HistorySection,
   LiteratureQuote,
-  DataSourceTag,
   FeedbackButtons,
   Button,
   Text,
@@ -50,7 +49,6 @@ export const FoodDetailScreen = () => {
     t('detail.ingredients'),
     t('detail.historyStory'),
     t('detail.literature'),
-    t('detail.health')
   ];
 
   const [activeTab, setActiveTab] = useState(tabs[0]);
@@ -65,11 +63,11 @@ export const FoodDetailScreen = () => {
     );
   };
 
-  const renderTabContent = () => {
-    // Map internal UI tabs correctly independent of localized tab labels
-    const currentTabName = tabs.indexOf(activeTab);
+  const activeTabIndex = tabs.indexOf(activeTab);
+  const showFeedback = activeTabIndex === 2 || activeTabIndex === 3;
 
-    switch (currentTabName) {
+  const renderTabContent = () => {
+    switch (activeTabIndex) {
       case 1: // 식재료
         return (
           <View style={styles.tabContent}>
@@ -82,19 +80,46 @@ export const FoodDetailScreen = () => {
           </View>
         );
       case 2: // 역사이야기
-        return (
-          <View style={styles.tabContent}>
-            <HistorySection
-              type="origin"
-              icon="📜"
-              title={t('detail.historyStory')}
-              content={storyText}
-            />
-          </View>
-        );
+        {
+          const literatureData = detail.literatureQuotes?.[0] || MOCK_DETAILS.literatureQuotes[0];
+          const ritualText = detail.id === 'yukgaejang' 
+            ? '삼복더위에 기운을 돋우는 복날 보양식이나 상례(喪禮) 시 조문객들에게 대접하는 음식으로 깊은 관계가 있습니다.' 
+            : '명절이나 특별한 잔치, 손님을 대접하는 격식 있는 의례 상차림에 주로 올랐습니다.';
+          return (
+            <View style={styles.tabContent}>
+              <HistorySection
+                type="origin"
+                icon="📜"
+                title={t('history.originTitle', { defaultValue: '유래 이야기' })}
+                content={storyText}
+              />
+              <HistorySection
+                type="literature"
+                icon="📚"
+                title={t('history.literatureTitle', { defaultValue: '문헌 기록' })}
+                content={t('history.literatureQuoteText', { defaultValue: '고문헌 기록에 묘사된 내용입니다.' })}
+                citation={{
+                  quote: literatureData.quoteOriginal,
+                  source: `${literatureData.sourceName} (${literatureData.era})`,
+                  onViewOriginal: () => {
+                    if (__DEV__) console.log('View original literature pressed');
+                  }
+                }}
+                citationLabel={t('history.citation')}
+                viewOriginalLabel={t('history.viewOriginal')}
+              />
+              <HistorySection
+                type="ritual"
+                icon="🎎"
+                title={t('history.ritualTitle', { defaultValue: '의례와의 연결' })}
+                content={ritualText}
+              />
+            </View>
+          );
+        }
       case 3: // 문헌
         {
-          const literatureData = ('literatureQuotes' in detail && detail.literatureQuotes?.[0]) || MOCK_DETAILS.literature;
+          const literatureData = detail.literatureQuotes?.[0] || MOCK_DETAILS.literatureQuotes[0];
           return (
             <View style={styles.tabContent}>
               <LiteratureQuote
@@ -102,18 +127,11 @@ export const FoodDetailScreen = () => {
                 quoteOriginal={literatureData.quoteOriginal}
                 quoteTranslation={literatureData.quoteTranslation}
                 era={literatureData.era}
+                translationLabel={t('history.modernTranslation')}
               />
             </View>
           );
         }
-      case 4: // 건강
-        return (
-          <View style={styles.tabContent}>
-            <Text variant="body" style={styles.textBlock}>
-              {'healthBenefits' in detail ? (detail.healthBenefits as string) : ''}
-            </Text>
-          </View>
-        );
       case 0: // 조리법
       default:
         return (
@@ -133,110 +151,186 @@ export const FoodDetailScreen = () => {
   };
 
   return (
-    <ScreenLayout scrollable>
-      <Header
-        title={displayName}
-        onBack={() => router.back()}
-        rightAction={
-          <Pressable
-            onPress={() => {
-              if (__DEV__) {
-                console.log('Share pressed');
-              }
-            }}
-          >
-            <Icon name="share" size={20} color={colors.text} />
-          </Pressable>
-        }
-      />
+    <ScreenLayout scrollable style={{ paddingHorizontal: 0 }}>
+      {/* Hero Image Area */}
+      <View style={[styles.heroContainer, { backgroundColor: colors.primaryLight }]}>
+        {'imageUrl' in detail && detail.imageUrl ? (
+          <Image source={{ uri: detail.imageUrl }} style={StyleSheet.absoluteFill} contentFit="cover" />
+        ) : (
+          <View style={styles.emojiWrapper}>
+            <Text style={styles.largeEmoji}>{detail.emoji}</Text>
+          </View>
+        )}
+        
+        {/* Overlays */}
+        <Pressable style={styles.overlayBackBtn} onPress={() => router.back()}>
+          <Icon name="back" size={24} color="#FFFFFF" />
+        </Pressable>
 
-      <View style={styles.heroSection}>
-        <Text style={styles.largeEmoji}>{detail.emoji}</Text>
-        <Text variant="h1" bold style={styles.foodTitle}>
-          {displayName}
-        </Text>
-        <View style={styles.tagContainer}>
-          {detail.tags.map((tag) => (
-            <View key={tag} style={[styles.tag, { backgroundColor: colors.primaryLight }]}>
-              <Text variant="caption" style={{ color: colors.textSecondary }}>
-                #{tag}
-              </Text>
-            </View>
-          ))}
-        </View>
-        <Text variant="caption" style={[styles.disclaimer, { color: colors.textSecondary }]}>
-          ⚠️ {t('detail.aiImageDisclaimer')}
-        </Text>
-      </View>
-
-      <TabBar tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
-
-      {renderTabContent()}
-
-      <DataSourceTag source={detail.source} />
-
-      <FeedbackButtons
-        selected={feedback}
-        onThumbUp={() => setFeedback(feedback === 'up' ? null : 'up')}
-        onThumbDown={() => setFeedback(feedback === 'down' ? null : 'down')}
-      />
-
-      <View style={styles.bottomActions}>
-        <Pressable
-          style={[
-            styles.favBtn,
-            { borderColor: isFavorite ? colors.primary : colors.border },
-          ]}
-          onPress={handleFavoriteToggle}
-        >
+        <Pressable style={styles.overlayFavBtn} onPress={handleFavoriteToggle}>
           <Icon
             name={isFavorite ? 'heart-filled' : 'heart'}
             size={24}
-            color={isFavorite ? colors.primary : colors.textSecondary}
+            color={isFavorite ? colors.primary : '#FFFFFF'}
           />
         </Pressable>
-        <Button
-          title={t('food.marketButton')}
-          onPress={() => {
-            if (__DEV__) {
-              console.log('Link to traditional markets');
-            }
-          }}
-          style={styles.marketBtn}
-        />
+
+        <View style={styles.disclaimerContainer}>
+          <Text style={styles.disclaimerText}>
+            ⚠️ {t('detail.aiImageDisclaimer')}
+          </Text>
+        </View>
+      </View>
+
+      {/* Main Content Area */}
+      <View style={styles.mainContent}>
+        {/* Food Info */}
+        <View style={styles.foodInfoSection}>
+          <Text variant="h1" bold style={styles.foodTitle}>
+            {displayName}
+          </Text>
+          {detail.nameLocalized && (
+            <Text variant="body" style={[styles.foodSubTitle, { color: colors.textSecondary }]}>
+              {detail.nameLocalized}
+            </Text>
+          )}
+          <View style={styles.tagContainer}>
+            {detail.tags.map((tag) => (
+              <View key={tag} style={[styles.tag, { backgroundColor: colors.primaryLight }]}>
+                <Text variant="caption" style={{ color: colors.textSecondary }}>
+                  #{tag}
+                </Text>
+              </View>
+            ))}
+          </View>
+          <Text variant="caption" style={[styles.sourceText, { color: colors.textTertiary }]}>
+            {t('detail.dataSource') || `출처: ${detail.source}`}
+          </Text>
+        </View>
+
+        <TabBar tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
+
+        {renderTabContent()}
+
+        {showFeedback && (
+          <FeedbackButtons
+            label={t('feedback.question')}
+            selected={feedback}
+            onPositive={() => setFeedback(feedback === 'up' ? null : 'up')}
+            onNegative={() => setFeedback(feedback === 'down' ? null : 'down')}
+            positiveLabel={t('feedback.positive')}
+            negativeLabel={t('feedback.negative')}
+          />
+        )}
+
+        <View style={styles.bottomActions}>
+          <Pressable
+            style={[
+              styles.favBtn,
+              { borderColor: isFavorite ? colors.primary : colors.border },
+            ]}
+            onPress={handleFavoriteToggle}
+          >
+            <Icon
+              name={isFavorite ? 'heart-filled' : 'heart'}
+              size={24}
+              color={isFavorite ? colors.primary : colors.textSecondary}
+            />
+          </Pressable>
+          <Button
+            title={t('food.marketButton')}
+            onPress={() => {
+              if (__DEV__) {
+                console.log('Link to traditional markets');
+              }
+            }}
+            style={styles.marketBtn}
+          />
+        </View>
       </View>
     </ScreenLayout>
   );
 };
 
 const styles = StyleSheet.create({
-  heroSection: {
+  heroContainer: {
+    height: 250,
+    width: '100%',
+    position: 'relative',
+  },
+  emojiWrapper: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 24,
   },
   largeEmoji: {
-    fontSize: 72,
-    marginBottom: 16,
+    fontSize: 80,
+  },
+  overlayBackBtn: {
+    position: 'absolute',
+    top: 16,
+    left: 16,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  overlayFavBtn: {
+    position: 'absolute',
+    top: 16,
+    right: 16,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  disclaimerContainer: {
+    position: 'absolute',
+    bottom: 12,
+    left: 16,
+    right: 16,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    alignSelf: 'flex-start',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+  },
+  disclaimerText: {
+    color: '#FFFFFF',
+    fontSize: 10,
+  },
+  mainContent: {
+    paddingHorizontal: 16,
+  },
+  foodInfoSection: {
+    paddingVertical: 20,
   },
   foodTitle: {
-    fontSize: 22,
-    marginBottom: 8,
+    fontSize: 24,
+    marginBottom: 4,
+  },
+  foodSubTitle: {
+    fontSize: 14,
+    marginBottom: 12,
   },
   tagContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'center',
-    marginBottom: 8,
+    marginBottom: 12,
   },
   tag: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
-    margin: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 6,
+    marginRight: 6,
+    marginBottom: 6,
   },
-  disclaimer: {
-    fontSize: 10,
-    marginTop: 4,
+  sourceText: {
+    fontSize: 12,
   },
   tabContent: {
     paddingVertical: 16,
@@ -244,12 +338,8 @@ const styles = StyleSheet.create({
   ingredientRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 6,
+    paddingVertical: 8,
     borderBottomWidth: 1,
-  },
-  textBlock: {
-    lineHeight: 22,
-    fontSize: 14,
   },
   bottomActions: {
     flexDirection: 'row',
@@ -270,5 +360,5 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FoodDetailScreen;
+export { FoodDetailScreen as default };
 

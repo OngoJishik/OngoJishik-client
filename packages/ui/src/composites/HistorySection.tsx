@@ -15,6 +15,8 @@ export interface HistorySectionProps {
     source: string;
     onViewOriginal: () => void;
   };
+  citationLabel?: string;
+  viewOriginalLabel?: string;
 }
 
 /**
@@ -27,6 +29,8 @@ export const HistorySection: React.FC<HistorySectionProps> = ({
   title,
   content,
   citation,
+  citationLabel = '출전',
+  viewOriginalLabel = '원문 보기',
 }) => {
   const { colors } = useTheme();
 
@@ -48,11 +52,11 @@ export const HistorySection: React.FC<HistorySectionProps> = ({
           </Text>
           <View style={styles.citationFooter}>
             <Text variant="caption" style={{ color: colors.textSecondary, flex: 1, marginRight: spacing.sm }} numberOfLines={1}>
-              출전: {citation.source}
+              {citationLabel}: {citation.source}
             </Text>
             <Pressable onPress={citation.onViewOriginal}>
               <Text variant="caption" bold style={{ color: colors.primary }}>
-                원문 보기 →
+                {viewOriginalLabel} →
               </Text>
             </Pressable>
           </View>

@@ -8,6 +8,7 @@ import { spacing } from '../../tokens/spacing';
 interface HeaderProps {
   title: string;
   onBack?: () => void;
+  backIcon?: 'back' | 'close';
   rightAction?: React.ReactNode;
 }
 
@@ -15,7 +16,7 @@ interface HeaderProps {
  * 앱의 최상단에서 제목과 네비게이션 액션을 제어하는 헤더 레이아웃 컴포넌트
  * @author Antigravity
  */
-export const Header: React.FC<HeaderProps> = ({ title, onBack, rightAction }) => {
+export const Header: React.FC<HeaderProps> = ({ title, onBack, backIcon = 'back', rightAction }) => {
   const { colors } = useTheme();
 
   return (
@@ -29,7 +30,7 @@ export const Header: React.FC<HeaderProps> = ({ title, onBack, rightAction }) =>
               pressed && { opacity: 0.7 },
             ]}
           >
-            <Icon name="back" size={22} color={colors.text} />
+            <Icon name={backIcon} size={22} color={colors.text} />
           </Pressable>
         )}
         <Text variant="h2" bold numberOfLines={1}>

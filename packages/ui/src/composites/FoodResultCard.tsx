@@ -8,6 +8,9 @@ import { FoodCategory, foodCategoryNames, formatFoodName } from '@ongo/utils';
 import { radius } from '../../tokens/radius';
 import { spacing } from '../../tokens/spacing';
 
+import { Icon } from '../primitives/Icon';
+import { colors as designColors } from '../../tokens/colors';
+
 export interface FoodResultCardProps {
   id: string;
   nameKo: string;
@@ -37,7 +40,6 @@ export const FoodResultCard: React.FC<FoodResultCardProps> = ({
   const { colors } = useTheme();
 
   const categoryName = foodCategoryNames[category]?.ko || category;
-  const displayName = formatFoodName(nameKo, nameLocalized);
 
   return (
     <Pressable onPress={onPress} style={styles.container}>
@@ -50,24 +52,34 @@ export const FoodResultCard: React.FC<FoodResultCardProps> = ({
               <Text style={styles.emoji}>{emoji}</Text>
             )}
             {era && (
-              <View style={[styles.eraBadge, { backgroundColor: colors.primary }]}>
-                <Text style={{ color: colors.background, fontSize: 8 }} bold>
+              <View style={[styles.eraBadge, { backgroundColor: colors.secondary }]}>
+                <Text style={[styles.eraText, { color: designColors.white }]} bold>
                   {era}
                 </Text>
               </View>
             )}
           </View>
           <View style={styles.infoWrapper}>
-            <Text variant="caption" style={{ color: colors.secondary }} bold>
-              {categoryName}
-            </Text>
-            <Text variant="h3" bold style={styles.title}>
-              {displayName}
-            </Text>
-            <Text variant="caption" numberOfLines={2} style={styles.description}>
+            <View style={[styles.categoryChip, { backgroundColor: colors.primaryLight }]}>
+              <Text variant="caption" style={[styles.categoryChipText, { color: colors.textSecondary }]}>
+                {categoryName}
+              </Text>
+            </View>
+            <View style={styles.titleRow}>
+              <Text variant="h3" bold style={[styles.title, { color: colors.text }]}>
+                {nameKo}
+              </Text>
+              {nameLocalized && (
+                <Text variant="caption" style={[styles.romanized, { color: colors.textTertiary }]}>
+                  {nameLocalized}
+                </Text>
+              )}
+            </View>
+            <Text variant="caption" numberOfLines={2} style={[styles.description, { color: colors.textSecondary }]}>
               {description}
             </Text>
           </View>
+          <Icon name="chevron-right" size={16} color={colors.textTertiary} style={styles.arrow} />
         </View>
       </Card>
     </Pressable>
@@ -109,15 +121,39 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 1,
   },
+  eraText: {
+    fontSize: 8,
+  },
   infoWrapper: {
     flex: 1,
     marginLeft: spacing.md,
   },
-  title: {
+  categoryChip: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 2,
+    borderRadius: radius.sm,
+    alignSelf: 'flex-start',
+  },
+  categoryChipText: {
+    fontSize: 10,
+    fontWeight: 'bold',
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
     marginVertical: spacing.xs,
+  },
+  title: {
     fontSize: 15,
+  },
+  romanized: {
+    fontSize: 11,
+    marginLeft: spacing.xs,
   },
   description: {
     fontSize: 12,
+  },
+  arrow: {
+    marginLeft: spacing.sm,
   },
 });

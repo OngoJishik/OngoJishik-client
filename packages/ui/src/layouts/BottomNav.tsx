@@ -25,10 +25,10 @@ export const BottomNav: React.FC<BottomNavProps> = ({ items, activeKey, onSelect
   const { colors } = useTheme();
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.card, borderTopColor: colors.border }]}>
+    <View style={[styles.container, { backgroundColor: colors.background, borderTopColor: colors.border }]}>
       {items.map((item) => {
         const isActive = item.key === activeKey;
-        const color = isActive ? colors.primary : colors.textSecondary;
+        const color = isActive ? colors.primary : colors.textTertiary;
         return (
           <Pressable
             key={item.key}

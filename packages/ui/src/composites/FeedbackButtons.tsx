@@ -7,9 +7,12 @@ import { spacing } from '../../tokens/spacing';
 import { radius } from '../../tokens/radius';
 
 interface FeedbackButtonsProps {
-  onThumbUp: () => void;
-  onThumbDown: () => void;
+  label: string;
+  onPositive: () => void;
+  onNegative: () => void;
   selected?: 'up' | 'down' | null;
+  positiveLabel?: string;
+  negativeLabel?: string;
 }
 
 /**
@@ -17,16 +20,19 @@ interface FeedbackButtonsProps {
  * @author Antigravity
  */
 export const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({
-  onThumbUp,
-  onThumbDown,
+  label,
+  onPositive,
+  onNegative,
   selected = null,
+  positiveLabel = '유익해요',
+  negativeLabel = '부족해요',
 }) => {
   const { colors } = useTheme();
 
   return (
     <View style={styles.container}>
       <Text variant="caption" style={[styles.title, { color: colors.textSecondary }]}>
-        추천된 정보가 유익하셨나요?
+        {label}
       </Text>
       <View style={styles.row}>
         <Pressable
@@ -36,11 +42,11 @@ export const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({
             selected === 'up' && { backgroundColor: colors.primaryLight, borderColor: colors.primary },
             pressed && { opacity: 0.8 },
           ]}
-          onPress={onThumbUp}
+          onPress={onPositive}
         >
           <Icon name="thumbs-up" size={16} color={selected === 'up' ? colors.primary : colors.textSecondary} />
           <Text variant="caption" style={[styles.btnText, { color: selected === 'up' ? colors.primary : colors.textSecondary }]}>
-            유익해요
+            {positiveLabel}
           </Text>
         </Pressable>
 
@@ -48,14 +54,14 @@ export const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({
           style={({ pressed }) => [
             styles.btn,
             { borderColor: colors.border },
-            selected === 'down' && { backgroundColor: '#FFEBEE', borderColor: colors.error },
+            selected === 'down' && { backgroundColor: 'rgba(211, 47, 47, 0.1)', borderColor: colors.error },
             pressed && { opacity: 0.8 },
           ]}
-          onPress={onThumbDown}
+          onPress={onNegative}
         >
           <Icon name="thumbs-down" size={16} color={selected === 'down' ? colors.error : colors.textSecondary} />
           <Text variant="caption" style={[styles.btnText, { color: selected === 'down' ? colors.error : colors.textSecondary }]}>
-            부족해요
+            {negativeLabel}
           </Text>
         </Pressable>
       </View>

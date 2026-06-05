@@ -14,7 +14,7 @@ export const TabBar: React.FC<TabBarProps> = ({ tabs, activeTab, onTabChange }) 
   const { colors } = useTheme();
 
   return (
-    <View style={[styles.container, { borderBottomColor: colors.border }]}>
+    <View style={[styles.container, { backgroundColor: colors.surfaceLight, borderBottomColor: colors.border }]}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         {tabs.map((tab) => {
           const isActive = tab === activeTab;
@@ -30,7 +30,7 @@ export const TabBar: React.FC<TabBarProps> = ({ tabs, activeTab, onTabChange }) 
               <Text
                 variant="label"
                 bold={isActive}
-                style={{ color: isActive ? colors.primary : colors.textSecondary }}
+                style={{ color: isActive ? colors.primary : colors.textTertiary }}
               >
                 {tab}
               </Text>

@@ -58,7 +58,7 @@ export const FavoritesScreen = () => {
   );
 };
 
-export default FavoritesScreen;
+export { FavoritesScreen as default };
 
 const styles = StyleSheet.create({
   emptyContainer: {

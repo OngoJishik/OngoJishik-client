@@ -38,6 +38,9 @@ export * from './composites/AIAnalysisBadge';
 export * from './composites/DataSourceTag';
 export * from './composites/FeedbackButtons';
 export * from './composites/MenuItem';
+export * from './composites/PhotoGallery';
+export * from './composites/RecipeLink';
+export * from './composites/PostDetail';
 
 // Layouts
 export * from './layouts/ScreenLayout';

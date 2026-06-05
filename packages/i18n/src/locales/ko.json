@@ -32,7 +32,8 @@
     "title": "검색",
     "recent": "최근 검색어",
     "recommended": "추천 검색어",
-    "noRecent": "최근 검색 기록이 없습니다."
+    "noRecent": "최근 검색 기록이 없습니다.",
+    "clearAll": "전체삭제"
   },
   "community": {
     "title": "커뮤니티",
@@ -49,7 +50,8 @@
     "register": "등록",
     "categorySelect": "카테고리 선택",
     "recipeTag": "레시피 태그",
-    "photoAdd": "사진 추가 (최대 3장)",
+    "recipeTagGuide": "사용한 레시피를 연결하세요",
+    "photoAdd": "사진 추가 (최대 5장)",
     "add": "추가",
     "placeholder": "오늘 요리한 후기나 요리 팁을 들려주세요! (최대 1000자)"
   },
@@ -78,7 +80,14 @@
     "title": "역사 탐색",
     "introTitle": "시간을 담은 우리의 맛",
     "introDesc": "전통 지식 데이터베이스와 고문헌 기록을 바탕으로 엄선한 우리 고유 음식의 역사와 문헌적 유래를 확인하세요.",
-    "literatureQuotes": "고문헌 속 원문 인용"
+    "literatureQuotes": "고문헌 속 원문 인용",
+    "citation": "출전",
+    "viewOriginal": "원문 보기",
+    "modernTranslation": "현대어 풀이",
+    "originTitle": "유래 이야기",
+    "literatureTitle": "문헌 기록",
+    "ritualTitle": "의례와의 연결",
+    "literatureQuoteText": "고문헌 기록에 묘사된 내용입니다."
   },
   "notifications": {
     "title": "알림 설정",
@@ -91,10 +100,40 @@
   },
   "results": {
     "title": "검색 결과",
-    "queryPrefix": "입력한 검색어:"
+    "queryPrefix": "입력한 검색어:",
+    "count": "{{count}}개 결과"
   },
   "food": {
     "marketButton": "📋 재료 구매처 보기 (전통시장)"
+  },
+  "feedback": {
+    "question": "이 역사 정보가 도움이 되었나요?",
+    "positive": "유익해요",
+    "negative": "부족해요"
+  },
+  "comment": {
+    "placeholder": "댓글을 입력하세요..."
+  },
+  "auth": {
+    "loginTitle": "온고지식 로그인",
+    "loginDesc": "한국 전통 음식 추천 및 역사 탐색 서비스",
+    "googleLogin": "Google로 로그인"
+  },
+  "ai": {
+    "analysisTitle": "AI 분석 결과",
+    "taste": "맛",
+    "color": "색",
+    "form": "형태",
+    "resultCount": "{{count}}개의 전통 음식을 찾았습니다."
+  },
+  "featured": {
+    "todayRecommendation": "오늘의 추천 전통 음식"
+  },
+  "dataSource": {
+    "label": "출처"
+  },
+  "postCard": {
+    "recipeLinked": "레시피 연계"
   },
   "common": {
     "like": "좋아요",
