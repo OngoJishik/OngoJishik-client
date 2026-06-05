@@ -11,12 +11,14 @@ export const recentSearchAtom = atom(
   (get, set, newSearch: string) => {
     const trimmed = newSearch.trim();
     if (!trimmed) return;
-    
+
     const currentHistory = get(searchHistoryAtom);
-    const filtered = currentHistory.filter((item) => item !== trimmed);
+    // atomWithStorage with AsyncStorage may return a Promise on the first read;
+    // fall back to an empty array until the value is hydrated.
+    const history = currentHistory instanceof Promise ? [] : currentHistory;
+    const filtered = history.filter((item) => item !== trimmed);
     const updated = [trimmed, ...filtered].slice(0, 10); // Limit to top 10 items
-    
+
     set(searchHistoryAtom, updated);
   }
 );
-
