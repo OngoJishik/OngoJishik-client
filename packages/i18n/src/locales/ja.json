@@ -32,7 +32,8 @@
     "title": "検索",
     "recent": "最近の検索",
     "recommended": "おすすめの検索",
-    "noRecent": "最近の検索履歴はありません。"
+    "noRecent": "最近の検索履歴はありません。",
+    "clearAll": "全て削除"
   },
   "community": {
     "title": "コミュニティ",
@@ -49,7 +50,8 @@
     "register": "登録",
     "categorySelect": "カテゴリー選択",
     "recipeTag": "レシピタグ",
-    "photoAdd": "写真追加 (最大3枚)",
+    "recipeTagGuide": "使用したレシピをリンクしてください",
+    "photoAdd": "写真追加 (最大5枚)",
     "add": "追加",
     "placeholder": "今日の料理の感想やコツを教えてください！ (最大1000文字)"
   },
@@ -64,7 +66,14 @@
     "language": "言語設定",
     "notifications": "通知設定",
     "appInfo": "アプリ情報",
-    "korean": "韓国語"
+    "korean": "韓国語",
+    "profileSubText": "日本語 · 登録日 2024.03",
+    "favoritesDesc": "お気に入りの料理リスト",
+    "searchHistoryDesc": "最近の検索履歴管理",
+    "myPostsDesc": "私が作成したコミュニティ記事",
+    "languageDesc": "アプリ表示言語の変更",
+    "notificationsDesc": "プッシュ通知設定",
+    "appInfoDesc": "バージョン情報と利用規約"
   },
   "favorites": {
     "title": "お気に入り一覧",
@@ -78,7 +87,14 @@
     "title": "歴史探索",
     "introTitle": "時の流れをたたえた私たちの味",
     "introDesc": "伝統知識データベースと古典文献の記録に基づき、厳選された独自料理の歴史と文献的な由来をご確認ください。",
-    "literatureQuotes": "古典文献からの引用"
+    "literatureQuotes": "古典文献からの引用",
+    "citation": "出典",
+    "viewOriginal": "原文を見る",
+    "modernTranslation": "現代語訳",
+    "originTitle": "由来の話",
+    "literatureTitle": "文献記録",
+    "ritualTitle": "儀礼との関連",
+    "literatureQuoteText": "古典文献に描かれた内容です。"
   },
   "notifications": {
     "title": "通知設定",
@@ -91,10 +107,40 @@
   },
   "results": {
     "title": "検索結果",
-    "queryPrefix": "入力された検索語:"
+    "queryPrefix": "入力された検索語:",
+    "count": "{{count}}件の結果"
   },
   "food": {
     "marketButton": "📋 材料の購入先を見る (伝統市場)"
+  },
+  "feedback": {
+    "question": "この歴史情報は役に立ちましたか？",
+    "positive": "役に立った",
+    "negative": "不十分"
+  },
+  "comment": {
+    "placeholder": "コメントを入力してください..."
+  },
+  "auth": {
+    "loginTitle": "オンゴ知識ログイン",
+    "loginDesc": "韓国伝統料理推薦・歴史探索サービス",
+    "googleLogin": "Googleでログイン"
+  },
+  "ai": {
+    "analysisTitle": "AI分析結果",
+    "taste": "味",
+    "color": "色",
+    "form": "形態",
+    "resultCount": "{{count}}件の伝統料理が見つかりました。"
+  },
+  "featured": {
+    "todayRecommendation": "今日のおすすめ伝統料理"
+  },
+  "dataSource": {
+    "label": "出典"
+  },
+  "postCard": {
+    "recipeLinked": "レシピ連携"
   },
   "common": {
     "like": "いいね",

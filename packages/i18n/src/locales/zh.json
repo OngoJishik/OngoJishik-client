@@ -32,7 +32,8 @@
     "title": "搜索",
     "recent": "最近搜索",
     "recommended": "推荐搜索",
-    "noRecent": "暂无最近搜索历史。"
+    "noRecent": "暂无最近搜索历史。",
+    "clearAll": "全部清除"
   },
   "community": {
     "title": "社区",
@@ -49,7 +50,8 @@
     "register": "发布",
     "categorySelect": "选择分类",
     "recipeTag": "食谱标签",
-    "photoAdd": "添加照片 (最多3张)",
+    "recipeTagGuide": "请链接使用的食谱",
+    "photoAdd": "添加照片 (最多5张)",
     "add": "添加",
     "placeholder": "分享你今天的烹饪心得或小贴士吧！ (最多1000字)"
   },
@@ -64,7 +66,14 @@
     "language": "语言设置",
     "notifications": "推送设置",
     "appInfo": "应用信息",
-    "korean": "韩语"
+    "korean": "韩语",
+    "profileSubText": "中文 · 注册日期 2024.03",
+    "favoritesDesc": "收藏的饮食列表",
+    "searchHistoryDesc": "管理最近搜索记录",
+    "myPostsDesc": "我写的社区帖子",
+    "languageDesc": "更改应用显示语言",
+    "notificationsDesc": "推送和通知设置",
+    "appInfoDesc": "版本信息和使用条款"
   },
   "favorites": {
     "title": "收藏列表",
@@ -78,7 +87,14 @@
     "title": "历史探索",
     "introTitle": "岁月中沉淀的味道",
     "introDesc": "探索我们独特传统美食的历史与文献起源，内容精选自知识数据库和古典文献记录。",
-    "literatureQuotes": "古典文献原著引用"
+    "literatureQuotes": "古典文献原著引用",
+    "citation": "出处",
+    "viewOriginal": "查看原文",
+    "modernTranslation": "现代翻译",
+    "originTitle": "来源故事",
+    "literatureTitle": "文献记录",
+    "ritualTitle": "与礼仪的关联",
+    "literatureQuoteText": "古典文献中描述的内容。"
   },
   "notifications": {
     "title": "通知设置",
@@ -91,10 +107,40 @@
   },
   "results": {
     "title": "搜索结果",
-    "queryPrefix": "输入的关键词:"
+    "queryPrefix": "输入的关键词:",
+    "count": "{{count}}个结果"
   },
   "food": {
     "marketButton": "📋 查看食材购买处 (传统市场)"
+  },
+  "feedback": {
+    "question": "这个历史信息对您有帮助吗？",
+    "positive": "有帮助",
+    "negative": "不够充分"
+  },
+  "comment": {
+    "placeholder": "请输入评论..."
+  },
+  "auth": {
+    "loginTitle": "温故知识登录",
+    "loginDesc": "韩国传统饮食推荐及历史探索服务",
+    "googleLogin": "使用Google登录"
+  },
+  "ai": {
+    "analysisTitle": "AI分析结果",
+    "taste": "味道",
+    "color": "颜色",
+    "form": "形态",
+    "resultCount": "找到了{{count}}种传统饮食。"
+  },
+  "featured": {
+    "todayRecommendation": "今日推荐传统饮食"
+  },
+  "dataSource": {
+    "label": "来源"
+  },
+  "postCard": {
+    "recipeLinked": "食谱关联"
   },
   "common": {
     "like": "点赞",
