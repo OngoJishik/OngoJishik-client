@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Pressable } from 'react-native';
+import { View, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom } from 'jotai';
 
 import { useTodayRecommendationQuery, usePopularFoodsQuery } from '@ongo/api-client';
 import { useTranslation } from '@ongo/i18n';
-import { localFavoritesAtom, languageAtom } from '@ongo/store';
+import { localFavoritesAtom } from '@ongo/store';
 import {
   ScreenLayout,
   Header,
@@ -28,8 +28,8 @@ export const HomeScreen = () => {
   const router = useRouter();
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const currentLang = useAtomValue(languageAtom);
-  const [favorites, setFavorites] = useAtom(localFavoritesAtom);
+  const [rawFavorites, setFavorites] = useAtom(localFavoritesAtom);
+  const favorites = rawFavorites instanceof Promise ? [] : rawFavorites;
 
   const [searchVal, setSearchVal] = useState('');
 
@@ -45,14 +45,15 @@ export const HomeScreen = () => {
   };
 
   const handleFavoriteToggle = (id: string) => {
-    setFavorites((prev) =>
-      prev.includes(id) ? prev.filter((favId) => favId !== id) : [...prev, id]
-    );
+    setFavorites((prev) => {
+      const list = prev instanceof Promise ? [] : prev;
+      return list.includes(id) ? list.filter((favId) => favId !== id) : [...list, id];
+    });
   };
 
   const handleSearch = () => {
     if (searchVal.trim()) {
-      router.push(`/search/results?q=${searchVal}`);
+      router.push(`/search/results?q=${encodeURIComponent(searchVal)}`);
     }
   };
 
@@ -106,12 +107,6 @@ export const HomeScreen = () => {
     </ScreenLayout>
   );
 };
-
-const styles = StyleSheet.create({
-  horizontalScroll: {
-    paddingBottom: 8,
-  },
-});
 
 export { HomeScreen as default };
 

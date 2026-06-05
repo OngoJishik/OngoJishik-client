@@ -32,7 +32,8 @@
     "title": "Search",
     "recent": "Recent Searches",
     "recommended": "Recommended",
-    "noRecent": "No recent search history."
+    "noRecent": "No recent search history.",
+    "clearAll": "Clear All"
   },
   "community": {
     "title": "Community",
@@ -49,7 +50,8 @@
     "register": "Post",
     "categorySelect": "Select Category",
     "recipeTag": "Recipe Tag",
-    "photoAdd": "Add Photos (Max 3)",
+    "recipeTagGuide": "Link the recipe you used",
+    "photoAdd": "Add Photos (Max 5)",
     "add": "Add",
     "placeholder": "Share your cooking review or tips! (Max 1000 chars)"
   },
@@ -64,7 +66,14 @@
     "language": "Language Settings",
     "notifications": "Notifications",
     "appInfo": "App Info",
-    "korean": "Korean"
+    "korean": "Korean",
+    "profileSubText": "English · Joined 2024.03",
+    "favoritesDesc": "List of favorite foods",
+    "searchHistoryDesc": "Manage recent search history",
+    "myPostsDesc": "Community posts I've written",
+    "languageDesc": "Change app display language",
+    "notificationsDesc": "Push and notification settings",
+    "appInfoDesc": "Version info and terms of use"
   },
   "favorites": {
     "title": "Favorites List",
@@ -78,7 +87,14 @@
     "title": "Explore History",
     "introTitle": "Our Flavors Through Time",
     "introDesc": "Explore the history and literary origins of our unique traditional foods, carefully selected from databases and classic records.",
-    "literatureQuotes": "Quotes from Classical Literature"
+    "literatureQuotes": "Quotes from Classical Literature",
+    "citation": "Citation",
+    "viewOriginal": "View Original",
+    "modernTranslation": "Modern Translation",
+    "originTitle": "Story of Origin",
+    "literatureTitle": "Literature Records",
+    "ritualTitle": "Connection to Rituals",
+    "literatureQuoteText": "Content described in classical literature."
   },
   "notifications": {
     "title": "Notification Settings",
@@ -91,10 +107,40 @@
   },
   "results": {
     "title": "Search Results",
-    "queryPrefix": "Entered search term:"
+    "queryPrefix": "Entered search term:",
+    "count": "{{count}} results"
   },
   "food": {
     "marketButton": "📋 View Ingredient Markets (Traditional Market)"
+  },
+  "feedback": {
+    "question": "Was this historical information helpful?",
+    "positive": "Helpful",
+    "negative": "Not enough"
+  },
+  "comment": {
+    "placeholder": "Write a comment..."
+  },
+  "auth": {
+    "loginTitle": "OngoJishik Login",
+    "loginDesc": "Korean traditional food recommendation and history exploration service",
+    "googleLogin": "Sign in with Google"
+  },
+  "ai": {
+    "analysisTitle": "AI Analysis Result",
+    "taste": "Taste",
+    "color": "Color",
+    "form": "Form",
+    "resultCount": "Found {{count}} traditional foods."
+  },
+  "featured": {
+    "todayRecommendation": "Today's Recommended Traditional Food"
+  },
+  "dataSource": {
+    "label": "Source"
+  },
+  "postCard": {
+    "recipeLinked": "Recipe Linked"
   },
   "common": {
     "like": "Like",

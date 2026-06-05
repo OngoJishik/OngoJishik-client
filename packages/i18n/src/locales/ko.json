@@ -66,7 +66,14 @@
     "language": "언어 설정",
     "notifications": "알림 설정",
     "appInfo": "앱 정보",
-    "korean": "한국어"
+    "korean": "한국어",
+    "profileSubText": "한국어 · 가입일 2024.03",
+    "favoritesDesc": "즐겨찾기한 음식 목록",
+    "searchHistoryDesc": "최근 검색 기록 관리",
+    "myPostsDesc": "내가 작성한 커뮤니티 글",
+    "languageDesc": "앱 표시 언어 변경",
+    "notificationsDesc": "푸시 및 알림 수신 설정",
+    "appInfoDesc": "버전 정보 및 이용약관"
   },
   "favorites": {
     "title": "즐겨찾기 목록",

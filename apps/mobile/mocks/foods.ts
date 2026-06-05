@@ -61,26 +61,7 @@ export const MOCK_RECOMMENDATION = {
   description: '밀전병을 중심에 두고 주위에 여덟 가지 고명(고기, 미나리, 버섯, 지단 등)을 채워 가며 싸 먹는 호화로운 조선 시대 궁중 음식입니다.',
 };
 
-export const MOCK_RESULTS = [
-  {
-    id: 'yukgaejang',
-    nameKo: '육개장',
-    nameLocalized: 'Yukgaejang',
-    emoji: '🍲',
-    category: 'soup' as FoodCategory,
-    era: '조선시대',
-    description: '매콤하고 깊은 맛의 소고기 국물 요리로 대파와 고사리를 듬뿍 넣어 푹 끓여낸 대표적인 전통 보양식.',
-  },
-  {
-    id: 'gujelpan',
-    nameKo: '구절판',
-    nameLocalized: 'Gujeolpan',
-    emoji: '🍱',
-    category: 'tteok' as FoodCategory,
-    era: '조선시대',
-    description: '아홉 가지 재료를 둥근 목기에 담아내어 얇은 밀전병에 정성스럽게 싸 먹는 품격 높은 궁중 요리.',
-  },
-];
+export const MOCK_RESULTS = MOCK_FOODS.slice(0, 2);
 
 export const MOCK_DETAILS = {
   id: 'yukgaejang',
@@ -97,6 +78,7 @@ export const MOCK_DETAILS = {
     { stepNumber: 3, title: '육수 붓고 끓이기', description: '끓여 둔 고기 육수에 양념한 고기와 야채를 넣고 센 불에서 끓이다가 중약 불로 줄여 깊은 맛이 우러날 때까지 푹 끓여 냅니다.' },
   ],
   historyStory: '육개장은 조선 시대 대구 지방의 향토 음식에서 유래한 고기 국물 요리입니다. 삼복더위에 기운을 돋우는 대표적인 보양식으로 즐겼으며 고종황제도 즐겨 먹었던 궁중 보양 음식 중 하나입니다.',
+  ritualContext: '삼복더위에 기운을 돋우는 복날 보양식이나 상례(喪禮) 시 조문객들에게 대접하는 음식으로 깊은 관계가 있습니다.',
   literatureQuotes: [
     {
       sourceName: '시의전서 (Space)',

@@ -25,6 +25,7 @@ export type TFoodDetail = TFood & {
   recipeSteps: TRecipeStep[];
   historyStory?: string;
   literatureQuotes?: TLiteratureQuote[];
+  ritualContext?: string;
   healthBenefits?: string;
 };
 

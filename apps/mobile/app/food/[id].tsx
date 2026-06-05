@@ -32,7 +32,8 @@ export const FoodDetailScreen = () => {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const currentLang = useAtomValue(languageAtom);
-  const [favorites, setFavorites] = useAtom(localFavoritesAtom);
+  const [rawFavorites, setFavorites] = useAtom(localFavoritesAtom);
+  const favorites = rawFavorites instanceof Promise ? [] : rawFavorites;
 
   const { id } = useLocalSearchParams();
   const foodId = (id as string) || 'yukgaejang';
@@ -58,21 +59,24 @@ export const FoodDetailScreen = () => {
   const displayName = formatFoodName(detail.nameKo, detail.nameLocalized, currentLang);
 
   const handleFavoriteToggle = () => {
-    setFavorites((prev) =>
-      prev.includes(foodId) ? prev.filter((favId) => favId !== foodId) : [...prev, foodId]
-    );
+    setFavorites((prev) => {
+      const list = prev instanceof Promise ? [] : prev;
+      return list.includes(foodId) ? list.filter((favId) => favId !== foodId) : [...list, foodId];
+    });
   };
 
   const activeTabIndex = tabs.indexOf(activeTab);
   const showFeedback = activeTabIndex === 2 || activeTabIndex === 3;
+
+  const literatureData = detail.literatureQuotes?.[0] || MOCK_DETAILS.literatureQuotes[0];
 
   const renderTabContent = () => {
     switch (activeTabIndex) {
       case 1: // 식재료
         return (
           <View style={styles.tabContent}>
-            {detail.ingredients.map((ing, index) => (
-              <View key={index} style={[styles.ingredientRow, { borderBottomColor: colors.border }]}>
+            {detail.ingredients.map((ing) => (
+              <View key={ing} style={[styles.ingredientRow, { borderBottomColor: colors.border }]}>
                 <Text style={{ marginRight: 8, color: colors.primary }}>•</Text>
                 <Text variant="body">{ing}</Text>
               </View>
@@ -81,10 +85,7 @@ export const FoodDetailScreen = () => {
         );
       case 2: // 역사이야기
         {
-          const literatureData = detail.literatureQuotes?.[0] || MOCK_DETAILS.literatureQuotes[0];
-          const ritualText = detail.id === 'yukgaejang' 
-            ? '삼복더위에 기운을 돋우는 복날 보양식이나 상례(喪禮) 시 조문객들에게 대접하는 음식으로 깊은 관계가 있습니다.' 
-            : '명절이나 특별한 잔치, 손님을 대접하는 격식 있는 의례 상차림에 주로 올랐습니다.';
+          const ritualText = detail.ritualContext ?? '';
           return (
             <View style={styles.tabContent}>
               <HistorySection
@@ -119,7 +120,6 @@ export const FoodDetailScreen = () => {
         }
       case 3: // 문헌
         {
-          const literatureData = detail.literatureQuotes?.[0] || MOCK_DETAILS.literatureQuotes[0];
           return (
             <View style={styles.tabContent}>
               <LiteratureQuote
@@ -204,7 +204,7 @@ export const FoodDetailScreen = () => {
             ))}
           </View>
           <Text variant="caption" style={[styles.sourceText, { color: colors.textTertiary }]}>
-            {t('detail.dataSource') || `출처: ${detail.source}`}
+            {t('detail.dataSource')}
           </Text>
         </View>
 

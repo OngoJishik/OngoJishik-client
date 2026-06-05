@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+declare const __DEV__: boolean;
+
 // Fast API or staging backend URL
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.ongo-jishik.com/v1';
 
@@ -32,7 +34,9 @@ apiClient.interceptors.response.use(
   (error) => {
     const status = error.response ? error.response.status : null;
     if (status === 401) {
-      console.warn('Unauthorized request - redirecting or clearing token');
+      if (__DEV__) {
+        console.warn('Unauthorized request - redirecting or clearing token');
+      }
     }
     return Promise.reject(error);
   }

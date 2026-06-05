@@ -24,19 +24,23 @@ export const SearchScreen = () => {
   const { t } = useTranslation();
   const [searchVal, setSearchVal] = useState('');
   
-  const [recentSearches, setRecentSearches] = useAtom(searchHistoryAtom);
+  const [rawRecentSearches, setRecentSearches] = useAtom(searchHistoryAtom);
+  const recentSearches = rawRecentSearches instanceof Promise ? [] : rawRecentSearches;
   const addRecentSearch = useSetAtom(recentSearchAtom);
 
   const handleSearch = (query: string) => {
     const trimmed = query.trim();
     if (trimmed) {
       addRecentSearch(trimmed);
-      router.push(`/search/results?q=${trimmed}`);
+      router.push(`/search/results?q=${encodeURIComponent(trimmed)}`);
     }
   };
 
   const removeRecentSearch = (item: string) => {
-    setRecentSearches((prev) => prev.filter((s) => s !== item));
+    setRecentSearches((prev) => {
+      const list = prev instanceof Promise ? [] : prev;
+      return list.filter((s) => s !== item);
+    });
   };
 
   const clearAllRecent = () => {
@@ -71,8 +75,8 @@ export const SearchScreen = () => {
         {recentSearches.length === 0 ? (
           <Text variant="caption" style={{ color: colors.textSecondary }}>{t('search.noRecent')}</Text>
         ) : (
-          recentSearches.map((item, index) => (
-            <View key={index} style={[styles.historyItem, { borderBottomColor: colors.border }]}>
+          recentSearches.map((item) => (
+            <View key={item} style={[styles.historyItem, { borderBottomColor: colors.border }]}>
               <Pressable style={{ flex: 1 }} onPress={() => handleSearch(item)}>
                 <Text variant="body" style={styles.historyText}>
                   🕐 {item}

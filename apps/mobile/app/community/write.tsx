@@ -15,9 +15,9 @@ import {
 import { colors as designColors } from '@ongo/ui';
 
 const CATEGORIES = [
-  { id: 'cookingReview', labelKey: 'community.cookingReview', value: '조리 후기' },
-  { id: 'myRecipe', labelKey: 'community.myRecipe', value: '나만의 레시피' },
-  { id: 'qna', labelKey: 'community.qna', value: '질문/답변' },
+  { id: 'review', labelKey: 'community.cookingReview' },
+  { id: 'recipe', labelKey: 'community.myRecipe' },
+  { id: 'qna', labelKey: 'community.qna' },
 ];
 
 /**
@@ -29,13 +29,10 @@ export const WritePostScreen = () => {
   const router = useRouter();
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const [selectedCat, setSelectedCat] = useState('조리 후기');
+  const [selectedCat, setSelectedCat] = useState('review');
   const [content, setContent] = useState('');
   const [linkedRecipe, setLinkedRecipe] = useState('🍲 육개장');
-  const [photos, setPhotos] = useState<string[]>([
-    'https://images.unsplash.com/photo-1546069901-ba9599a7e63c',
-    'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38',
-  ]);
+  const [photos, setPhotos] = useState<string[]>([]);
 
   const handleRegister = () => {
     if (!content.trim()) return;
@@ -54,8 +51,8 @@ export const WritePostScreen = () => {
     }
   };
 
-  const removePhoto = (index: number) => {
-    setPhotos((prev) => prev.filter((_, i) => i !== index));
+  const removePhoto = (uri: string) => {
+    setPhotos((prev) => prev.filter((p) => p !== uri));
   };
 
   const isContentEmpty = !content.trim();
@@ -88,8 +85,8 @@ export const WritePostScreen = () => {
             <Chip
               key={cat.id}
               label={t(cat.labelKey)}
-              selected={selectedCat === cat.value}
-              onPress={() => setSelectedCat(cat.value)}
+              selected={selectedCat === cat.id}
+              onPress={() => setSelectedCat(cat.id)}
             />
           ))}
         </View>
@@ -127,10 +124,10 @@ export const WritePostScreen = () => {
               </Text>
             </Pressable>
           )}
-          {photos.map((uri, index) => (
-            <View key={index} style={[styles.photoContainer, { borderColor: colors.border }]}>
+          {photos.map((uri) => (
+            <View key={uri} style={[styles.photoContainer, { borderColor: colors.border }]}>
               <Image source={{ uri }} style={styles.photo} contentFit="cover" />
-              <Pressable style={styles.photoCloseBtn} onPress={() => removePhoto(index)}>
+              <Pressable style={styles.photoCloseBtn} onPress={() => removePhoto(uri)}>
                 <Icon name="close" size={10} color="#FFFFFF" />
               </Pressable>
             </View>
