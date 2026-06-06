@@ -9,11 +9,11 @@
   },
   "dependencies": {
     "clsx": "^2.1.1",
-    "expo-linear-gradient": "^56.0.4",
     "tailwind-merge": "^2.3.0"
   },
   "peerDependencies": {
     "expo-image": "*",
+    "expo-linear-gradient": "*",
     "react": ">=18.0.0",
     "react-native": ">=0.72.0"
   },
@@ -21,7 +21,8 @@
     "@ongo/typescript-config": "workspace:*",
     "@ongo/utils": "workspace:*",
     "@types/react": "^18.2.79",
-    "expo-image": "~1.13.0",
+    "expo-image": "~2.0.7",
+    "expo-linear-gradient": "~14.0.2",
     "typescript": "^5.4.5"
   }
 }

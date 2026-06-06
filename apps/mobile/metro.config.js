@@ -16,4 +16,13 @@ config.resolver.nodeModulesPaths = [
   path.resolve(workspaceRoot, 'node_modules'),
 ];
 
+// 3. Force all workspace packages to use the app-level react / react-native
+//    to prevent duplicate module instances in pnpm monorepos.
+//    Without this, @ongo/ui etc. can resolve a different react-native instance
+//    which causes "RCTText view config getter is undefined" crash at runtime.
+config.resolver.extraNodeModules = {
+  'react': path.resolve(projectRoot, 'node_modules', 'react'),
+  'react-native': path.resolve(projectRoot, 'node_modules', 'react-native'),
+};
+
 module.exports = config;
