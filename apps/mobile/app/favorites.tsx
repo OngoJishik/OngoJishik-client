@@ -28,7 +28,7 @@ export const FavoritesScreen = () => {
 
   return (
     <ScreenLayout>
-      <Header title={`♡ ${t('favorites.title')}`} onBack={() => router.back()} />
+      <Header title={`★ ${t('favorites.title')}`} onBack={() => router.back()} />
 
       {favoriteFoods.length === 0 ? (
         <View style={styles.emptyContainer}>

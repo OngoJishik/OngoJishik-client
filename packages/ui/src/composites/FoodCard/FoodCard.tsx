@@ -68,7 +68,7 @@ export const FoodCard = ({
             }}
           >
             <Icon
-              name={isFavorite ? 'heart-filled' : 'heart'}
+              name={isFavorite ? 'star-filled' : 'star'}
               size={18}
               color={isFavorite ? colors.primary : colors.textTertiary}
             />

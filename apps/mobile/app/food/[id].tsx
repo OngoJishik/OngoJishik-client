@@ -169,7 +169,7 @@ export const FoodDetailScreen = () => {
 
         <Pressable style={styles.overlayFavBtn} onPress={handleFavoriteToggle}>
           <Icon
-            name={isFavorite ? 'heart-filled' : 'heart'}
+            name={isFavorite ? 'star-filled' : 'star'}
             size={24}
             color={isFavorite ? colors.primary : '#FFFFFF'}
           />
@@ -232,7 +232,7 @@ export const FoodDetailScreen = () => {
             onPress={handleFavoriteToggle}
           >
             <Icon
-              name={isFavorite ? 'heart-filled' : 'heart'}
+              name={isFavorite ? 'star-filled' : 'star'}
               size={24}
               color={isFavorite ? colors.primary : colors.textSecondary}
             />
