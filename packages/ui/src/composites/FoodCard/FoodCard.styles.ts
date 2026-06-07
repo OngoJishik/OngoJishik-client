@@ -12,7 +12,6 @@ export const styles = StyleSheet.create({
   },
   card: {
     padding: spacing.sm,
-    overflow: 'hidden',
   },
   imageContainer: {
     width: '100%',

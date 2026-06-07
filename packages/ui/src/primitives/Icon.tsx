@@ -21,6 +21,7 @@ export interface IconProps extends Omit<RNTextProps, 'children'> {
     | 'thumbs-up'
     | 'thumbs-down'
     | 'star'
+    | 'star-filled'
     | 'info';
   size?: number;
   color?: string;
@@ -44,7 +45,8 @@ const iconMap: Record<IconProps['name'], string> = {
   'chevron-right': '→',
   'thumbs-up': '👍',
   'thumbs-down': '👎',
-  star: '⭐',
+  star: '☆',
+  'star-filled': '★',
   info: 'ℹ️',
 };
 

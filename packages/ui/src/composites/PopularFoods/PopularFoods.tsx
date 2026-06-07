@@ -42,6 +42,7 @@ export const PopularFoods: React.FC<PopularFoodsProps> = ({
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
+        style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
       >
         {foods.map((food) => (
@@ -71,7 +72,11 @@ const styles = StyleSheet.create({
   title: {
     marginBottom: spacing.md,
   },
+  scrollView: {
+    marginHorizontal: -spacing.lg,
+  },
   scrollContent: {
-    paddingRight: spacing.md,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
   },
 });

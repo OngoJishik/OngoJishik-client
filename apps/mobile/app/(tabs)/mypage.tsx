@@ -87,7 +87,7 @@ export const MyPageScreen = () => {
       <View style={styles.menuContainer}>
         <MenuItem
           title={t('mypage.favoritesList')}
-          icon="♡"
+          icon="★"
           description={t('mypage.favoritesDesc')}
           onPress={() => router.push('/favorites')}
         />

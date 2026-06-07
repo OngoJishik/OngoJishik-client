@@ -56,7 +56,7 @@ export const LanguageSettingsScreen = () => {
               <Text variant="label" bold={isSelected}>
                 {t(`settings.${lang.translationKey}`)}
               </Text>
-              {isSelected && <Icon name="star" size={16} color={colors.primary} />}
+              {isSelected && <Icon name="star-filled" size={16} color={colors.primary} />}
             </Pressable>
           );
         })}

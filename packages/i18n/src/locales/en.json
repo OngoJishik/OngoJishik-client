@@ -2,7 +2,6 @@
   "tabs": {
     "home": "Home",
     "search": "Search",
-    "history": "History",
     "community": "Community",
     "mypage": "My"
   },
@@ -53,7 +52,13 @@
     "recipeTagGuide": "Link the recipe you used",
     "photoAdd": "Add Photos (Max 5)",
     "add": "Add",
-    "placeholder": "Share your cooking review or tips! (Max 1000 chars)"
+    "placeholder": "Share your cooking review or tips! (Max 1000 chars)",
+    "addRecipeTag": "Add Recipe Tag",
+    "recipePicker": "Select Recipe",
+    "favoriteRecipes": "Favorite Recipes",
+    "customRecipe": "Custom Entry",
+    "customRecipePlaceholder": "Enter recipe name",
+    "contentSection": "Write Post"
   },
   "mypage": {
     "title": "My Page",

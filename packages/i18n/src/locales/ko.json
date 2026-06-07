@@ -2,7 +2,6 @@
   "tabs": {
     "home": "홈",
     "search": "검색",
-    "history": "역사",
     "community": "커뮤니티",
     "mypage": "마이"
   },
@@ -53,7 +52,13 @@
     "recipeTagGuide": "사용한 레시피를 연결하세요",
     "photoAdd": "사진 추가 (최대 5장)",
     "add": "추가",
-    "placeholder": "오늘 요리한 후기나 요리 팁을 들려주세요! (최대 1000자)"
+    "placeholder": "오늘 요리한 후기나 요리 팁을 들려주세요! (최대 1000자)",
+    "addRecipeTag": "레시피 태그 추가",
+    "recipePicker": "레시피 선택",
+    "favoriteRecipes": "즐겨찾기 레시피",
+    "customRecipe": "직접 입력",
+    "customRecipePlaceholder": "레시피 이름을 입력하세요",
+    "contentSection": "글 작성"
   },
   "mypage": {
     "title": "마이페이지",
