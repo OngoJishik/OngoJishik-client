@@ -14,6 +14,9 @@ import {
 } from '@ongo/ui';
 import { colors as designColors } from '@ongo/ui';
 
+import { RecipePickerModal } from './components/RecipePickerModal';
+import type { TLinkedRecipe } from './components/RecipePickerModal';
+
 const CATEGORIES = [
   { id: 'review', labelKey: 'community.cookingReview' },
   { id: 'recipe', labelKey: 'community.myRecipe' },
@@ -31,8 +34,9 @@ export const WritePostScreen = () => {
   const { t } = useTranslation();
   const [selectedCat, setSelectedCat] = useState('review');
   const [content, setContent] = useState('');
-  const [linkedRecipe, setLinkedRecipe] = useState('🍲 육개장');
+  const [linkedRecipe, setLinkedRecipe] = useState<TLinkedRecipe | null>(null);
   const [photos, setPhotos] = useState<string[]>([]);
+  const [isRecipeModalOpen, setIsRecipeModalOpen] = useState(false);
 
   const handleRegister = () => {
     if (!content.trim()) return;
@@ -46,7 +50,7 @@ export const WritePostScreen = () => {
     if (photos.length < 5) {
       setPhotos((prev) => [
         ...prev,
-        `https://images.unsplash.com/photo-1546069901-ba9599a7e63c?sig=${Date.now()}`
+        `https://images.unsplash.com/photo-1546069901-ba9599a7e63c?sig=${Date.now()}`,
       ]);
     }
   };
@@ -76,6 +80,7 @@ export const WritePostScreen = () => {
         }
       />
 
+      {/* 카테고리 선택 */}
       <View style={styles.section}>
         <Text variant="caption" bold style={[styles.sectionTitle, { color: colors.textSecondary }]}>
           {t('write.categorySelect')}
@@ -92,6 +97,7 @@ export const WritePostScreen = () => {
         </View>
       </View>
 
+      {/* 레시피 태그 */}
       <View style={styles.section}>
         <Text variant="caption" bold style={[styles.sectionTitle, { color: colors.textSecondary }]}>
           {t('write.recipeTag')}
@@ -102,15 +108,26 @@ export const WritePostScreen = () => {
         {linkedRecipe ? (
           <View style={[styles.recipeTag, { backgroundColor: colors.primaryLight, borderColor: colors.border }]}>
             <Text variant="body" style={{ fontSize: 13, color: colors.text }}>
-              {linkedRecipe}
+              {linkedRecipe.emoji} {linkedRecipe.nameKo}
             </Text>
-            <Pressable onPress={() => setLinkedRecipe('')}>
+            <Pressable onPress={() => setLinkedRecipe(null)}>
               <Icon name="close" size={14} color={colors.textSecondary} style={{ marginLeft: 8 }} />
             </Pressable>
           </View>
-        ) : null}
+        ) : (
+          <Pressable
+            style={[styles.addRecipeBtn, { borderColor: colors.border }]}
+            onPress={() => setIsRecipeModalOpen(true)}
+          >
+            <Icon name="write" size={14} color={colors.textSecondary} />
+            <Text variant="caption" style={{ color: colors.textSecondary, marginLeft: 6 }}>
+              {t('write.addRecipeTag')}
+            </Text>
+          </Pressable>
+        )}
       </View>
 
+      {/* 사진 추가 */}
       <View style={styles.section}>
         <Text variant="caption" bold style={[styles.sectionTitle, { color: colors.textSecondary }]}>
           {t('write.photoAdd')}
@@ -135,7 +152,11 @@ export const WritePostScreen = () => {
         </View>
       </View>
 
-      <View style={[styles.section, { flex: 1 }]}>
+      {/* 글 작성 — 카드 섹션 */}
+      <View style={[styles.editorCard, { borderColor: colors.border }]}>
+        <Text variant="caption" bold style={[styles.sectionTitle, { color: colors.textSecondary }]}>
+          {t('write.contentSection')}
+        </Text>
         <TextInput
           value={content}
           onChangeText={setContent}
@@ -149,6 +170,16 @@ export const WritePostScreen = () => {
           {content.length}/1000
         </Text>
       </View>
+
+      <RecipePickerModal
+        visible={isRecipeModalOpen}
+        selectedRecipe={linkedRecipe}
+        onClose={() => setIsRecipeModalOpen(false)}
+        onSelect={(recipe) => {
+          setLinkedRecipe(recipe);
+          setIsRecipeModalOpen(false);
+        }}
+      />
     </ScreenLayout>
   );
 };
@@ -171,6 +202,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 8,
+    alignSelf: 'flex-start',
+  },
+  addRecipeBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
     alignSelf: 'flex-start',
   },
   uploadBtn: {
@@ -209,16 +250,24 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  editorCard: {
+    flex: 1,
+    marginTop: 20,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderRadius: 12,
+    padding: 16,
+  },
   editor: {
     flex: 1,
     fontSize: 14,
     lineHeight: 20,
     textAlignVertical: 'top',
-    paddingVertical: 12,
+    paddingVertical: 8,
   },
   counter: {
     alignSelf: 'flex-end',
-    marginBottom: 24,
+    marginTop: 4,
   },
 });
 
