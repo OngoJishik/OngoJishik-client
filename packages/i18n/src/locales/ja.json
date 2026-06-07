@@ -2,7 +2,6 @@
   "tabs": {
     "home": "ホーム",
     "search": "検索",
-    "history": "歴史",
     "community": "コミュニティ",
     "mypage": "マイ"
   },
@@ -53,7 +52,13 @@
     "recipeTagGuide": "使用したレシピをリンクしてください",
     "photoAdd": "写真追加 (最大5枚)",
     "add": "追加",
-    "placeholder": "今日の料理の感想やコツを教えてください！ (最大1000文字)"
+    "placeholder": "今日の料理の感想やコツを教えてください！ (最大1000文字)",
+    "addRecipeTag": "レシピタグ追加",
+    "recipePicker": "レシピ選択",
+    "favoriteRecipes": "お気に入りレシピ",
+    "customRecipe": "直接入力",
+    "customRecipePlaceholder": "レシピ名を入力してください",
+    "contentSection": "投稿作成"
   },
   "mypage": {
     "title": "マイページ",

@@ -10,7 +10,6 @@ export function TabLayout() {
   const navItems: NavItem[] = [
     { key: 'index', label: t('tabs.home'), iconName: 'home' },
     { key: 'search', label: t('tabs.search'), iconName: 'search' },
-    { key: 'history', label: t('tabs.history'), iconName: 'history' },
     { key: 'community', label: t('tabs.community'), iconName: 'community' },
     { key: 'mypage', label: t('tabs.mypage'), iconName: 'mypage' },
   ];
@@ -47,7 +46,6 @@ export function TabLayout() {
     >
       <Tabs.Screen name="index" />
       <Tabs.Screen name="search" />
-      <Tabs.Screen name="history" />
       <Tabs.Screen name="community" />
       <Tabs.Screen name="mypage" />
     </Tabs>

@@ -2,7 +2,6 @@
   "tabs": {
     "home": "首页",
     "search": "搜索",
-    "history": "历史",
     "community": "社区",
     "mypage": "我的"
   },
@@ -53,7 +52,13 @@
     "recipeTagGuide": "请链接使用的食谱",
     "photoAdd": "添加照片 (最多5张)",
     "add": "添加",
-    "placeholder": "分享你今天的烹饪心得或小贴士吧！ (最多1000字)"
+    "placeholder": "分享你今天的烹饪心得或小贴士吧！ (最多1000字)",
+    "addRecipeTag": "添加食谱标签",
+    "recipePicker": "选择食谱",
+    "favoriteRecipes": "收藏食谱",
+    "customRecipe": "自定义输入",
+    "customRecipePlaceholder": "请输入食谱名称",
+    "contentSection": "写文章"
   },
   "mypage": {
     "title": "个人中心",
