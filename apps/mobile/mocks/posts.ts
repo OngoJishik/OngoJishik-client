@@ -5,7 +5,7 @@
 export const MOCK_POSTS = [
   {
     id: 'post1',
-    author: { name: '전통요리사_하나', avatarUrl: undefined },
+    author: { id: 'user1', name: '전통요리사_하나', avatarUrl: undefined },
     createdAt: '2026-05-27T08:00:00Z',
     category: 'review',
     images: [
@@ -20,7 +20,7 @@ export const MOCK_POSTS = [
   },
   {
     id: 'post2',
-    author: { name: 'GourmetTraveler', avatarUrl: undefined },
+    author: { id: 'user2', name: 'GourmetTraveler', avatarUrl: undefined },
     createdAt: '2026-05-26T15:30:00Z',
     category: 'recipe',
     images: [],
@@ -35,7 +35,7 @@ export const MOCK_POSTS = [
 export const MOCK_MY_POSTS = [
   {
     id: 'my-post1',
-    author: { name: '전통요리사_하나', avatarUrl: undefined },
+    author: { id: 'user1', name: '전통요리사_하나', avatarUrl: undefined },
     createdAt: '2026-05-27T08:00:00Z',
     category: 'review',
     images: [],
@@ -50,13 +50,13 @@ export const MOCK_MY_POSTS = [
 export const MOCK_COMMENTS = [
   {
     id: 'c1',
-    author: { name: 'KimCook', avatarUrl: undefined },
+    author: { id: 'user2', name: 'KimCook', avatarUrl: undefined },
     createdAt: '2026-05-27T08:15:00Z',
     content: '우와, 정말 칼칼하고 시원해보여요! 고춧기름 내는 비결이 궁금하네요.',
   },
   {
     id: 'c2',
-    author: { name: '전통매니아', avatarUrl: undefined },
+    author: { id: 'user3', name: '전통매니아', avatarUrl: undefined },
     createdAt: '2026-05-27T09:00:00Z',
     content: '대파를 푹 끓이면 은은한 단맛도 돌아서 국물 맛이 일품이죠. 멋진 레시피 후기 감사드립니다!',
   },

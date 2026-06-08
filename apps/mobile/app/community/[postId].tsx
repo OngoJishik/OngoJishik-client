@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, FlatList, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, StyleSheet, FlatList, KeyboardAvoidingView, Platform, Pressable } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useAtomValue } from 'jotai';
 
 import { useTranslation } from '@ongo/i18n';
 import {
@@ -9,12 +10,15 @@ import {
   PostDetail,
   CommentInput,
   Text,
-  Avatar,
   useTheme,
 } from '@ongo/ui';
-import { formatDate } from '@ongo/utils';
+import { userProfileAtom } from '@ongo/store';
+import { useDeletePostMutation } from '@ongo/api-client';
 
 import { MOCK_POSTS, MOCK_COMMENTS } from '../../mocks';
+import { CommentItem } from './components/CommentItem';
+import { PostMoreMenu } from './components/PostMoreMenu';
+import type { TCommentData } from './components/CommentItem';
 
 /**
  * 커뮤니티 게시글 상세 및 댓글 조회/등록 화면 컴포넌트
@@ -25,16 +29,51 @@ export const PostDetailScreen = () => {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { postId } = useLocalSearchParams<{ postId: string }>();
-  const [comments, setComments] = useState(MOCK_COMMENTS);
-  
+  const userProfile = useAtomValue(userProfileAtom);
+  const { mutate: deletePost } = useDeletePostMutation();
+  const [comments, setComments] = useState<TCommentData[]>(MOCK_COMMENTS);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   // Find the post from shared mock posts or fall back to the first one
   const initialPost = MOCK_POSTS.find((p) => p.id === postId) || MOCK_POSTS[0];
   const [post, setPost] = useState(initialPost);
 
+  const isAuthor = !!userProfile && post.author.id === userProfile.id;
+
+  const handleEdit = () => {
+    router.push({
+      pathname: '/community/write',
+      params: {
+        postId: post.id,
+        mode: 'edit',
+        initCategory: post.category,
+        initContent: post.content,
+        initLinkedRecipeNameKo: post.linkedRecipe?.nameKo ?? '',
+        initLinkedRecipeEmoji: post.linkedRecipe?.emoji ?? '',
+        initImages: JSON.stringify(post.images),
+      },
+    });
+  };
+
+  const handleDelete = () => {
+    deletePost(post.id, { onSuccess: () => router.back() });
+  };
+
+  const handleUpdateComment = (commentId: string, content: string) => {
+    setComments((prev) =>
+      prev.map((c) => (c.id === commentId ? { ...c, content } : c)),
+    );
+  };
+
+  const handleDeleteComment = (commentId: string) => {
+    setComments((prev) => prev.filter((c) => c.id !== commentId));
+    setPost((prev) => ({ ...prev, commentCount: Math.max(0, prev.commentCount - 1) }));
+  };
+
   const handleAddComment = (text: string) => {
-    const newComment = {
+    const newComment: TCommentData = {
       id: `c${Date.now()}`,
-      author: { name: '나의계정', avatarUrl: undefined },
+      author: { id: userProfile?.id ?? 'me', name: userProfile?.name ?? '나의계정', avatarUrl: undefined },
       createdAt: new Date().toISOString(),
       content: text,
     };
@@ -60,7 +99,17 @@ export const PostDetailScreen = () => {
       style={{ flex: 1 }}
     >
       <ScreenLayout>
-        <Header title={t('community.postDetail')} onBack={() => router.back()} />
+        <Header
+          title={t('community.postDetail')}
+          onBack={() => router.back()}
+          rightAction={
+            isAuthor ? (
+              <Pressable onPress={() => setIsMenuOpen(true)} hitSlop={8}>
+                <Text variant="label" style={{ fontSize: 20, color: colors.text }}>⋯</Text>
+              </Pressable>
+            ) : undefined
+          }
+        />
 
         <FlatList
           data={comments}
@@ -90,22 +139,12 @@ export const PostDetailScreen = () => {
             </View>
           }
           renderItem={({ item }) => (
-            <View style={styles.commentRow}>
-              <Avatar name={item.author.name} size={30} />
-              <View style={styles.commentMeta}>
-                <View style={styles.commentHeaderRow}>
-                  <Text variant="label" bold style={{ fontSize: 13 }}>
-                    {item.author.name}
-                  </Text>
-                  <Text variant="caption" style={styles.commentTime}>
-                    {formatDate(item.createdAt)}
-                  </Text>
-                </View>
-                <Text variant="body" style={styles.commentContent}>
-                  {item.content}
-                </Text>
-              </View>
-            </View>
+            <CommentItem
+              comment={item}
+              isAuthor={!!userProfile && item.author.id === userProfile.id}
+              onUpdate={handleUpdateComment}
+              onDelete={handleDeleteComment}
+            />
           )}
           contentContainerStyle={styles.listContent}
         />
@@ -115,6 +154,13 @@ export const PostDetailScreen = () => {
           placeholder={t('comment.placeholder')}
         />
       </ScreenLayout>
+
+      <PostMoreMenu
+        visible={isMenuOpen}
+        onClose={() => setIsMenuOpen(false)}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
     </KeyboardAvoidingView>
   );
 };
@@ -124,29 +170,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     marginTop: 16,
     marginBottom: 8,
-  },
-  commentRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 16,
-    paddingHorizontal: 4,
-  },
-  commentMeta: {
-    flex: 1,
-    marginLeft: 12,
-  },
-  commentHeaderRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  commentTime: {
-    fontSize: 10,
-  },
-  commentContent: {
-    fontSize: 13,
-    lineHeight: 18,
-    marginTop: 4,
   },
   listContent: {
     paddingBottom: 24,

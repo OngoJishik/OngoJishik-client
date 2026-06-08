@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, TextInput, Pressable } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Image } from 'expo-image';
 
 import { useTranslation } from '@ongo/i18n';
@@ -13,6 +13,7 @@ import {
   useTheme,
 } from '@ongo/ui';
 import { colors as designColors } from '@ongo/ui';
+import { usePostDetailQuery, useUpdatePostMutation } from '@ongo/api-client';
 
 import { RecipePickerModal } from './components/RecipePickerModal';
 import type { TLinkedRecipe } from './components/RecipePickerModal';
@@ -32,14 +33,68 @@ export const WritePostScreen = () => {
   const router = useRouter();
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const [selectedCat, setSelectedCat] = useState('review');
-  const [content, setContent] = useState('');
-  const [linkedRecipe, setLinkedRecipe] = useState<TLinkedRecipe | null>(null);
-  const [photos, setPhotos] = useState<string[]>([]);
+  const {
+    postId,
+    mode,
+    initCategory,
+    initContent,
+    initLinkedRecipeNameKo,
+    initLinkedRecipeEmoji,
+    initImages,
+  } = useLocalSearchParams<{
+    postId?: string;
+    mode?: string;
+    initCategory?: string;
+    initContent?: string;
+    initLinkedRecipeNameKo?: string;
+    initLinkedRecipeEmoji?: string;
+    initImages?: string;
+  }>();
+  const isEditMode = mode === 'edit' && !!postId;
+
+  const [selectedCat, setSelectedCat] = useState<string>(() =>
+    isEditMode && initCategory ? String(initCategory) : 'review',
+  );
+  const [content, setContent] = useState<string>(() =>
+    isEditMode && initContent ? String(initContent) : '',
+  );
+  const [linkedRecipe, setLinkedRecipe] = useState<TLinkedRecipe | null>(() => {
+    if (isEditMode && initLinkedRecipeNameKo && initLinkedRecipeEmoji) {
+      return { nameKo: String(initLinkedRecipeNameKo), emoji: String(initLinkedRecipeEmoji) };
+    }
+    return null;
+  });
+  const [photos, setPhotos] = useState<string[]>(() => {
+    if (isEditMode && initImages) {
+      try { return JSON.parse(String(initImages)); } catch {}
+    }
+    return [];
+  });
   const [isRecipeModalOpen, setIsRecipeModalOpen] = useState(false);
+
+  const { data: existingPost } = usePostDetailQuery(postId ?? '');
+  const { mutate: updatePost } = useUpdatePostMutation();
+
+  useEffect(() => {
+    if (isEditMode && existingPost) {
+      setSelectedCat(existingPost.category);
+      setContent(existingPost.content);
+      setPhotos(existingPost.images);
+      if (existingPost.linkedRecipe) {
+        setLinkedRecipe({ nameKo: existingPost.linkedRecipe.nameKo, emoji: existingPost.linkedRecipe.emoji });
+      }
+    }
+  }, [isEditMode, existingPost]);
 
   const handleRegister = () => {
     if (!content.trim()) return;
+    if (isEditMode && postId) {
+      updatePost(
+        { postId, data: { category: selectedCat as 'review' | 'recipe' | 'qna', content, images: photos } },
+        { onSuccess: () => router.back() },
+      );
+      return;
+    }
     if (__DEV__) {
       console.log('Register post:', { selectedCat, content, linkedRecipe, photos });
     }
@@ -64,7 +119,7 @@ export const WritePostScreen = () => {
   return (
     <ScreenLayout>
       <Header
-        title={t('write.title')}
+        title={isEditMode ? t('write.editTitle') : t('write.title')}
         onBack={() => router.back()}
         backIcon="close"
         rightAction={
@@ -74,7 +129,7 @@ export const WritePostScreen = () => {
               bold
               style={{ color: isContentEmpty ? colors.textSecondary : designColors.primary.DEFAULT }}
             >
-              {t('write.register')}
+              {isEditMode ? t('write.edit') : t('write.register')}
             </Text>
           </Pressable>
         }
