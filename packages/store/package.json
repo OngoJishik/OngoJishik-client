@@ -8,7 +8,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "jotai": "^2.8.3"
+    "jotai": "catalog:"
   },
   "peerDependencies": {
     "@react-native-async-storage/async-storage": ">=1.0.0"
@@ -16,7 +16,7 @@
   "devDependencies": {
     "@ongo/typescript-config": "workspace:*",
     "@ongo/api-client": "workspace:*",
-    "@react-native-async-storage/async-storage": "^1.23.1",
-    "typescript": "^5.4.5"
+    "@react-native-async-storage/async-storage": "catalog:",
+    "typescript": "catalog:"
   }
 }
