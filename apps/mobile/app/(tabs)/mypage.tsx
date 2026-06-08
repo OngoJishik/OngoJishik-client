@@ -37,7 +37,8 @@ export const MyPageScreen = () => {
   return (
     <ScreenLayout scrollable>
       <Header
-        title={`👤 ${t('mypage.title')}`}
+        title={t('mypage.title')}
+          titleIcon="mypage"
         rightAction={
           <Pressable onPress={() => {
             if (__DEV__) {
@@ -88,18 +89,21 @@ export const MyPageScreen = () => {
         <MenuItem
           title={t('mypage.favoritesList')}
           icon="★"
+          iconName="star-filled"
           description={t('mypage.favoritesDesc')}
           onPress={() => router.push('/favorites')}
         />
         <MenuItem
           title={t('mypage.searchHistory')}
           icon="🔍"
+          iconName="search"
           description={t('mypage.searchHistoryDesc')}
           onPress={() => router.push('/(tabs)/search')}
         />
         <MenuItem
           title={t('mypage.myPosts')}
           icon="💬"
+          iconName="write"
           description={t('mypage.myPostsDesc')}
           onPress={() => router.push('/my-posts')}
         />
@@ -122,6 +126,7 @@ export const MyPageScreen = () => {
         <MenuItem
           title={t('mypage.notifications')}
           icon="🔔"
+          iconName="bell"
           description={t('mypage.notificationsDesc')}
           rightElement={<Text variant="caption" style={{ color: colors.textSecondary }}>{t('common.on')}</Text>}
           onPress={() => router.push('/settings/notifications')}

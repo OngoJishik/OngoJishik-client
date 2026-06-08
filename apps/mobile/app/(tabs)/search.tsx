@@ -49,7 +49,7 @@ export const SearchScreen = () => {
 
   return (
     <ScreenLayout>
-      <Header title={t('search.title')} />
+      <Header title={t('search.title')} titleIcon="search" />
 
       <SearchBar
         value={searchVal}

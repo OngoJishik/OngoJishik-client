@@ -44,7 +44,7 @@ export const MyPostsScreen = () => {
 
   return (
     <ScreenLayout>
-      <Header title={`📝 ${t('myPosts.title')}`} onBack={() => router.back()} />
+      <Header title={t('myPosts.title')} titleIcon="write" onBack={() => router.back()} />
 
       {posts.length === 0 ? (
         <View style={styles.emptyContainer}>

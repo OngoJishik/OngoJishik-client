@@ -59,7 +59,8 @@ export const CommunityScreen = () => {
   return (
     <ScreenLayout>
       <Header
-        title={`💬 ${t('community.title')}`}
+        title={t('community.title')}
+        titleIcon="community"
         rightAction={
           <Pressable onPress={() => router.push('/community/write')}>
             <Icon name="write" size={22} color={colors.text} />

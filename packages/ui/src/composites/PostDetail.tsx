@@ -76,7 +76,7 @@ export const PostDetail: React.FC<PostDetailProps> = ({
         </Pressable>
 
         <View style={styles.engageBtn}>
-          <Icon name="community" size={20} color={colors.textSecondary} />
+          <Icon name="comment" size={20} color={colors.textSecondary} />
           <Text variant="body" bold style={[styles.engageText, { color: colors.textSecondary }]}>
             {commentCount}
           </Text>
