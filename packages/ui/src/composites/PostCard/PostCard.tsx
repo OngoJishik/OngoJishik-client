@@ -93,7 +93,7 @@ export const PostCard = ({
         </Pressable>
 
         <Pressable style={styles.footerBtn} onPress={onPress}>
-          <Icon name="community" size={18} color={colors.textSecondary} />
+          <Icon name="comment" size={18} color={colors.textSecondary} />
           <Text variant="caption" style={[styles.footerBtnText, { color: colors.textSecondary }]}>
             {commentCount}
           </Text>

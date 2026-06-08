@@ -1,12 +1,13 @@
 import React from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Text } from '../primitives/Text';
-import { Icon, IconProps } from '../primitives/Icon';
+import { Icon, IconProps, TIconName } from '../primitives/Icon';
 import { useTheme } from '../../theme/useTheme';
 import { spacing } from '../../tokens/spacing';
 
 interface MenuItemProps {
-  icon: string;      // 이모지 (♡, 🕐, 📝 등)
+  icon: string;
+  iconName?: TIconName;
   title: string;
   description: string;
   rightElement?: React.ReactNode;
@@ -15,6 +16,7 @@ interface MenuItemProps {
 
 export const MenuItem: React.FC<MenuItemProps> = ({
   icon,
+  iconName,
   title,
   description,
   rightElement,
@@ -29,7 +31,10 @@ export const MenuItem: React.FC<MenuItemProps> = ({
     >
       <View style={styles.leftRow}>
         <View style={[styles.iconContainer, { backgroundColor: colors.primaryLight }]}>
-          <Text style={styles.iconText}>{icon}</Text>
+          {iconName
+            ? <Icon name={iconName} size={18} color={colors.primary} />
+            : <Text style={styles.iconText}>{icon}</Text>
+          }
         </View>
         <View style={styles.textContainer}>
           <Text variant="label" bold style={{ color: colors.text }}>

@@ -1,12 +1,13 @@
 import React from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
 import { Text } from '../primitives/Text';
-import { Icon } from '../primitives/Icon';
+import { Icon, TIconName } from '../primitives/Icon';
 import { useTheme } from '../../theme/useTheme';
 import { spacing } from '../../tokens/spacing';
 
 interface HeaderProps {
   title: string;
+  titleIcon?: TIconName;
   onBack?: () => void;
   backIcon?: 'back' | 'close';
   rightAction?: React.ReactNode;
@@ -16,7 +17,7 @@ interface HeaderProps {
  * 앱의 최상단에서 제목과 네비게이션 액션을 제어하는 헤더 레이아웃 컴포넌트
  * @author Antigravity
  */
-export const Header: React.FC<HeaderProps> = ({ title, onBack, backIcon = 'back', rightAction }) => {
+export const Header: React.FC<HeaderProps> = ({ title, titleIcon, onBack, backIcon = 'back', rightAction }) => {
   const { colors } = useTheme();
 
   return (
@@ -32,6 +33,9 @@ export const Header: React.FC<HeaderProps> = ({ title, onBack, backIcon = 'back'
           >
             <Icon name={backIcon} size={22} color={colors.text} />
           </Pressable>
+        )}
+        {titleIcon && (
+          <Icon name={titleIcon} size={20} color={colors.text} style={{ marginRight: spacing.xs }} />
         )}
         <Text variant="h2" bold numberOfLines={1}>
           {title}

@@ -42,11 +42,18 @@
     "qna": "質問/回答",
     "postDetail": "投稿詳細",
     "comments": "コメント",
-    "commentsCount": "コメント {{count}}件"
+    "commentsCount": "コメント {{count}}件",
+    "editPost": "編集",
+    "deletePost": "削除",
+    "editPostTitle": "投稿編集",
+    "deleteConfirmTitle": "投稿削除",
+    "deleteConfirmMessage": "本当に削除しますか？削除した投稿は復元できません。"
   },
   "write": {
     "title": "新規投稿",
+    "editTitle": "投稿編集",
     "register": "登録",
+    "edit": "保存",
     "categorySelect": "カテゴリー選択",
     "recipeTag": "レシピタグ",
     "recipeTagGuide": "使用したレシピをリンクしてください",
@@ -124,7 +131,13 @@
     "negative": "不十分"
   },
   "comment": {
-    "placeholder": "コメントを入力してください..."
+    "placeholder": "コメントを入力してください...",
+    "editComment": "コメント編集",
+    "deleteComment": "コメント削除",
+    "deleteCommentConfirmTitle": "コメント削除",
+    "deleteCommentConfirmMessage": "本当に削除しますか？",
+    "save": "保存",
+    "cancelEdit": "キャンセル"
   },
   "auth": {
     "loginTitle": "オンゴ知識ログイン",

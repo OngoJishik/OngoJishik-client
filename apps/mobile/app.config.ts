@@ -6,10 +6,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   slug: 'ongo-jishik',
   version: '1.0.0',
   orientation: 'portrait',
-  icon: './assets/icon.png',
+  icon: './assets/icons/icon.png',
   userInterfaceStyle: 'automatic',
   splash: {
-    image: './assets/splash.png',
+    image: './assets/images/splash.png',
     resizeMode: 'contain',
     backgroundColor: '#FAFAF8', // Hanji base color
   },
@@ -19,13 +19,13 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   android: {
     adaptiveIcon: {
-      foregroundImage: './assets/adaptive-icon.png',
+      foregroundImage: './assets/icons/adaptive-icon.png',
       backgroundColor: '#FAFAF8',
     },
     package: 'com.ongo.jishik',
   },
   web: {
-    favicon: './assets/favicon.png',
+    favicon: './assets/icons/favicon.png',
   },
   plugins: [
     'expo-router',

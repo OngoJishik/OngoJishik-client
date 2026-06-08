@@ -4,14 +4,11 @@ import {
   StyleSheet,
   TextInput,
   Pressable,
-  Modal,
   ScrollView,
-  KeyboardAvoidingView,
-  Platform,
 } from 'react-native';
 
 import { useTranslation } from '@ongo/i18n';
-import { Text, Icon, useTheme } from '@ongo/ui';
+import { Text, Icon, useTheme, BottomSheet } from '@ongo/ui';
 import { colors as designColors } from '@ongo/ui';
 import { MOCK_FOODS } from '../../../mocks';
 
@@ -49,126 +46,91 @@ export const RecipePickerModal = ({
   };
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="slide"
-      onRequestClose={onClose}
-    >
-      <KeyboardAvoidingView
-        style={styles.container}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-        <Pressable style={styles.overlay} onPress={onClose} />
-        <View style={[styles.sheet, { backgroundColor: colors.background }]}>
-          <View style={[styles.handle, { backgroundColor: colors.border }]} />
+    <BottomSheet visible={visible} onClose={onClose} maxHeight="65%">
+      <View style={styles.header}>
+        <Text variant="h3" bold style={{ color: colors.text }}>
+          {t('write.recipePicker')}
+        </Text>
+        <Pressable onPress={onClose}>
+          <Icon name="close" size={20} color={colors.textSecondary} />
+        </Pressable>
+      </View>
 
-          <View style={styles.header}>
-            <Text variant="h3" bold style={{ color: colors.text }}>
-              {t('write.recipePicker')}
-            </Text>
-            <Pressable onPress={onClose}>
-              <Icon name="close" size={20} color={colors.textSecondary} />
-            </Pressable>
-          </View>
+      <Text variant="caption" bold style={[styles.sectionLabel, { color: colors.textSecondary }]}>
+        {t('write.favoriteRecipes')}
+      </Text>
 
-          <Text variant="caption" bold style={[styles.sectionLabel, { color: colors.textSecondary }]}>
-            {t('write.favoriteRecipes')}
-          </Text>
-
-          <ScrollView style={styles.list} showsVerticalScrollIndicator={false}>
-            {MOCK_FOODS.map((food) => (
-              <Pressable
-                key={food.id}
-                style={[styles.foodItem, { borderBottomColor: colors.border }]}
-                onPress={() => handleSelectFood(food)}
-              >
-                <Text style={styles.emoji}>{food.emoji}</Text>
-                <View style={styles.foodInfo}>
-                  <Text variant="body" style={{ color: colors.text }}>{food.nameKo}</Text>
-                  <Text variant="caption" style={{ color: colors.textTertiary }} numberOfLines={1}>
-                    {food.description}
-                  </Text>
-                </View>
-                {selectedRecipe?.nameKo === food.nameKo && (
-                  <View style={[styles.selectedDot, { backgroundColor: designColors.primary.DEFAULT }]} />
-                )}
-              </Pressable>
-            ))}
-          </ScrollView>
-
-          <View style={[styles.customSection, { borderTopColor: colors.border }]}>
-            <Text variant="caption" bold style={[styles.sectionLabel, { color: colors.textSecondary }]}>
-              {t('write.customRecipe')}
-            </Text>
-            <View style={styles.customRow}>
-              <TextInput
-                value={customInput}
-                onChangeText={setCustomInput}
-                placeholder={t('write.customRecipePlaceholder')}
-                placeholderTextColor={colors.textSecondary}
-                style={[
-                  styles.customInput,
-                  { color: colors.text, borderColor: colors.border, backgroundColor: colors.primaryLight },
-                ]}
-                returnKeyType="done"
-                onSubmitEditing={handleAddCustom}
-              />
-              <Pressable
-                style={[
-                  styles.addBtn,
-                  { backgroundColor: designColors.primary.DEFAULT, opacity: customInput.trim() ? 1 : 0.4 },
-                ]}
-                onPress={handleAddCustom}
-                disabled={!customInput.trim()}
-              >
-                <Text variant="label" bold style={{ color: '#FFFFFF' }}>
-                  {t('write.add')}
-                </Text>
-              </Pressable>
+      <ScrollView style={styles.list} showsVerticalScrollIndicator={false}>
+        {MOCK_FOODS.map((food) => (
+          <Pressable
+            key={food.id}
+            style={[styles.foodItem, { borderBottomColor: colors.border }]}
+            onPress={() => handleSelectFood(food)}
+          >
+            <Text style={styles.emoji}>{food.emoji}</Text>
+            <View style={styles.foodInfo}>
+              <Text variant="body" style={{ color: colors.text }}>{food.nameKo}</Text>
+              <Text variant="caption" style={{ color: colors.textTertiary }} numberOfLines={1}>
+                {food.description}
+              </Text>
             </View>
-          </View>
+            {selectedRecipe?.nameKo === food.nameKo && (
+              <View style={[styles.selectedDot, { backgroundColor: designColors.primary.DEFAULT }]} />
+            )}
+          </Pressable>
+        ))}
+      </ScrollView>
+
+      <View style={[styles.customSection, { borderTopColor: colors.border }]}>
+        <Text variant="caption" bold style={[styles.sectionLabel, { color: colors.textSecondary }]}>
+          {t('write.customRecipe')}
+        </Text>
+        <View style={styles.customRow}>
+          <TextInput
+            value={customInput}
+            onChangeText={setCustomInput}
+            placeholder={t('write.customRecipePlaceholder')}
+            placeholderTextColor={colors.textSecondary}
+            style={[
+              styles.customInput,
+              { color: colors.text, borderColor: colors.border, backgroundColor: colors.primaryLight },
+            ]}
+            returnKeyType="done"
+            onSubmitEditing={handleAddCustom}
+          />
+          <Pressable
+            style={[
+              styles.addBtn,
+              { backgroundColor: designColors.primary.DEFAULT, opacity: customInput.trim() ? 1 : 0.4 },
+            ]}
+            onPress={handleAddCustom}
+            disabled={!customInput.trim()}
+          >
+            <Text variant="label" bold style={{ color: '#FFFFFF' }}>
+              {t('write.add')}
+            </Text>
+          </Pressable>
         </View>
-      </KeyboardAvoidingView>
-    </Modal>
+      </View>
+    </BottomSheet>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
-  },
-  sheet: {
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingHorizontal: 20,
-    paddingBottom: Platform.OS === 'ios' ? 34 : 24,
-    maxHeight: '65%',
-  },
-  handle: {
-    width: 36,
-    height: 4,
-    borderRadius: 2,
-    alignSelf: 'center',
-    marginTop: 12,
-    marginBottom: 16,
-  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    paddingHorizontal: 20,
     marginBottom: 16,
   },
   sectionLabel: {
     marginBottom: 8,
+    paddingHorizontal: 20,
   },
   list: {
     maxHeight: 220,
+    paddingHorizontal: 20,
   },
   foodItem: {
     flexDirection: 'row',
@@ -193,6 +155,7 @@ const styles = StyleSheet.create({
     borderTopWidth: StyleSheet.hairlineWidth,
     paddingTop: 16,
     marginTop: 8,
+    paddingHorizontal: 20,
   },
   customRow: {
     flexDirection: 'row',

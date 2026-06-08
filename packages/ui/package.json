@@ -15,7 +15,8 @@
     "expo-image": "*",
     "expo-linear-gradient": "*",
     "react": ">=18.0.0",
-    "react-native": ">=0.72.0"
+    "react-native": ">=0.72.0",
+    "react-native-svg": ">=15.0.0"
   },
   "devDependencies": {
     "@ongo/typescript-config": "workspace:*",
@@ -23,6 +24,7 @@
     "@types/react": "^18.2.79",
     "expo-image": "~2.0.7",
     "expo-linear-gradient": "~14.0.2",
+    "react-native-svg": "^15.15.5",
     "typescript": "^5.4.5"
   }
 }

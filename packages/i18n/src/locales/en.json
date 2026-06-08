@@ -42,11 +42,18 @@
     "qna": "Q&A",
     "postDetail": "Post Detail",
     "comments": "Comments",
-    "commentsCount": "Comments ({{count}})"
+    "commentsCount": "Comments ({{count}})",
+    "editPost": "Edit",
+    "deletePost": "Delete",
+    "editPostTitle": "Edit Post",
+    "deleteConfirmTitle": "Delete Post",
+    "deleteConfirmMessage": "Are you sure you want to delete this post? This action cannot be undone."
   },
   "write": {
     "title": "Create Post",
+    "editTitle": "Edit Post",
     "register": "Post",
+    "edit": "Save",
     "categorySelect": "Select Category",
     "recipeTag": "Recipe Tag",
     "recipeTagGuide": "Link the recipe you used",
@@ -124,7 +131,13 @@
     "negative": "Not enough"
   },
   "comment": {
-    "placeholder": "Write a comment..."
+    "placeholder": "Write a comment...",
+    "editComment": "Edit Comment",
+    "deleteComment": "Delete Comment",
+    "deleteCommentConfirmTitle": "Delete Comment",
+    "deleteCommentConfirmMessage": "Are you sure you want to delete this comment?",
+    "save": "Save",
+    "cancelEdit": "Cancel"
   },
   "auth": {
     "loginTitle": "OngoJishik Login",
