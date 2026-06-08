@@ -30,6 +30,17 @@ export type TPost = {
 };
 
 /**
+ * 게시글 수정 요청 타입
+ * @author Antigravity
+ */
+export type TPostUpdateRequest = {
+  category: 'review' | 'recipe' | 'qna';
+  content: string;
+  images: string[];
+  linkedRecipeId?: string;
+};
+
+/**
  * 게시글 댓글 정보 타입
  * @author Antigravity
  */

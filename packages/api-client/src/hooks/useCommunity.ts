@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { communityEndpoints } from '../endpoints/community';
-import { communityKeys } from './queryKeys';
+import { communityKeys, userKeys } from './queryKeys';
+import type { TPostUpdateRequest } from '../types/community';
 
 /**
  * 커뮤니티 피드 목록 조회 훅
@@ -69,6 +70,37 @@ export const usePostCommentsQuery = (postId: string) => {
 };
 
 /**
+ * 게시글 수정 뮤테이션 훅
+ * @author Antigravity
+ */
+export const useUpdatePostMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ postId, data }: { postId: string; data: TPostUpdateRequest }) =>
+      communityEndpoints.updatePost(postId, data),
+    onSuccess: (_, { postId }) => {
+      queryClient.invalidateQueries({ queryKey: communityKeys.post(postId) });
+      queryClient.invalidateQueries({ queryKey: communityKeys.feeds() });
+    },
+  });
+};
+
+/**
+ * 게시글 삭제 뮤테이션 훅
+ * @author Antigravity
+ */
+export const useDeletePostMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (postId: string) => communityEndpoints.deletePost(postId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: communityKeys.feeds() });
+      queryClient.invalidateQueries({ queryKey: userKeys.posts() });
+    },
+  });
+};
+
+/**
  * 댓글 추가 뮤테이션 훅
  * @author Antigravity
  */
@@ -76,6 +108,36 @@ export const useAddCommentMutation = (postId: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (content: string) => communityEndpoints.addComment(postId, content),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: communityKeys.comments(postId) });
+      queryClient.invalidateQueries({ queryKey: communityKeys.post(postId) });
+    },
+  });
+};
+
+/**
+ * 댓글 수정 뮤테이션 훅
+ * @author Antigravity
+ */
+export const useUpdateCommentMutation = (postId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ commentId, content }: { commentId: string; content: string }) =>
+      communityEndpoints.updateComment(postId, commentId, content),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: communityKeys.comments(postId) });
+    },
+  });
+};
+
+/**
+ * 댓글 삭제 뮤테이션 훅
+ * @author Antigravity
+ */
+export const useDeleteCommentMutation = (postId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (commentId: string) => communityEndpoints.deleteComment(postId, commentId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: communityKeys.comments(postId) });
       queryClient.invalidateQueries({ queryKey: communityKeys.post(postId) });
