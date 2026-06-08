@@ -42,11 +42,18 @@
     "qna": "질문/답변",
     "postDetail": "게시글 상세",
     "comments": "댓글",
-    "commentsCount": "댓글 {{count}}개"
+    "commentsCount": "댓글 {{count}}개",
+    "editPost": "수정",
+    "deletePost": "삭제",
+    "editPostTitle": "게시글 수정",
+    "deleteConfirmTitle": "게시글 삭제",
+    "deleteConfirmMessage": "정말 삭제하시겠습니까? 삭제된 게시글은 복구할 수 없습니다."
   },
   "write": {
     "title": "게시글 작성",
+    "editTitle": "게시글 수정",
     "register": "등록",
+    "edit": "수정",
     "categorySelect": "카테고리 선택",
     "recipeTag": "레시피 태그",
     "recipeTagGuide": "사용한 레시피를 연결하세요",
@@ -124,7 +131,13 @@
     "negative": "부족해요"
   },
   "comment": {
-    "placeholder": "댓글을 입력하세요..."
+    "placeholder": "댓글을 입력하세요...",
+    "editComment": "댓글 수정",
+    "deleteComment": "댓글 삭제",
+    "deleteCommentConfirmTitle": "댓글 삭제",
+    "deleteCommentConfirmMessage": "정말 삭제하시겠습니까?",
+    "save": "저장",
+    "cancelEdit": "취소"
   },
   "auth": {
     "loginTitle": "온고지식 로그인",

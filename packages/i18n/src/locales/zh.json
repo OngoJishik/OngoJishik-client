@@ -42,11 +42,18 @@
     "qna": "问答",
     "postDetail": "帖子详情",
     "comments": "评论",
-    "commentsCount": "{{count}} 条评论"
+    "commentsCount": "{{count}} 条评论",
+    "editPost": "编辑",
+    "deletePost": "删除",
+    "editPostTitle": "编辑帖子",
+    "deleteConfirmTitle": "删除帖子",
+    "deleteConfirmMessage": "确定要删除吗？删除后无法恢复。"
   },
   "write": {
     "title": "发布帖子",
+    "editTitle": "编辑帖子",
     "register": "发布",
+    "edit": "保存",
     "categorySelect": "选择分类",
     "recipeTag": "食谱标签",
     "recipeTagGuide": "请链接使用的食谱",
@@ -124,7 +131,13 @@
     "negative": "不够充分"
   },
   "comment": {
-    "placeholder": "请输入评论..."
+    "placeholder": "请输入评论...",
+    "editComment": "编辑评论",
+    "deleteComment": "删除评论",
+    "deleteCommentConfirmTitle": "删除评论",
+    "deleteCommentConfirmMessage": "确定要删除这条评论吗？",
+    "save": "保存",
+    "cancelEdit": "取消"
   },
   "auth": {
     "loginTitle": "温故知识登录",
