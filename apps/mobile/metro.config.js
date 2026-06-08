@@ -1,7 +1,6 @@
 const { getDefaultConfig } = require('expo/metro-config');
 const path = require('path');
 
-// Find the project and workspace directories
 const projectRoot = __dirname;
 const workspaceRoot = path.resolve(projectRoot, '../..');
 
@@ -18,11 +17,22 @@ config.resolver.nodeModulesPaths = [
 
 // 3. Force all workspace packages to use the app-level react / react-native
 //    to prevent duplicate module instances in pnpm monorepos.
-//    Without this, @ongo/ui etc. can resolve a different react-native instance
-//    which causes "RCTText view config getter is undefined" crash at runtime.
 config.resolver.extraNodeModules = {
   'react': path.resolve(projectRoot, 'node_modules', 'react'),
   'react-native': path.resolve(projectRoot, 'node_modules', 'react-native'),
+  'react-native-svg': path.resolve(projectRoot, 'node_modules', 'react-native-svg'),
+};
+
+// 4. SVG transformer — .svg files become React Native SVG components
+const { transformer, resolver } = config;
+config.transformer = {
+  ...transformer,
+  babelTransformerPath: require.resolve('react-native-svg-transformer'),
+};
+config.resolver = {
+  ...resolver,
+  assetExts: resolver.assetExts.filter((ext) => ext !== 'svg'),
+  sourceExts: [...resolver.sourceExts, 'svg'],
 };
 
 module.exports = config;
