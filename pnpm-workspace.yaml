@@ -11,9 +11,3 @@ catalog:
   "@react-native-async-storage/async-storage": "1.23.1"
   react-native-svg: "~15.8.0"
   "@types/react": "~18.3.0"
-
-overrides:
-  react-native: "0.76.9"
-
-patchedDependencies:
-  expo-modules-autolinking@2.0.8: patches/expo-modules-autolinking@2.0.8.patch
