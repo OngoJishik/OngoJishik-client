@@ -8,15 +8,15 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "i18next": "^23.11.5",
-    "react-i18next": "^14.1.2"
+    "i18next": "catalog:",
+    "react-i18next": "catalog:"
   },
   "peerDependencies": {
     "react": ">=18.0.0"
   },
   "devDependencies": {
-    "@types/react": "^18.2.79",
+    "@types/react": "catalog:",
     "@ongo/typescript-config": "workspace:*",
-    "typescript": "^5.4.5"
+    "typescript": "catalog:"
   }
 }

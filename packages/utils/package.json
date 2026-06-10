@@ -8,10 +8,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@react-native-async-storage/async-storage": "^1.23.1"
+    "@react-native-async-storage/async-storage": "catalog:"
   },
   "devDependencies": {
     "@ongo/typescript-config": "workspace:*",
-    "typescript": "^5.4.5"
+    "typescript": "catalog:"
   }
 }
