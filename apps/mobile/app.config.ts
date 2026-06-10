@@ -4,6 +4,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: '온고지식',
   slug: 'ongo-jishik',
+  owner: 'ongosub',
   version: '1.0.0',
   orientation: 'portrait',
   icon: './assets/icons/icon.png',
@@ -36,7 +37,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   extra: {
     eas: {
-      projectId: '69689eb8-3969-4c62-bcc3-5c4f4f73eaa9',
+      projectId: '1f66cc22-71c5-4739-9581-289321418e67',
     },
   },
 });
