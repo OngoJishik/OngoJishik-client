@@ -25,6 +25,7 @@ export type PostCardProps = {
   isLiked: boolean;
   onPress: () => void;
   onLike: () => void;
+  title?: string;
 };
 
 /**
@@ -43,6 +44,7 @@ export const PostCard = ({
   isLiked,
   onPress,
   onLike,
+  title,
 }: PostCardProps) => {
   const { colors } = useTheme();
 
@@ -77,6 +79,12 @@ export const PostCard = ({
               {linkedRecipe.nameKo} 레시피 연계
             </Text>
           </View>
+        )}
+
+        {title && (
+          <Text variant="body" bold style={{ color: colors.text, marginBottom: spacing.xs }}>
+            {title}
+          </Text>
         )}
 
         <Text variant="body" style={[styles.content, { color: colors.text }]} numberOfLines={3}>

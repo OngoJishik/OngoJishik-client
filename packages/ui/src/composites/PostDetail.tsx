@@ -21,6 +21,7 @@ export interface PostDetailProps {
   linkedRecipe?: { id: string; nameKo: string; emoji: string; description?: string };
   onLike: () => void;
   onRecipePress?: () => void;
+  title?: string;
 }
 
 /**
@@ -39,6 +40,7 @@ export const PostDetail: React.FC<PostDetailProps> = ({
   linkedRecipe,
   onLike,
   onRecipePress,
+  title,
 }) => {
   const { colors } = useTheme();
 
@@ -82,6 +84,13 @@ export const PostDetail: React.FC<PostDetailProps> = ({
           </Text>
         </View>
       </View>
+
+      {/* Title */}
+      {title && (
+        <Text variant="h3" bold style={{ color: colors.text, marginBottom: 8, fontSize: 16 }}>
+          {title}
+        </Text>
+      )}
 
       {/* Post Content */}
       <Text variant="body" style={[styles.content, { color: colors.text }]}>
