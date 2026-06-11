@@ -47,7 +47,8 @@
     "deletePost": "Delete",
     "editPostTitle": "Edit Post",
     "deleteConfirmTitle": "Delete Post",
-    "deleteConfirmMessage": "Are you sure you want to delete this post? This action cannot be undone."
+    "deleteConfirmMessage": "Are you sure you want to delete this post? This action cannot be undone.",
+    "postNotFound": "Post not found."
   },
   "write": {
     "title": "Create Post",
@@ -65,7 +66,8 @@
     "favoriteRecipes": "Favorite Recipes",
     "customRecipe": "Custom Entry",
     "customRecipePlaceholder": "Enter recipe name",
-    "contentSection": "Write Post"
+    "contentSection": "Write Post",
+    "titlePlaceholder": "Enter a title (Required)"
   },
   "mypage": {
     "title": "My Page",
@@ -83,6 +85,8 @@
     "favoritesDesc": "List of favorite foods",
     "searchHistoryDesc": "Manage recent search history",
     "myPostsDesc": "Community posts I've written",
+    "myComments": "My Comments",
+    "myCommentsDesc": "View and manage comments you wrote.",
     "languageDesc": "Change app display language",
     "notificationsDesc": "Push and notification settings",
     "appInfoDesc": "Version info and terms of use"
@@ -94,6 +98,11 @@
   "myPosts": {
     "title": "My Posts",
     "empty": "No posts written."
+  },
+  "myComments": {
+    "empty": "You have not written any comments.",
+    "originalPost": "Original Post",
+    "noTitle": "No Title"
   },
   "history": {
     "title": "Explore History",

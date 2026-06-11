@@ -47,7 +47,8 @@
     "deletePost": "删除",
     "editPostTitle": "编辑帖子",
     "deleteConfirmTitle": "删除帖子",
-    "deleteConfirmMessage": "确定要删除吗？删除后无法恢复。"
+    "deleteConfirmMessage": "确定要删除吗？删除后无法恢复。",
+    "postNotFound": "找不到帖子。"
   },
   "write": {
     "title": "发布帖子",
@@ -65,7 +66,8 @@
     "favoriteRecipes": "收藏食谱",
     "customRecipe": "自定义输入",
     "customRecipePlaceholder": "请输入食谱名称",
-    "contentSection": "写文章"
+    "contentSection": "写文章",
+    "titlePlaceholder": "请输入标题（必填）"
   },
   "mypage": {
     "title": "个人中心",
@@ -83,6 +85,8 @@
     "favoritesDesc": "收藏的饮食列表",
     "searchHistoryDesc": "管理最近搜索记录",
     "myPostsDesc": "我写的社区帖子",
+    "myComments": "我的评论",
+    "myCommentsDesc": "查看和管理您撰写的评论。",
     "languageDesc": "更改应用显示语言",
     "notificationsDesc": "推送和通知设置",
     "appInfoDesc": "版本信息和使用条款"
@@ -94,6 +98,11 @@
   "myPosts": {
     "title": "我的帖子",
     "empty": "你还没有发布过帖子。"
+  },
+  "myComments": {
+    "empty": "您还没有写过评论。",
+    "originalPost": "原文帖子",
+    "noTitle": "无标题"
   },
   "history": {
     "title": "历史探索",

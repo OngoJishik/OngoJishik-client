@@ -47,7 +47,8 @@
     "deletePost": "삭제",
     "editPostTitle": "게시글 수정",
     "deleteConfirmTitle": "게시글 삭제",
-    "deleteConfirmMessage": "정말 삭제하시겠습니까? 삭제된 게시글은 복구할 수 없습니다."
+    "deleteConfirmMessage": "정말 삭제하시겠습니까? 삭제된 게시글은 복구할 수 없습니다.",
+    "postNotFound": "게시글을 찾을 수 없습니다."
   },
   "write": {
     "title": "게시글 작성",
@@ -65,7 +66,8 @@
     "favoriteRecipes": "즐겨찾기 레시피",
     "customRecipe": "직접 입력",
     "customRecipePlaceholder": "레시피 이름을 입력하세요",
-    "contentSection": "글 작성"
+    "contentSection": "글 작성",
+    "titlePlaceholder": "제목을 입력하세요 (필수)"
   },
   "mypage": {
     "title": "마이페이지",
@@ -83,6 +85,8 @@
     "favoritesDesc": "즐겨찾기한 음식 목록",
     "searchHistoryDesc": "최근 검색 기록 관리",
     "myPostsDesc": "내가 작성한 커뮤니티 글",
+    "myComments": "내가 작성한 댓글",
+    "myCommentsDesc": "내가 작성한 댓글들을 확인합니다.",
     "languageDesc": "앱 표시 언어 변경",
     "notificationsDesc": "푸시 및 알림 수신 설정",
     "appInfoDesc": "버전 정보 및 이용약관"
@@ -94,6 +98,11 @@
   "myPosts": {
     "title": "내 게시글",
     "empty": "작성한 게시글이 없습니다."
+  },
+  "myComments": {
+    "empty": "작성한 댓글이 없습니다.",
+    "originalPost": "원문 게시글",
+    "noTitle": "제목 없음"
   },
   "history": {
     "title": "역사 탐색",
