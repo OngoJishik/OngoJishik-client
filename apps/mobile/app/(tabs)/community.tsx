@@ -12,8 +12,7 @@ import {
   useTheme,
 } from '@ongo/ui';
 import { colors as designColors } from '@ongo/ui';
-
-import { MOCK_POSTS } from '../../mocks';
+import { useBoardsInfiniteQuery, useToggleLikeMutation } from '@ongo/api-client';
 
 const FILTER_CATEGORIES = [
   { id: 'all', labelKey: 'community.all' },
@@ -21,6 +20,20 @@ const FILTER_CATEGORIES = [
   { id: 'recipe', labelKey: 'community.myRecipe' },
   { id: 'qna', labelKey: 'community.qna' },
 ];
+
+/**
+ * JSON 이미지 문자열 파싱 헬퍼 함수
+ * @author Antigravity
+ */
+const parseImages = (imageUrl?: string): string[] => {
+  if (!imageUrl) return [];
+  try {
+    const parsed = JSON.parse(imageUrl);
+    return Array.isArray(parsed) ? parsed : [imageUrl];
+  } catch {
+    return [imageUrl];
+  }
+};
 
 /**
  * 커뮤니티 피드 화면 컴포넌트
@@ -32,29 +45,37 @@ export const CommunityScreen = () => {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const [selectedFilter, setSelectedFilter] = useState('all');
-  const [posts, setPosts] = useState(MOCK_POSTS);
 
-  const handlePostPress = (postId: string) => {
-    router.push(`/community/${postId}`);
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    refetch,
+  } = useBoardsInfiniteQuery(10);
+
+  const { mutate: toggleLike } = useToggleLikeMutation();
+
+  const handlePostPress = (boardId: number) => {
+    router.push(`/community/${boardId}`);
   };
 
-  const handleLike = (postId: string) => {
-    setPosts((prev) =>
-      prev.map((post) =>
-        post.id === postId
-          ? {
-              ...post,
-              isLiked: !post.isLiked,
-              likeCount: post.isLiked ? post.likeCount - 1 : post.likeCount + 1,
-            }
-          : post
-      )
-    );
+  const handleLike = (boardId: number) => {
+    toggleLike({ boardId });
   };
 
-  const filteredPosts = selectedFilter === 'all'
-    ? posts
-    : posts.filter((post) => post.category === selectedFilter);
+  const allBoards = data?.pages.flatMap((page) => page.content) || [];
+
+  const filteredPosts = allBoards.filter((board) => {
+    const category = board.category || 'review';
+    return selectedFilter === 'all' || category === selectedFilter;
+  });
+
+  const handleLoadMore = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  };
 
   return (
     <ScreenLayout>
@@ -95,21 +116,25 @@ export const CommunityScreen = () => {
 
       <FlatList
         data={filteredPosts}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => String(item.boardId)}
         showsVerticalScrollIndicator={false}
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.5}
+        refreshing={isFetchingNextPage}
+        onRefresh={refetch}
         renderItem={({ item }) => (
           <PostCard
-            author={item.author}
+            author={{ name: item.authorNickname || '익명' }}
             createdAt={item.createdAt}
-            category={item.category}
-            images={item.images}
-            linkedRecipe={item.linkedRecipe}
-            content={item.content}
-            likeCount={item.likeCount}
-            commentCount={item.commentCount}
-            isLiked={item.isLiked}
-            onPress={() => handlePostPress(item.id)}
-            onLike={() => handleLike(item.id)}
+            category={item.category || 'review'}
+            images={parseImages(item.imageUrl)}
+            content="" // Feed list does not return full content; title is displayed
+            title={item.title}
+            likeCount={0} // Default since not in Summary response yet
+            commentCount={0} // Default since not in Summary response yet
+            isLiked={false}
+            onPress={() => handlePostPress(item.boardId)}
+            onLike={() => handleLike(item.boardId)}
           />
         )}
         contentContainerStyle={styles.listContent}
@@ -137,3 +162,4 @@ const styles = StyleSheet.create({
     paddingBottom: 48,
   },
 });
+
