@@ -16,7 +16,7 @@
 ```typescript
 // 변수: camelCase / 상수: UPPER_SNAKE_CASE
 const userName = "하나";
-const API_BASE_URL = "https://api.ongo-jishik.com";
+const API_BASE_URL = "https://api.example.com";
 
 // 이벤트 핸들러: handle + 대상 + 동작
 const handleSearchSubmit = () => {};

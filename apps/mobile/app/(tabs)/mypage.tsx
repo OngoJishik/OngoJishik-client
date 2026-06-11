@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, Pressable } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, Href } from 'expo-router';
 import { useAtomValue } from 'jotai';
 
 import { useTranslation } from '@ongo/i18n';
@@ -72,8 +72,7 @@ export const MyPageScreen = () => {
         </View>
         <View style={[styles.statCol, styles.statDivider, { borderColor: colors.border }]}>
           <Text variant="h2" bold style={[styles.statVal, { color: colors.primary }]}>
-            {/* TODO: add postCount to TUserProfile once API contract is confirmed */}
-            {(currentUser as any)?.postCount ?? 0}
+            {currentUser?.postCount ?? 0}
           </Text>
           <Text variant="caption" style={{ color: colors.textSecondary }}>{t('mypage.posts')}</Text>
         </View>
@@ -106,6 +105,13 @@ export const MyPageScreen = () => {
           iconName="write"
           description={t('mypage.myPostsDesc')}
           onPress={() => router.push('/my-posts')}
+        />
+        <MenuItem
+          title={t('mypage.myComments', '내가 작성한 댓글')}
+          icon="💬"
+          iconName="comment"
+          description={t('mypage.myCommentsDesc', '내가 작성한 댓글들을 확인합니다.')}
+          onPress={() => router.push('/my-comments' as Href)}
         />
       </View>
 

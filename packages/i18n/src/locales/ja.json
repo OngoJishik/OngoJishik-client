@@ -47,7 +47,8 @@
     "deletePost": "削除",
     "editPostTitle": "投稿編集",
     "deleteConfirmTitle": "投稿削除",
-    "deleteConfirmMessage": "本当に削除しますか？削除した投稿は復元できません。"
+    "deleteConfirmMessage": "本当に削除しますか？削除した投稿は復元できません。",
+    "postNotFound": "投稿が見つかりません。"
   },
   "write": {
     "title": "新規投稿",
@@ -65,7 +66,8 @@
     "favoriteRecipes": "お気に入りレシピ",
     "customRecipe": "直接入力",
     "customRecipePlaceholder": "レシピ名を入力してください",
-    "contentSection": "投稿作成"
+    "contentSection": "投稿作成",
+    "titlePlaceholder": "タイトルを入力してください（必須）"
   },
   "mypage": {
     "title": "マイページ",
@@ -83,6 +85,8 @@
     "favoritesDesc": "お気に入りの料理リスト",
     "searchHistoryDesc": "最近の検索履歴管理",
     "myPostsDesc": "私が作成したコミュニティ記事",
+    "myComments": "マイコメント",
+    "myCommentsDesc": "自分が作成したコメントを確認します。",
     "languageDesc": "アプリ表示言語の変更",
     "notificationsDesc": "プッシュ通知設定",
     "appInfoDesc": "バージョン情報と利用規約"
@@ -94,6 +98,11 @@
   "myPosts": {
     "title": "マイ投稿",
     "empty": "作成された投稿はありません。"
+  },
+  "myComments": {
+    "empty": "作成したコメントがありません。",
+    "originalPost": "元の投稿",
+    "noTitle": "タイトルなし"
   },
   "history": {
     "title": "歴史探索",

@@ -1,30 +1,45 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { communityEndpoints } from '../endpoints/community';
-import { communityKeys, userKeys } from './queryKeys';
-import type { TPostUpdateRequest } from '../types/community';
+import { communityKeys } from './queryKeys';
+import type { TBoardUpdateRequest, TBoardCreateRequest, TComment } from '../types/community';
+import type { TPage } from '../types/common';
 
 /**
- * 커뮤니티 피드 목록 조회 훅
+ * 커뮤니티 게시글 목록 무한 스크롤 조회 훅
  * @author Antigravity
  */
-export const useCommunityFeedQuery = (category?: string, page: number = 1) => {
-  return useQuery({
-    queryKey: communityKeys.feed(category, page),
-    queryFn: () => communityEndpoints.getFeed(category, page),
+export const useBoardsInfiniteQuery = (size: number = 10) => {
+  return useInfiniteQuery({
+    queryKey: communityKeys.boardList(undefined, size),
+    queryFn: ({ pageParam = 0 }) => communityEndpoints.getBoards(pageParam, size),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => (lastPage.last ? undefined : lastPage.number + 1),
     staleTime: 30 * 1000, // 30s
     gcTime: 5 * 60 * 1000, // 5m
   });
 };
 
 /**
- * 커뮤니티 게시글 상세 조회 훅
+ * 게시글 제목 검색 훅
  * @author Antigravity
  */
-export const usePostDetailQuery = (postId: string) => {
+export const useSearchBoardsQuery = (title: string, page: number = 0, size: number = 10) => {
   return useQuery({
-    queryKey: communityKeys.post(postId),
-    queryFn: () => communityEndpoints.getPostDetail(postId),
-    enabled: !!postId,
+    queryKey: communityKeys.boardSearch(title, page),
+    queryFn: () => communityEndpoints.searchBoards(title, page, size),
+    enabled: !!title,
+  });
+};
+
+/**
+ * 게시글 상세 조회 훅
+ * @author Antigravity
+ */
+export const useBoardDetailQuery = (boardId: number) => {
+  return useQuery({
+    queryKey: communityKeys.boardDetail(boardId),
+    queryFn: () => communityEndpoints.getBoardDetail(boardId),
+    enabled: !isNaN(boardId) && boardId > 0,
   });
 };
 
@@ -32,12 +47,168 @@ export const usePostDetailQuery = (postId: string) => {
  * 게시글 작성 뮤테이션 훅
  * @author Antigravity
  */
-export const useCreatePostMutation = () => {
+export const useCreateBoardMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: communityEndpoints.createPost,
+    mutationFn: (data: TBoardCreateRequest) => communityEndpoints.createBoard(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: communityKeys.feeds() });
+      queryClient.invalidateQueries({ queryKey: communityKeys.boards() });
+    },
+  });
+};
+
+/**
+ * 게시글 수정 뮤테이션 훅
+ * @author Antigravity
+ */
+export const useUpdateBoardMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ boardId, data }: { boardId: number; data: TBoardUpdateRequest }) =>
+      communityEndpoints.updateBoard(boardId, data),
+    onSuccess: (_, { boardId }) => {
+      queryClient.invalidateQueries({ queryKey: communityKeys.boardDetail(boardId) });
+      queryClient.invalidateQueries({ queryKey: communityKeys.boards() });
+    },
+  });
+};
+
+/**
+ * 게시글 삭제 뮤테이션 훅
+ * @author Antigravity
+ */
+export const useDeleteBoardMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (boardId: number) => communityEndpoints.deleteBoard(boardId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: communityKeys.boards() });
+    },
+  });
+};
+
+/**
+ * 게시글별 댓글 목록 조회 훅
+ * @author Antigravity
+ */
+export const useBoardCommentsQuery = (boardId: number, page: number = 0, size: number = 20) => {
+  return useQuery({
+    queryKey: communityKeys.comments(boardId, page),
+    queryFn: () => communityEndpoints.getComments(boardId, page, size),
+    enabled: !isNaN(boardId) && boardId > 0,
+  });
+};
+
+/**
+ * 댓글 추가 뮤테이션 훅
+ * @author Antigravity
+ */
+export const useAddCommentMutation = (boardId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ content }: { content: string; authorName?: string }) =>
+      communityEndpoints.createComment(boardId, { commentContent: content }),
+    onMutate: async ({ content, authorName = '익명' }) => {
+      await queryClient.cancelQueries({ queryKey: communityKeys.comments(boardId) });
+      const previousComments = queryClient.getQueryData<TPage<TComment>>(communityKeys.comments(boardId, 0));
+
+      if (previousComments) {
+        const newComment: TComment = {
+          commentId: -Date.now(),
+          boardId,
+          authorId: 0,
+          authorName,
+          commentContent: content,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+
+        queryClient.setQueryData<TPage<TComment>>(communityKeys.comments(boardId, 0), {
+          ...previousComments,
+          content: [...previousComments.content, newComment],
+          totalElements: previousComments.totalElements + 1,
+        });
+      }
+
+      return { previousComments };
+    },
+    onError: (err, variables, context) => {
+      if (context?.previousComments) {
+        queryClient.setQueryData(communityKeys.comments(boardId, 0), context.previousComments);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: communityKeys.comments(boardId) });
+    },
+  });
+};
+
+/**
+ * 댓글 수정 뮤테이션 훅
+ * @author Antigravity
+ */
+export const useUpdateCommentMutation = (boardId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ commentId, content }: { commentId: number; content: string }) =>
+      communityEndpoints.updateComment(commentId, { commentContent: content }),
+    onMutate: async ({ commentId, content }) => {
+      await queryClient.cancelQueries({ queryKey: communityKeys.comments(boardId) });
+      const previousComments = queryClient.getQueryData<TPage<TComment>>(communityKeys.comments(boardId, 0));
+
+      if (previousComments) {
+        const updatedContent = previousComments.content.map((c) =>
+          c.commentId === commentId ? { ...c, commentContent: content, updatedAt: new Date().toISOString() } : c
+        );
+        queryClient.setQueryData<TPage<TComment>>(communityKeys.comments(boardId, 0), {
+          ...previousComments,
+          content: updatedContent,
+        });
+      }
+
+      return { previousComments };
+    },
+    onError: (err, variables, context) => {
+      if (context?.previousComments) {
+        queryClient.setQueryData(communityKeys.comments(boardId, 0), context.previousComments);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: communityKeys.comments(boardId) });
+    },
+  });
+};
+
+/**
+ * 댓글 삭제 뮤테이션 훅
+ * @author Antigravity
+ */
+export const useDeleteCommentMutation = (boardId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (commentId: number) => communityEndpoints.deleteComment(commentId),
+    onMutate: async (commentId) => {
+      await queryClient.cancelQueries({ queryKey: communityKeys.comments(boardId) });
+      const previousComments = queryClient.getQueryData<TPage<TComment>>(communityKeys.comments(boardId, 0));
+
+      if (previousComments) {
+        const updatedContent = previousComments.content.filter((c) => c.commentId !== commentId);
+        queryClient.setQueryData<TPage<TComment>>(communityKeys.comments(boardId, 0), {
+          ...previousComments,
+          content: updatedContent,
+          totalElements: Math.max(0, previousComments.totalElements - 1),
+        });
+      }
+
+      return { previousComments };
+    },
+    onError: (err, variables, context) => {
+      if (context?.previousComments) {
+        queryClient.setQueryData(communityKeys.comments(boardId, 0), context.previousComments);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: communityKeys.comments(boardId) });
     },
   });
 };
@@ -49,99 +220,55 @@ export const useCreatePostMutation = () => {
 export const useToggleLikeMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: communityEndpoints.likePost,
-    onSuccess: (_, postId) => {
-      queryClient.invalidateQueries({ queryKey: communityKeys.post(postId) });
-      queryClient.invalidateQueries({ queryKey: communityKeys.feeds() });
+    mutationFn: ({ boardId }: { boardId: number; currentLiked?: boolean }) =>
+      communityEndpoints.toggleLike(boardId),
+    onMutate: async ({ boardId, currentLiked }) => {
+      if (currentLiked === undefined) return;
+      await queryClient.cancelQueries({ queryKey: communityKeys.likeCount(boardId) });
+      const previousLikeCount = queryClient.getQueryData<number>(communityKeys.likeCount(boardId));
+
+      if (previousLikeCount !== undefined) {
+        const nextLikeCount = currentLiked
+          ? Math.max(0, previousLikeCount - 1)
+          : previousLikeCount + 1;
+        queryClient.setQueryData<number>(communityKeys.likeCount(boardId), nextLikeCount);
+      }
+
+      return { previousLikeCount };
+    },
+    onError: (err, variables, context) => {
+      if (context?.previousLikeCount !== undefined) {
+        queryClient.setQueryData(communityKeys.likeCount(variables.boardId), context.previousLikeCount);
+      }
+    },
+    onSettled: (data, error, variables) => {
+      queryClient.invalidateQueries({ queryKey: communityKeys.likeCount(variables.boardId) });
+      queryClient.invalidateQueries({ queryKey: communityKeys.boardDetail(variables.boardId) });
     },
   });
 };
 
 /**
- * 게시글 댓글 목록 조회 훅
+ * 게시글 좋아요 개수 조회 훅
  * @author Antigravity
  */
-export const usePostCommentsQuery = (postId: string) => {
+export const useLikeCountQuery = (boardId: number) => {
   return useQuery({
-    queryKey: communityKeys.comments(postId),
-    queryFn: () => communityEndpoints.getComments(postId),
-    enabled: !!postId,
+    queryKey: communityKeys.likeCount(boardId),
+    queryFn: () => communityEndpoints.getLikeCount(boardId),
+    enabled: !isNaN(boardId) && boardId > 0,
   });
 };
 
 /**
- * 게시글 수정 뮤테이션 훅
+ * 내가 작성한 댓글 목록 조회 훅
  * @author Antigravity
  */
-export const useUpdatePostMutation = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ postId, data }: { postId: string; data: TPostUpdateRequest }) =>
-      communityEndpoints.updatePost(postId, data),
-    onSuccess: (_, { postId }) => {
-      queryClient.invalidateQueries({ queryKey: communityKeys.post(postId) });
-      queryClient.invalidateQueries({ queryKey: communityKeys.feeds() });
-    },
+export const useMyCommentsQuery = (page: number = 0, size: number = 20) => {
+  return useQuery({
+    queryKey: communityKeys.myComments(page),
+    queryFn: () => communityEndpoints.getMyComments(page, size),
   });
 };
 
-/**
- * 게시글 삭제 뮤테이션 훅
- * @author Antigravity
- */
-export const useDeletePostMutation = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (postId: string) => communityEndpoints.deletePost(postId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: communityKeys.feeds() });
-      queryClient.invalidateQueries({ queryKey: userKeys.posts() });
-    },
-  });
-};
-
-/**
- * 댓글 추가 뮤테이션 훅
- * @author Antigravity
- */
-export const useAddCommentMutation = (postId: string) => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (content: string) => communityEndpoints.addComment(postId, content),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: communityKeys.comments(postId) });
-      queryClient.invalidateQueries({ queryKey: communityKeys.post(postId) });
-    },
-  });
-};
-
-/**
- * 댓글 수정 뮤테이션 훅
- * @author Antigravity
- */
-export const useUpdateCommentMutation = (postId: string) => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ commentId, content }: { commentId: string; content: string }) =>
-      communityEndpoints.updateComment(postId, commentId, content),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: communityKeys.comments(postId) });
-    },
-  });
-};
-
-/**
- * 댓글 삭제 뮤테이션 훅
- * @author Antigravity
- */
-export const useDeleteCommentMutation = (postId: string) => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (commentId: string) => communityEndpoints.deleteComment(postId, commentId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: communityKeys.comments(postId) });
-      queryClient.invalidateQueries({ queryKey: communityKeys.post(postId) });
-    },
-  });
-};
 

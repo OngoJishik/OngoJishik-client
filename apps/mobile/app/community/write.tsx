@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TextInput, Pressable } from 'react-native';
+import { View, StyleSheet, TextInput, Pressable, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Image } from 'expo-image';
 
@@ -13,16 +13,35 @@ import {
   useTheme,
 } from '@ongo/ui';
 import { colors as designColors } from '@ongo/ui';
-import { usePostDetailQuery, useUpdatePostMutation } from '@ongo/api-client';
+import {
+  useBoardDetailQuery,
+  useCreateBoardMutation,
+  useUpdateBoardMutation,
+} from '@ongo/api-client';
 
 import { RecipePickerModal } from './components/RecipePickerModal';
 import type { TLinkedRecipe } from './components/RecipePickerModal';
+import type { TBoardCategory } from '@ongo/api-client';
 
 const CATEGORIES = [
   { id: 'review', labelKey: 'community.cookingReview' },
   { id: 'recipe', labelKey: 'community.myRecipe' },
   { id: 'qna', labelKey: 'community.qna' },
 ];
+
+/**
+ * JSON 이미지 문자열 파싱 헬퍼 함수
+ * @author Antigravity
+ */
+const parseImages = (imageUrl?: string): string[] => {
+  if (!imageUrl) return [];
+  try {
+    const parsed = JSON.parse(imageUrl);
+    return Array.isArray(parsed) ? parsed : [imageUrl];
+  } catch {
+    return [imageUrl];
+  }
+};
 
 /**
  * 커뮤니티 게시글 작성 화면 컴포넌트
@@ -38,6 +57,7 @@ export const WritePostScreen = () => {
     mode,
     initCategory,
     initContent,
+    initTitle,
     initLinkedRecipeNameKo,
     initLinkedRecipeEmoji,
     initImages,
@@ -46,14 +66,19 @@ export const WritePostScreen = () => {
     mode?: string;
     initCategory?: string;
     initContent?: string;
+    initTitle?: string;
     initLinkedRecipeNameKo?: string;
     initLinkedRecipeEmoji?: string;
     initImages?: string;
   }>();
   const isEditMode = mode === 'edit' && !!postId;
+  const boardId = isEditMode ? parseInt(postId ?? '', 10) : 0;
 
   const [selectedCat, setSelectedCat] = useState<string>(() =>
     isEditMode && initCategory ? String(initCategory) : 'review',
+  );
+  const [title, setTitle] = useState<string>(() =>
+    isEditMode && initTitle ? String(initTitle) : '',
   );
   const [content, setContent] = useState<string>(() =>
     isEditMode && initContent ? String(initContent) : '',
@@ -72,14 +97,16 @@ export const WritePostScreen = () => {
   });
   const [isRecipeModalOpen, setIsRecipeModalOpen] = useState(false);
 
-  const { data: existingPost } = usePostDetailQuery(postId ?? '');
-  const { mutate: updatePost } = useUpdatePostMutation();
+  const { data: existingPost } = useBoardDetailQuery(boardId);
+  const { mutate: createBoard } = useCreateBoardMutation();
+  const { mutate: updateBoard } = useUpdateBoardMutation();
 
   useEffect(() => {
     if (isEditMode && existingPost) {
-      setSelectedCat(existingPost.category);
+      setSelectedCat(existingPost.category || 'review');
+      setTitle(existingPost.title);
       setContent(existingPost.content);
-      setPhotos(existingPost.images);
+      setPhotos(existingPost.imageUrl ? parseImages(existingPost.imageUrl) : []);
       if (existingPost.linkedRecipe) {
         setLinkedRecipe({ nameKo: existingPost.linkedRecipe.nameKo, emoji: existingPost.linkedRecipe.emoji });
       }
@@ -87,18 +114,28 @@ export const WritePostScreen = () => {
   }, [isEditMode, existingPost]);
 
   const handleRegister = () => {
-    if (!content.trim()) return;
-    if (isEditMode && postId) {
-      updatePost(
-        { postId, data: { category: selectedCat as 'review' | 'recipe' | 'qna', content, images: photos } },
+    if (!title.trim() || !content.trim()) return;
+
+    const payload = {
+      title: title.trim(),
+      content: content.trim(),
+      imageUrl: JSON.stringify(photos),
+      category: selectedCat as TBoardCategory,
+      linkedRecipeId: undefined, // Backend does not support recipe linking yet
+    };
+
+    if (isEditMode && boardId) {
+      updateBoard(
+        { boardId, data: payload },
         { onSuccess: () => router.back() },
       );
       return;
     }
-    if (__DEV__) {
-      console.log('Register post:', { selectedCat, content, linkedRecipe, photos });
-    }
-    router.back();
+
+    createBoard(
+      payload,
+      { onSuccess: () => router.back() },
+    );
   };
 
   const addMockPhoto = () => {
@@ -114,128 +151,144 @@ export const WritePostScreen = () => {
     setPhotos((prev) => prev.filter((p) => p !== uri));
   };
 
-  const isContentEmpty = !content.trim();
+  const isFormInvalid = !title.trim() || !content.trim();
 
   return (
-    <ScreenLayout>
-      <Header
-        title={isEditMode ? t('write.editTitle') : t('write.title')}
-        onBack={() => router.back()}
-        backIcon="close"
-        rightAction={
-          <Pressable onPress={handleRegister} disabled={isContentEmpty}>
-            <Text
-              variant="label"
-              bold
-              style={{ color: isContentEmpty ? colors.textSecondary : designColors.primary.DEFAULT }}
-            >
-              {isEditMode ? t('write.edit') : t('write.register')}
-            </Text>
-          </Pressable>
-        }
-      />
-
-      {/* 카테고리 선택 */}
-      <View style={styles.section}>
-        <Text variant="caption" bold style={[styles.sectionTitle, { color: colors.textSecondary }]}>
-          {t('write.categorySelect')}
-        </Text>
-        <View style={styles.row}>
-          {CATEGORIES.map((cat) => (
-            <Chip
-              key={cat.id}
-              label={t(cat.labelKey)}
-              selected={selectedCat === cat.id}
-              onPress={() => setSelectedCat(cat.id)}
-            />
-          ))}
-        </View>
-      </View>
-
-      {/* 레시피 태그 */}
-      <View style={styles.section}>
-        <Text variant="caption" bold style={[styles.sectionTitle, { color: colors.textSecondary }]}>
-          {t('write.recipeTag')}
-        </Text>
-        <Text variant="caption" style={{ color: colors.textTertiary, marginBottom: 8 }}>
-          {t('write.recipeTagGuide')}
-        </Text>
-        {linkedRecipe ? (
-          <View style={[styles.recipeTag, { backgroundColor: colors.primaryLight, borderColor: colors.border }]}>
-            <Text variant="body" style={{ fontSize: 13, color: colors.text }}>
-              {linkedRecipe.emoji} {linkedRecipe.nameKo}
-            </Text>
-            <Pressable onPress={() => setLinkedRecipe(null)}>
-              <Icon name="close" size={14} color={colors.textSecondary} style={{ marginLeft: 8 }} />
-            </Pressable>
-          </View>
-        ) : (
-          <Pressable
-            style={[styles.addRecipeBtn, { borderColor: colors.border }]}
-            onPress={() => setIsRecipeModalOpen(true)}
-          >
-            <Icon name="write" size={14} color={colors.textSecondary} />
-            <Text variant="caption" style={{ color: colors.textSecondary, marginLeft: 6 }}>
-              {t('write.addRecipeTag')}
-            </Text>
-          </Pressable>
-        )}
-      </View>
-
-      {/* 사진 추가 */}
-      <View style={styles.section}>
-        <Text variant="caption" bold style={[styles.sectionTitle, { color: colors.textSecondary }]}>
-          {t('write.photoAdd')}
-        </Text>
-        <View style={styles.row}>
-          {photos.length < 5 && (
-            <Pressable style={[styles.uploadBtn, { borderColor: colors.border }]} onPress={addMockPhoto}>
-              <Icon name="write" size={20} color={colors.textSecondary} />
-              <Text variant="caption" style={{ color: colors.textSecondary, marginTop: 4 }}>
-                {t('write.add')}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{ flex: 1 }}
+    >
+      <ScreenLayout>
+        <Header
+          title={isEditMode ? t('write.editTitle') : t('write.title')}
+          onBack={() => router.back()}
+          backIcon="close"
+          rightAction={
+            <Pressable onPress={handleRegister} disabled={isFormInvalid}>
+              <Text
+                variant="label"
+                bold
+                style={{ color: isFormInvalid ? colors.textSecondary : designColors.primary.DEFAULT }}
+              >
+                {isEditMode ? t('write.edit') : t('write.register')}
               </Text>
             </Pressable>
-          )}
-          {photos.map((uri) => (
-            <View key={uri} style={[styles.photoContainer, { borderColor: colors.border }]}>
-              <Image source={{ uri }} style={styles.photo} contentFit="cover" />
-              <Pressable style={styles.photoCloseBtn} onPress={() => removePhoto(uri)}>
-                <Icon name="close" size={10} color="#FFFFFF" />
-              </Pressable>
-            </View>
-          ))}
-        </View>
-      </View>
-
-      {/* 글 작성 — 카드 섹션 */}
-      <View style={[styles.editorCard, { borderColor: colors.border }]}>
-        <Text variant="caption" bold style={[styles.sectionTitle, { color: colors.textSecondary }]}>
-          {t('write.contentSection')}
-        </Text>
-        <TextInput
-          value={content}
-          onChangeText={setContent}
-          placeholder={t('write.placeholder')}
-          placeholderTextColor={colors.textSecondary}
-          multiline
-          maxLength={1000}
-          style={[styles.editor, { color: colors.text }]}
+          }
         />
-        <Text variant="caption" style={[styles.counter, { color: colors.textSecondary }]}>
-          {content.length}/1000
-        </Text>
-      </View>
 
-      <RecipePickerModal
-        visible={isRecipeModalOpen}
-        selectedRecipe={linkedRecipe}
-        onClose={() => setIsRecipeModalOpen(false)}
-        onSelect={(recipe) => {
-          setLinkedRecipe(recipe);
-          setIsRecipeModalOpen(false);
-        }}
-      />
-    </ScreenLayout>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={styles.scrollContainer}
+        >
+          {/* 카테고리 선택 */}
+          <View style={styles.section}>
+            <Text variant="caption" bold style={[styles.sectionTitle, { color: colors.textSecondary }]}>
+              {t('write.categorySelect')}
+            </Text>
+            <View style={styles.row}>
+              {CATEGORIES.map((cat) => (
+                <Chip
+                  key={cat.id}
+                  label={t(cat.labelKey)}
+                  selected={selectedCat === cat.id}
+                  onPress={() => setSelectedCat(cat.id)}
+                />
+              ))}
+            </View>
+          </View>
+
+          {/* 레시피 태그 */}
+          <View style={styles.section}>
+            <Text variant="caption" bold style={[styles.sectionTitle, { color: colors.textSecondary }]}>
+              {t('write.recipeTag')}
+            </Text>
+            <Text variant="caption" style={{ color: colors.textTertiary, marginBottom: 8 }}>
+              {t('write.recipeTagGuide')}
+            </Text>
+            {linkedRecipe ? (
+              <View style={[styles.recipeTag, { backgroundColor: colors.primaryLight, borderColor: colors.border }]}>
+                <Text variant="body" style={{ fontSize: 13, color: colors.text }}>
+                  {linkedRecipe.emoji} {linkedRecipe.nameKo}
+                </Text>
+                <Pressable onPress={() => setLinkedRecipe(null)}>
+                  <Icon name="close" size={14} color={colors.textSecondary} style={{ marginLeft: 8 }} />
+                </Pressable>
+              </View>
+            ) : (
+              <Pressable
+                style={[styles.addRecipeBtn, { borderColor: colors.border }]}
+                onPress={() => setIsRecipeModalOpen(true)}
+              >
+                <Icon name="write" size={14} color={colors.textSecondary} />
+                <Text variant="caption" style={{ color: colors.textSecondary, marginLeft: 6 }}>
+                  {t('write.addRecipeTag')}
+                </Text>
+              </Pressable>
+            )}
+          </View>
+
+          {/* 사진 추가 */}
+          <View style={styles.section}>
+            <Text variant="caption" bold style={[styles.sectionTitle, { color: colors.textSecondary }]}>
+              {t('write.photoAdd')}
+            </Text>
+            <View style={styles.row}>
+              {photos.length < 5 && (
+                <Pressable style={[styles.uploadBtn, { borderColor: colors.border }]} onPress={addMockPhoto}>
+                  <Icon name="write" size={20} color={colors.textSecondary} />
+                  <Text variant="caption" style={{ color: colors.textSecondary, marginTop: 4 }}>
+                    {t('write.add')}
+                  </Text>
+                </Pressable>
+              )}
+              {photos.map((uri) => (
+                <View key={uri} style={[styles.photoContainer, { borderColor: colors.border }]}>
+                  <Image source={{ uri }} style={styles.photo} contentFit="cover" />
+                  <Pressable style={styles.photoCloseBtn} onPress={() => removePhoto(uri)}>
+                    <Icon name="close" size={10} color="#FFFFFF" />
+                  </Pressable>
+                </View>
+              ))}
+            </View>
+          </View>
+
+          {/* 글 작성 — 카드 섹션 */}
+          <View style={[styles.editorCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <TextInput
+              value={title}
+              onChangeText={setTitle}
+              placeholder={t('write.titlePlaceholder')}
+              placeholderTextColor={colors.textSecondary}
+              style={[styles.titleInput, { color: colors.text, borderBottomColor: colors.border }]}
+              maxLength={100}
+            />
+            <TextInput
+              value={content}
+              onChangeText={setContent}
+              placeholder={t('write.placeholder')}
+              placeholderTextColor={colors.textSecondary}
+              multiline
+              maxLength={1000}
+              style={[styles.editor, { color: colors.text }]}
+            />
+            <Text variant="caption" style={[styles.counter, { color: colors.textSecondary }]}>
+              {content.length}/1000
+            </Text>
+          </View>
+        </ScrollView>
+
+        <RecipePickerModal
+          visible={isRecipeModalOpen}
+          selectedRecipe={linkedRecipe}
+          onClose={() => setIsRecipeModalOpen(false)}
+          onSelect={(recipe) => {
+            setLinkedRecipe(recipe);
+            setIsRecipeModalOpen(false);
+          }}
+        />
+      </ScreenLayout>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -305,13 +358,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  scrollContainer: {
+    paddingBottom: 40,
+  },
   editorCard: {
-    flex: 1,
+    minHeight: 250,
     marginTop: 20,
-    backgroundColor: '#FFFFFF',
     borderWidth: 1,
     borderRadius: 12,
     padding: 16,
+  },
+  titleInput: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    paddingVertical: 8,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    marginBottom: 8,
   },
   editor: {
     flex: 1,

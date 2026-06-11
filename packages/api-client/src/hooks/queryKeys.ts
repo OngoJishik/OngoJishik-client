@@ -21,13 +21,19 @@ export const foodKeys = {
  */
 export const communityKeys = {
   all: ['community'] as const,
-  feeds: () => [...communityKeys.all, 'feed'] as const,
-  feed: (category?: string, page?: number) =>
-    [...communityKeys.feeds(), { category, page }] as const,
-  posts: () => [...communityKeys.all, 'post'] as const,
-  post: (postId: string) => [...communityKeys.posts(), postId] as const,
-  comments: (postId: string) =>
-    [...communityKeys.all, 'comments', postId] as const,
+  boards: () => [...communityKeys.all, 'board'] as const,
+  boardList: (page?: number, size?: number) =>
+    [...communityKeys.boards(), 'list', { page, size }] as const,
+  boardSearch: (title: string, page?: number) =>
+    [...communityKeys.boards(), 'search', { title, page }] as const,
+  boardDetail: (boardId: number) =>
+    [...communityKeys.boards(), 'detail', boardId] as const,
+  comments: (boardId: number, page?: number) =>
+    [...communityKeys.all, 'comments', boardId, { page }] as const,
+  likeCount: (boardId: number) =>
+    [...communityKeys.all, 'likeCount', boardId] as const,
+  myComments: (page?: number) =>
+    [...communityKeys.all, 'myComments', { page }] as const,
 };
 
 /**
