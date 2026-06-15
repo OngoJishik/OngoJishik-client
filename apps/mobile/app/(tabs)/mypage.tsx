@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, StyleSheet, Pressable } from 'react-native';
+import { View, StyleSheet, Pressable, Alert } from 'react-native';
 import { useRouter, Href } from 'expo-router';
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 import { useTranslation } from '@ongo/i18n';
 import {
@@ -13,7 +14,15 @@ import {
   Icon,
   useTheme,
 } from '@ongo/ui';
-import { currentUserAtom, localFavoritesAtom, searchHistoryAtom } from '@ongo/store';
+import { useLogoutMutation } from '@ongo/api-client';
+import {
+  currentUserAtom,
+  localFavoritesAtom,
+  searchHistoryAtom,
+  authTokenAtom,
+  refreshTokenAtom,
+  userProfileAtom,
+} from '@ongo/store';
 
 /**
  * 마이페이지 화면 컴포넌트
@@ -28,6 +37,46 @@ export const MyPageScreen = () => {
   const currentUser = useAtomValue(currentUserAtom);
   const favorites = useAtomValue(localFavoritesAtom);
   const searchHistory = useAtomValue(searchHistoryAtom);
+
+  const { mutateAsync: logout } = useLogoutMutation();
+  const setAuthToken = useSetAtom(authTokenAtom);
+  const setRefreshToken = useSetAtom(refreshTokenAtom);
+  const setUserProfile = useSetAtom(userProfileAtom);
+
+  const handleLogout = () => {
+    Alert.alert(
+      t('mypage.logout', { defaultValue: '로그아웃' }),
+      t('mypage.logoutConfirm', { defaultValue: '정말 로그아웃 하시겠습니까?' }),
+      [
+        { text: t('common.cancel', { defaultValue: '취소' }), style: 'cancel' },
+        {
+          text: t('common.confirm', { defaultValue: '확인' }),
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await logout();
+            } catch (error) {
+              if (__DEV__) {
+                console.error('Logout API failed:', error);
+              }
+            } finally {
+              // Always clear client session states
+              setAuthToken(null);
+              setRefreshToken(null);
+              setUserProfile(null);
+              try {
+                await GoogleSignin.signOut();
+              } catch (e) {
+                if (__DEV__) {
+                  console.error('Google SignOut error:', e);
+                }
+              }
+            }
+          },
+        },
+      ]
+    );
+  };
 
   const displayName = currentUser?.name ?? '전통요리사_하나';
   const displayEmail = currentUser?.email ?? 'hana@gmail.com';
@@ -147,6 +196,12 @@ export const MyPageScreen = () => {
               console.log('App Info pressed');
             }
           }}
+        />
+        <MenuItem
+          title={t('mypage.logout', { defaultValue: '로그아웃' })}
+          icon="🚪"
+          description={t('mypage.logoutDesc', { defaultValue: '기기에서 로그아웃하고 로그인 화면으로 돌아갑니다.' })}
+          onPress={handleLogout}
         />
       </View>
     </ScreenLayout>
