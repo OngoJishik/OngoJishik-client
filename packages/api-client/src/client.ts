@@ -24,9 +24,10 @@ export const apiClient = axios.create({
 // Request interceptor for inserting tokens
 apiClient.interceptors.request.use(
   async (config) => {
-    // Try to load a temporary token from environment variables first, falling back to AsyncStorage
-    const token = process.env.EXPO_PUBLIC_API_TEMP_TOKEN || await storage.getItem<string>('auth_token');
+    // Try to load a real token from AsyncStorage first, falling back to temporary token from env
+    const token = (await storage.getItem<string>('ongo_auth_token')) || process.env.EXPO_PUBLIC_API_TEMP_TOKEN;
     if (token && config.headers) {
+
       config.headers.Authorization = `Bearer ${token}`;
     }
     if (__DEV__) {

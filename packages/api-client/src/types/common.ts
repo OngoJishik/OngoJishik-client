@@ -49,3 +49,17 @@ export type TUserProfile = {
   postCount?: number;
 };
 
+/**
+ * 구글 로그인 및 토큰 갱신 응답 데이터 타입
+ * @author Antigravity
+ */
+export type TUserLoginResponse = {
+  userId: number;
+  email: string;
+  nickname: string;
+  accessToken: string;
+  refreshToken: string;
+  newUser: boolean;
+};
+
+
