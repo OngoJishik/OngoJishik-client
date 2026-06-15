@@ -37,6 +37,7 @@ export const MyPageScreen = () => {
   const currentUser = useAtomValue(currentUserAtom);
   const favorites = useAtomValue(localFavoritesAtom);
   const searchHistory = useAtomValue(searchHistoryAtom);
+  const refreshToken = useAtomValue(refreshTokenAtom);
 
   const { mutateAsync: logout } = useLogoutMutation();
   const setAuthToken = useSetAtom(authTokenAtom);
@@ -54,10 +55,10 @@ export const MyPageScreen = () => {
           style: 'destructive',
           onPress: async () => {
             try {
-              await logout();
+              await logout(refreshToken);
             } catch (error) {
               if (__DEV__) {
-                console.error('Logout API failed:', error);
+                console.warn('Logout API failed:', error);
               }
             } finally {
               // Always clear client session states

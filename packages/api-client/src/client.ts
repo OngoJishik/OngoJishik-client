@@ -33,6 +33,9 @@ apiClient.interceptors.request.use(
     if (__DEV__) {
       console.log(`[API Request] ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`);
       console.log('[API Request Headers]', JSON.stringify(config.headers));
+      if (config.data) {
+        console.log('[API Request Body]', JSON.stringify(config.data));
+      }
     }
     return config;
   },
@@ -58,7 +61,10 @@ apiClient.interceptors.response.use(
   },
   (error) => {
     if (__DEV__) {
-      console.error('[API Response Error]', error.response?.status, error.message);
+      console.warn('[API Response Error]', error.response?.status, error.message);
+      if (error.response?.data) {
+        console.warn('[API Response Error Data]', JSON.stringify(error.response.data, null, 2));
+      }
     }
     const status = error.response ? error.response.status : null;
     if (status === 401) {

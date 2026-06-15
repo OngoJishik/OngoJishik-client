@@ -19,8 +19,8 @@ export const authEndpoints = {
    * 로그아웃
    * @author Antigravity
    */
-  async logout(): Promise<void> {
-    await apiClient.post('/api/users/auth/logout');
+  async logout(refreshToken?: string | null): Promise<void> {
+    await apiClient.post('/api/users/auth/logout', refreshToken ? { refreshToken } : {});
   },
 
   /**

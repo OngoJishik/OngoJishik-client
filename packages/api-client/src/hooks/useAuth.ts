@@ -27,6 +27,6 @@ export const useRefreshTokenMutation = () => {
  */
 export const useLogoutMutation = () => {
   return useMutation({
-    mutationFn: () => authEndpoints.logout(),
+    mutationFn: (refreshToken?: string | null) => authEndpoints.logout(refreshToken),
   });
 };
