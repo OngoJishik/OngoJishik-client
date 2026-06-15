@@ -31,6 +31,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   plugins: [
     'expo-router',
     'expo-asset',
+    [
+      '@react-native-google-signin/google-signin',
+      {
+        iosUrlScheme: process.env.EXPO_PUBLIC_GOOGLE_IOS_URL_SCHEME || 'com.googleusercontent.apps.placeholder',
+      },
+    ],
   ],
   experiments: {
     typedRoutes: true,

@@ -1,25 +1,64 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { useRouter } from 'expo-router';
+import { View, StyleSheet, Alert } from 'react-native';
+import { useSetAtom } from 'jotai';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 import { useTranslation } from '@ongo/i18n';
 import { ScreenLayout, Button, Text, useTheme } from '@ongo/ui';
+import { useGoogleLoginMutation } from '@ongo/api-client';
+import { authTokenAtom, refreshTokenAtom, userProfileAtom } from '@ongo/store';
 
 /**
- * 로그인 화면 컴포넌트 (Google OAuth 플레이스홀더)
+ * 로그인 화면 컴포넌트 (구글 소셜 로그인 연동)
  * @author Antigravity
  */
 export const LoginScreen = () => {
-  const router = useRouter();
   const { colors } = useTheme();
   const { t } = useTranslation();
 
-  const handleGoogleLogin = () => {
-    if (__DEV__) {
-      console.log('Google login process started...');
+  const { mutateAsync: loginWithGoogle, isPending } = useGoogleLoginMutation();
+  const setAuthToken = useSetAtom(authTokenAtom);
+  const setRefreshToken = useSetAtom(refreshTokenAtom);
+  const setUserProfile = useSetAtom(userProfileAtom);
+
+  const handleGoogleLogin = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const response = await GoogleSignin.signIn();
+      
+      const idToken = response.data?.idToken;
+      if (!idToken) {
+        throw new Error('Google Sign-in did not return an ID token.');
+      }
+
+      // Call backend API with the Google ID Token
+      const result = await loginWithGoogle(idToken);
+
+      // Map backend response to TUserProfile format
+      const userProfile = {
+        id: String(result.userId),
+        email: result.email,
+        name: result.nickname,
+        language: 'ko' as const,
+        notificationsEnabled: true,
+      };
+
+      // Update Jotai atoms (automatically saved to AsyncStorage)
+      setAuthToken(result.accessToken);
+      setRefreshToken(result.refreshToken);
+      setUserProfile(userProfile);
+
+      // AuthNavigator inside _layout.tsx will automatically redirect to /(tabs)
+    } catch (error) {
+      if (__DEV__) {
+        console.error('Google login failed:', error);
+      }
+      
+      Alert.alert(
+        t('common.error', { defaultValue: '오류' }),
+        t('common.loginFailed', { defaultValue: '로그인에 실패했습니다. 다시 시도해주세요.' })
+      );
     }
-    // Simulate successful login and go back or to home
-    router.replace('/(tabs)');
   };
 
   return (
@@ -34,6 +73,8 @@ export const LoginScreen = () => {
         <Button
           title={t('auth.googleLogin', { defaultValue: 'Google로 로그인' })}
           onPress={handleGoogleLogin}
+          loading={isPending}
+          disabled={isPending}
           style={styles.loginBtn}
         />
       </View>
@@ -67,3 +108,4 @@ const styles = StyleSheet.create({
 });
 
 export { LoginScreen as default };
+

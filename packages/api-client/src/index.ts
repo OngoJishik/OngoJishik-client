@@ -17,4 +17,6 @@ export * from './hooks/useFoodDetail';
 export * from './hooks/useRecommendation';
 export * from './hooks/useCommunity';
 export * from './hooks/useFavorites';
+export * from './hooks/useAuth';
+
 

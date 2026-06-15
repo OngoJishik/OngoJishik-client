@@ -1,30 +1,43 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { atom } from 'jotai';
+import { atomWithStorage, createJSONStorage } from 'jotai/utils';
 import type { TUserProfile } from '@ongo/api-client';
 
-// 인증 API 연동 전 개발용 Mock 유저 (MOCK_POSTS의 user1과 동일)
-const MOCK_USER: TUserProfile = {
-  id: 'user1',
-  email: 'hana@gmail.com',
-  name: '전통요리사_하나',
-  language: 'ko',
-  notificationsEnabled: true,
-};
-
 /**
- * 인증 액세스 토큰 상태 Atom
+ * 인증 액세스 토큰 상태 Atom (AsyncStorage 영속)
  * @author Antigravity
  */
-export const authTokenAtom = atom<string | null>('mock-token');
+export const authTokenAtom = atomWithStorage<string | null>(
+  'ongo_auth_token',
+  null,
+  createJSONStorage(() => AsyncStorage)
+);
 
 /**
- * 로그인된 유저의 프로필 정보 상태 Atom
+ * 인증 리프레시 토큰 상태 Atom (AsyncStorage 영속)
  * @author Antigravity
  */
-export const userProfileAtom = atom<TUserProfile | null>(MOCK_USER);
+export const refreshTokenAtom = atomWithStorage<string | null>(
+  'ongo_refresh_token',
+  null,
+  createJSONStorage(() => AsyncStorage)
+);
+
+/**
+ * 로그인된 유저의 프로필 정보 상태 Atom (AsyncStorage 영속)
+ * @author Antigravity
+ */
+export const userProfileAtom = atomWithStorage<TUserProfile | null>(
+  'ongo_user_profile',
+  null,
+  createJSONStorage(() => AsyncStorage)
+);
+
 
 /**
  * 사용자가 인증(로그인)되었는지 여부를 확인하는 파생 Atom
  * @author Antigravity
  */
 export const isAuthenticatedAtom = atom<boolean>((get) => !!get(authTokenAtom));
+
 
