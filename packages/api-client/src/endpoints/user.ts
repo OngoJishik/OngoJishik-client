@@ -1,9 +1,9 @@
 import { apiClient } from '../client';
 import type { TUserProfile } from '../types/common';
-import type { TFood } from '../types/food';
+import type { TBookmarkResponse } from '../types/bookmark';
 
 /**
- * 사용자 정보 및 개인화 관련 API 엔드포인트 객체
+ * 사용자 정보 및 즐겨찾기 관련 API 엔드포인트 객체
  * @author Antigravity
  */
 export const userEndpoints = {
@@ -26,21 +26,29 @@ export const userEndpoints = {
   },
 
   /**
-   * 사용자의 즐겨찾기(전통 음식) 목록 조회
+   * 내 즐겨찾기(북마크) 목록 조회 (GET /api/bookmarks)
    * @author Antigravity
    */
-  async getFavorites(): Promise<TFood[]> {
-    const response = await apiClient.get<TFood[]>('/user/favorites');
+  async getBookmarks(): Promise<TBookmarkResponse[]> {
+    const response = await apiClient.get<TBookmarkResponse[]>('/api/bookmarks');
     return response.data;
   },
 
   /**
-   * 특정 음식의 즐겨찾기 등록/해제 토글
+   * 음식 즐겨찾기 추가 (POST /api/bookmarks/{foodId})
    * @author Antigravity
    */
-  async toggleFavorite(foodId: string): Promise<{ isFavorite: boolean }> {
-    const response = await apiClient.post<{ isFavorite: boolean }>(`/user/favorites/${foodId}/toggle`);
+  async addBookmark(foodId: string): Promise<TBookmarkResponse> {
+    const response = await apiClient.post<TBookmarkResponse>(`/api/bookmarks/${foodId}`);
     return response.data;
+  },
+
+  /**
+   * 음식 즐겨찾기 삭제 (DELETE /api/bookmarks/{foodId})
+   * @author Antigravity
+   */
+  async deleteBookmark(foodId: string): Promise<void> {
+    await apiClient.delete(`/api/bookmarks/${foodId}`);
   },
 };
 
