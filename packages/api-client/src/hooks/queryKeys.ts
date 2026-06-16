@@ -1,4 +1,5 @@
 import type { TSearchFilters } from '../types/search';
+import type { TBoardCategory } from '../types/community';
 
 /**
  * 음식 관련 TanStack Query Key 팩토리 객체
@@ -22,12 +23,14 @@ export const foodKeys = {
 export const communityKeys = {
   all: ['community'] as const,
   boards: () => [...communityKeys.all, 'board'] as const,
-  boardList: (page?: number, size?: number) =>
-    [...communityKeys.boards(), 'list', { page, size }] as const,
-  boardSearch: (title: string, page?: number) =>
-    [...communityKeys.boards(), 'search', { title, page }] as const,
+  boardList: (page?: number, size?: number, category?: TBoardCategory) =>
+    [...communityKeys.boards(), 'list', { page, size, category }] as const,
+  boardSearch: (title: string, page?: number, category?: TBoardCategory) =>
+    [...communityKeys.boards(), 'search', { title, page, category }] as const,
   boardDetail: (boardId: number) =>
     [...communityKeys.boards(), 'detail', boardId] as const,
+  myBoards: (page?: number, size?: number) =>
+    [...communityKeys.boards(), 'me', { page, size }] as const,
   comments: (boardId: number, page?: number) =>
     [...communityKeys.all, 'comments', boardId, { page }] as const,
   likeCount: (boardId: number) =>
@@ -56,4 +59,3 @@ export const historyKeys = {
   all: ['history'] as const,
   story: (foodId: string) => [...historyKeys.all, foodId] as const,
 };
-

@@ -23,25 +23,11 @@ import { RecipePickerModal } from './components/RecipePickerModal';
 import type { TLinkedRecipe } from './components/RecipePickerModal';
 import type { TBoardCategory } from '@ongo/api-client';
 
-const CATEGORIES = [
-  { id: 'review', labelKey: 'community.cookingReview' },
-  { id: 'recipe', labelKey: 'community.myRecipe' },
-  { id: 'qna', labelKey: 'community.qna' },
+const CATEGORIES: { id: TBoardCategory; labelKey: string }[] = [
+  { id: 'REVIEW', labelKey: 'community.cookingReview' },
+  { id: 'RECIPE', labelKey: 'community.myRecipe' },
+  { id: 'QNA', labelKey: 'community.qna' },
 ];
-
-/**
- * JSON 이미지 문자열 파싱 헬퍼 함수
- * @author Antigravity
- */
-const parseImages = (imageUrl?: string): string[] => {
-  if (!imageUrl) return [];
-  try {
-    const parsed = JSON.parse(imageUrl);
-    return Array.isArray(parsed) ? parsed : [imageUrl];
-  } catch {
-    return [imageUrl];
-  }
-};
 
 /**
  * 커뮤니티 게시글 작성 화면 컴포넌트
@@ -74,8 +60,8 @@ export const WritePostScreen = () => {
   const isEditMode = mode === 'edit' && !!postId;
   const boardId = isEditMode ? parseInt(postId ?? '', 10) : 0;
 
-  const [selectedCat, setSelectedCat] = useState<string>(() =>
-    isEditMode && initCategory ? String(initCategory) : 'review',
+  const [selectedCat, setSelectedCat] = useState<TBoardCategory>(() =>
+    isEditMode && initCategory ? (String(initCategory) as TBoardCategory) : 'REVIEW',
   );
   const [title, setTitle] = useState<string>(() =>
     isEditMode && initTitle ? String(initTitle) : '',
@@ -103,13 +89,10 @@ export const WritePostScreen = () => {
 
   useEffect(() => {
     if (isEditMode && existingPost) {
-      setSelectedCat(existingPost.category || 'review');
+      setSelectedCat(existingPost.category);
       setTitle(existingPost.title);
       setContent(existingPost.content);
-      setPhotos(existingPost.imageUrl ? parseImages(existingPost.imageUrl) : []);
-      if (existingPost.linkedRecipe) {
-        setLinkedRecipe({ nameKo: existingPost.linkedRecipe.nameKo, emoji: existingPost.linkedRecipe.emoji });
-      }
+      setPhotos(existingPost.imageUrls ?? []);
     }
   }, [isEditMode, existingPost]);
 
@@ -119,9 +102,8 @@ export const WritePostScreen = () => {
     const payload = {
       title: title.trim(),
       content: content.trim(),
-      imageUrl: JSON.stringify(photos),
-      category: selectedCat as TBoardCategory,
-      linkedRecipeId: undefined, // Backend does not support recipe linking yet
+      imageUrls: photos,
+      category: selectedCat,
     };
 
     if (isEditMode && boardId) {
