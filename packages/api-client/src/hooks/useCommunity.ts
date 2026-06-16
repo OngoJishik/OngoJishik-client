@@ -1,17 +1,17 @@
 import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { communityEndpoints } from '../endpoints/community';
 import { communityKeys } from './queryKeys';
-import type { TBoardUpdateRequest, TBoardCreateRequest, TComment } from '../types/community';
+import type { TBoardCategory, TBoardUpdateRequest, TBoardCreateRequest, TComment } from '../types/community';
 import type { TPage } from '../types/common';
 
 /**
  * 커뮤니티 게시글 목록 무한 스크롤 조회 훅
  * @author Antigravity
  */
-export const useBoardsInfiniteQuery = (size: number = 10) => {
+export const useBoardsInfiniteQuery = (size: number = 10, category?: TBoardCategory) => {
   return useInfiniteQuery({
-    queryKey: communityKeys.boardList(undefined, size),
-    queryFn: ({ pageParam = 0 }) => communityEndpoints.getBoards(pageParam, size),
+    queryKey: communityKeys.boardList(undefined, size, category),
+    queryFn: ({ pageParam = 0 }) => communityEndpoints.getBoards(pageParam, size, 'createdAt', 'DESC', category),
     initialPageParam: 0,
     getNextPageParam: (lastPage) => (lastPage.last ? undefined : lastPage.number + 1),
     staleTime: 30 * 1000, // 30s
@@ -23,10 +23,15 @@ export const useBoardsInfiniteQuery = (size: number = 10) => {
  * 게시글 제목 검색 훅
  * @author Antigravity
  */
-export const useSearchBoardsQuery = (title: string, page: number = 0, size: number = 10) => {
+export const useSearchBoardsQuery = (
+  title: string,
+  page: number = 0,
+  size: number = 10,
+  category?: TBoardCategory
+) => {
   return useQuery({
-    queryKey: communityKeys.boardSearch(title, page),
-    queryFn: () => communityEndpoints.searchBoards(title, page, size),
+    queryKey: communityKeys.boardSearch(title, page, category),
+    queryFn: () => communityEndpoints.searchBoards(title, page, size, 'createdAt', 'DESC', category),
     enabled: !!title,
   });
 };
@@ -84,6 +89,21 @@ export const useDeleteBoardMutation = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: communityKeys.boards() });
     },
+  });
+};
+
+/**
+ * 내가 작성한 게시글 목록 무한 스크롤 조회 훅
+ * @author Antigravity
+ */
+export const useMyBoardsInfiniteQuery = (size: number = 10) => {
+  return useInfiniteQuery({
+    queryKey: communityKeys.myBoards(undefined, size),
+    queryFn: ({ pageParam = 0 }) => communityEndpoints.getMyBoards(pageParam, size),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => (lastPage.last ? undefined : lastPage.number + 1),
+    staleTime: 30 * 1000, // 30s
+    gcTime: 5 * 60 * 1000, // 5m
   });
 };
 
@@ -271,4 +291,15 @@ export const useMyCommentsQuery = (page: number = 0, size: number = 20) => {
   });
 };
 
-
+/**
+ * 내가 작성한 게시글 페이지 조회 훅 (무한 스크롤 없는 단순 페이지 버전)
+ * size=1로 호출하면 totalElements만 효율적으로 조회할 수 있습니다.
+ * @author Antigravity
+ */
+export const useMyBoardsQuery = (page: number = 0, size: number = 10) => {
+  return useQuery({
+    queryKey: communityKeys.myBoards(page, size),
+    queryFn: () => communityEndpoints.getMyBoards(page, size),
+    staleTime: 60 * 1000, // 1m
+  });
+};
