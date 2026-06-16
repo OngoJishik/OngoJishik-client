@@ -23,8 +23,9 @@ export const foodKeys = {
 export const communityKeys = {
   all: ['community'] as const,
   boards: () => [...communityKeys.all, 'board'] as const,
+  boardLists: () => [...communityKeys.all, 'board', 'list'] as const,
   boardList: (page?: number, size?: number, category?: TBoardCategory) =>
-    [...communityKeys.boards(), 'list', { page, size, category }] as const,
+    [...communityKeys.boardLists(), { page, size, category }] as const,
   boardSearch: (title: string, page?: number, category?: TBoardCategory) =>
     [...communityKeys.boards(), 'search', { title, page, category }] as const,
   boardDetail: (boardId: number) =>

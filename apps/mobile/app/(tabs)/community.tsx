@@ -76,9 +76,9 @@ export const CommunityScreen = () => {
   const handleLike = (boardId: number, currentIsLiked: boolean, currentLikeCount: number) => {
     // 1. 낙관적 업데이트: 캐시의 board list 데이터를 즉시 변경
     queryClient.setQueriesData<InfiniteData<TPage<TBoardSummary>>>(
-      { queryKey: communityKeys.boards() },
+      { queryKey: communityKeys.boardLists() },
       (old) => {
-        if (!old) return old;
+        if (!old || !old.pages) return old;
         return {
           ...old,
           pages: old.pages.map((page) => ({
@@ -106,9 +106,9 @@ export const CommunityScreen = () => {
         onError: () => {
           // 3. 실패 시 원래 값으로 롤백
           queryClient.setQueriesData<InfiniteData<TPage<TBoardSummary>>>(
-            { queryKey: communityKeys.boards() },
+            { queryKey: communityKeys.boardLists() },
             (old) => {
-              if (!old) return old;
+              if (!old || !old.pages) return old;
               return {
                 ...old,
                 pages: old.pages.map((page) => ({
