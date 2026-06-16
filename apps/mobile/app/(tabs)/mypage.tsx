@@ -14,7 +14,7 @@ import {
   Icon,
   useTheme,
 } from '@ongo/ui';
-import { useLogoutMutation } from '@ongo/api-client';
+import { useLogoutMutation, useMyBoardsQuery } from '@ongo/api-client';
 import {
   currentUserAtom,
   localFavoritesAtom,
@@ -43,6 +43,10 @@ export const MyPageScreen = () => {
   const setAuthToken = useSetAtom(authTokenAtom);
   const setRefreshToken = useSetAtom(refreshTokenAtom);
   const setUserProfile = useSetAtom(userProfileAtom);
+
+  // 내 게시글 총 개수 조회 (size=1로 totalElements만 효율적으로 가져옴)
+  const { data: myBoardsData } = useMyBoardsQuery(0, 1);
+  const postCount = myBoardsData?.totalElements ?? currentUser?.postCount ?? 0;
 
   const handleLogout = () => {
     Alert.alert(
@@ -122,7 +126,7 @@ export const MyPageScreen = () => {
         </View>
         <View style={[styles.statCol, styles.statDivider, { borderColor: colors.border }]}>
           <Text variant="h2" bold style={[styles.statVal, { color: colors.primary }]}>
-            {currentUser?.postCount ?? 0}
+            {postCount}
           </Text>
           <Text variant="caption" style={{ color: colors.textSecondary }}>{t('mypage.posts')}</Text>
         </View>
