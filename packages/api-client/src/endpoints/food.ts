@@ -1,5 +1,5 @@
 import { apiClient } from '../client';
-import type { TFood, TFoodDetail } from '../types/food';
+import type { TFood, TFoodDetail, TRecommendResponse, TFoodDetailResponse } from '../types/food';
 import type { TSearchFilters, TAiSearchAnalysis } from '../types/search';
 
 /**
@@ -8,7 +8,7 @@ import type { TSearchFilters, TAiSearchAnalysis } from '../types/search';
  */
 export const foodEndpoints = {
   /**
-   * 전통 음식 검색
+   * 전통 음식 검색 (레거시 - stub)
    * @author Antigravity
    */
   async searchFoods(query: string, filters?: TSearchFilters): Promise<TFood[]> {
@@ -19,7 +19,7 @@ export const foodEndpoints = {
   },
 
   /**
-   * AI 기반 검색어 분석
+   * AI 기반 검색어 분석 (레거시 - stub)
    * @author Antigravity
    */
   async analyzeSearchAI(query: string): Promise<TAiSearchAnalysis> {
@@ -28,7 +28,26 @@ export const foodEndpoints = {
   },
 
   /**
-   * 전통 음식 상세 정보 조회
+   * 자연어 기반 음식 추천 (POST /api/analysis/recommend)
+   * 사용자 입력 문장을 기반으로 전통 음식 3개를 추천합니다.
+   * @author Antigravity
+   */
+  async getRecommendation(query: string): Promise<TRecommendResponse> {
+    const response = await apiClient.post<TRecommendResponse>('/api/analysis/recommend', { query });
+    return response.data;
+  },
+
+  /**
+   * 추천 음식 상세 정보 조회 (GET /api/analysis/{foodId})
+   * @author Antigravity
+   */
+  async getFoodDetailFromAnalysis(foodId: string): Promise<TFoodDetailResponse> {
+    const response = await apiClient.get<TFoodDetailResponse>(`/api/analysis/${foodId}`);
+    return response.data;
+  },
+
+  /**
+   * 전통 음식 상세 정보 조회 (레거시 - stub)
    * @author Antigravity
    */
   async getFoodDetail(id: string): Promise<TFoodDetail> {
@@ -37,7 +56,7 @@ export const foodEndpoints = {
   },
 
   /**
-   * 오늘의 추천 음식 조회
+   * 오늘의 추천 음식 조회 (레거시 - stub)
    * @author Antigravity
    */
   async getTodayRecommendation(): Promise<TFoodDetail> {
@@ -46,7 +65,7 @@ export const foodEndpoints = {
   },
 
   /**
-   * 인기 전통 음식 목록 조회
+   * 인기 전통 음식 목록 조회 (레거시 - stub)
    * @author Antigravity
    */
   async getPopularFoods(): Promise<TFood[]> {
