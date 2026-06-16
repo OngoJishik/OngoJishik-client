@@ -1,59 +1,80 @@
 import React from 'react';
-import { FlatList, View, StyleSheet } from 'react-native';
+import { FlatList, View, StyleSheet, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useAtomValue } from 'jotai';
 
 import { useTranslation } from '@ongo/i18n';
-import { localFavoritesAtom } from '@ongo/store';
+import { useFavoritesQuery } from '@ongo/api-client';
 import {
   ScreenLayout,
   Header,
   FoodResultCard,
   Text,
 } from '@ongo/ui';
-
-import { MOCK_FOODS } from '../mocks';
+import { colors as designColors } from '@ongo/ui';
 
 /**
  * 즐겨찾기 음식 목록 화면 컴포넌트
- * 마이페이지 등에서 이동할 수 있으며, 사용자가 즐겨찾기(하트)를 등록한 전통 음식 목록을 렌더링합니다.
+ * GET /api/bookmarks 를 통해 서버에서 즐겨찾기 목록을 가져와 렌더링합니다.
  * @author Antigravity
  */
 export const FavoritesScreen = () => {
   const router = useRouter();
   const { t } = useTranslation();
-  const favorites = useAtomValue(localFavoritesAtom);
+  const { data: bookmarks, isLoading, isError } = useFavoritesQuery();
 
-  const favoriteFoods = MOCK_FOODS.filter((food) => favorites.includes(food.id));
+  const renderContent = () => {
+    if (isLoading) {
+      return (
+        <View style={styles.centerContainer}>
+          <ActivityIndicator size="large" color={designColors.primary.DEFAULT} />
+        </View>
+      );
+    }
+
+    if (isError) {
+      return (
+        <View style={styles.centerContainer}>
+          <Text variant="bodySecondary">{t('favorites.error', { defaultValue: '즐겨찾기를 불러오지 못했어요.' })}</Text>
+        </View>
+      );
+    }
+
+    const favoriteFoods = bookmarks ?? [];
+
+    if (favoriteFoods.length === 0) {
+      return (
+        <View style={styles.emptyContainer}>
+          <Text variant="bodySecondary">{t('favorites.empty')}</Text>
+        </View>
+      );
+    }
+
+    return (
+      <FlatList
+        data={favoriteFoods}
+        keyExtractor={(item) => item.foodId}
+        showsVerticalScrollIndicator={false}
+        renderItem={({ item }) => (
+          <FoodResultCard
+            id={item.foodId}
+            nameKo={item.foodName}
+            nameLocalized={undefined}
+            emoji={'🍲'}
+            category={item.category as Parameters<typeof FoodResultCard>[0]['category']}
+            era={undefined}
+            description={item.foodFeature}
+            onPress={() => router.push(`/food/${item.foodId}`)}
+          />
+        )}
+        contentContainerStyle={styles.listContent}
+      />
+    );
+  };
 
   return (
     <ScreenLayout>
       <Header title={t('favorites.title')} titleIcon="star-filled" onBack={() => router.back()} />
-
-      {favoriteFoods.length === 0 ? (
-        <View style={styles.emptyContainer}>
-          <Text variant="bodySecondary">{t('favorites.empty')}</Text>
-        </View>
-      ) : (
-        <FlatList
-          data={favoriteFoods}
-          keyExtractor={(item) => item.id}
-          showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => (
-            <FoodResultCard
-              id={item.id}
-              nameKo={item.nameKo}
-              nameLocalized={item.nameLocalized}
-              emoji={item.emoji}
-              category={item.category}
-              era={item.era}
-              description={item.description}
-              onPress={() => router.push(`/food/${item.id}`)}
-            />
-          )}
-          contentContainerStyle={styles.listContent}
-        />
-      )}
+      {renderContent()}
     </ScreenLayout>
   );
 };
@@ -61,6 +82,11 @@ export const FavoritesScreen = () => {
 export { FavoritesScreen as default };
 
 const styles = StyleSheet.create({
+  centerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -70,3 +96,4 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
 });
+
