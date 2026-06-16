@@ -6,8 +6,8 @@ const workspaceRoot = path.resolve(projectRoot, '../..');
 
 const config = getDefaultConfig(projectRoot);
 
-// 1. Watch all files within the monorepo workspace
-config.watchFolders = [workspaceRoot];
+// 1. Watch all files within the monorepo workspace (preserve Expo defaults)
+config.watchFolders = [workspaceRoot, ...(config.watchFolders ?? [])];
 
 // 2. Let Metro look for modules in both the local node_modules and the monorepo root node_modules
 config.resolver.nodeModulesPaths = [
