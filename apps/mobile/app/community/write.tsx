@@ -146,11 +146,12 @@ export const WritePostScreen = () => {
     if (photos.length >= 5) return;
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsMultipleSelection: false,
+      allowsMultipleSelection: true,
+      selectionLimit: 5 - photos.length,
       quality: 0.8,
     });
     if (!result.canceled && result.assets.length > 0) {
-      setPhotos((prev) => [...prev, result.assets[0].uri]);
+      setPhotos((prev) => [...prev, ...result.assets.map((a) => a.uri)]);
     }
   };
 
