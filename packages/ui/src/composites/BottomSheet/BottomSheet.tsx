@@ -14,6 +14,8 @@ import { useTheme } from '../../../theme/useTheme';
 export type BottomSheetProps = {
   visible: boolean;
   onClose: () => void;
+  /** 닫힌 애니메이션이 완료된 후 호출됩니다. 키보드 포커스 등 후처리에 활용하세요. */
+  onClosed?: () => void;
   children: React.ReactNode;
   maxHeight?: number | `${number}%`;
 };
@@ -25,7 +27,7 @@ const TRANSLATE_Y_INITIAL = 600;
  * 오버레이 페이드인 + 시트 슬라이드업 애니메이션이 적용된 바텀시트 공통 컴포넌트
  * @author Antigravity
  */
-export const BottomSheet = ({ visible, onClose, children, maxHeight }: BottomSheetProps) => {
+export const BottomSheet = ({ visible, onClose, onClosed, children, maxHeight }: BottomSheetProps) => {
   const { colors } = useTheme();
   const [isMounted, setIsMounted] = useState(false);
   const isMountedRef = useRef(false);
@@ -47,6 +49,7 @@ export const BottomSheet = ({ visible, onClose, children, maxHeight }: BottomShe
         if (finished) {
           isMountedRef.current = false;
           setIsMounted(false);
+          onClosed?.();
         }
       });
     }

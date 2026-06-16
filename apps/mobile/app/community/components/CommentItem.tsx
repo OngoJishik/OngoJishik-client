@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { View, StyleSheet, Alert, Pressable, TextInput } from 'react-native';
 
 import { useTranslation } from '@ongo/i18n';
@@ -23,28 +23,42 @@ export type CommentItemProps = {
   isAuthor: boolean;
   onUpdate: (commentId: string, content: string) => void;
   onDelete: (commentId: string) => void;
+  onEditingChange?: (isEditing: boolean) => void;
 };
 
-const CLOSE_ANIM_MS = 260;
+// BottomSheet(Modal) 닫힌 애니메이션(250ms) + Modal 언마운트 대기 + 여유
+const CLOSE_ANIM_MS = 420;
 
 /**
  * 커뮤니티 댓글 아이템 컴포넌트
  * 본인 댓글에만 ⋯ 메뉴(수정/삭제)를 표시하고, 수정 시 인라인 TextInput으로 전환됩니다.
  * @author Antigravity
  */
-export const CommentItem = ({ comment, isAuthor, onUpdate, onDelete }: CommentItemProps) => {
+export const CommentItem = ({ comment, isAuthor, onUpdate, onDelete, onEditingChange }: CommentItemProps) => {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(comment.content);
+  const inputRef = useRef<TextInput>(null);
+  const pendingEdit = useRef(false); // 수정 전환 종류 플래그
 
   const handleEdit = () => {
+    // BottomSheet를 닫고, onClosed 콜백에서 편집 모드 전환
+    pendingEdit.current = true;
     setIsMenuOpen(false);
+  };
+
+  const handleEditAfterClose = () => {
+    if (!pendingEdit.current) return;
+    pendingEdit.current = false;
+    setEditText(comment.content);
+    setIsEditing(true);
+    onEditingChange?.(true);
+    // Modal이 언마운트된 다음 프레임에 키보드 요청 (네이티브 Modal 완전 해제를 위해 200ms 대기)
     setTimeout(() => {
-      setEditText(comment.content);
-      setIsEditing(true);
-    }, CLOSE_ANIM_MS);
+      inputRef.current?.focus();
+    }, 200);
   };
 
   const handleDelete = () => {
@@ -66,11 +80,13 @@ export const CommentItem = ({ comment, isAuthor, onUpdate, onDelete }: CommentIt
       onUpdate(comment.id, editText.trim());
     }
     setIsEditing(false);
+    onEditingChange?.(false);
   };
 
   const handleCancel = () => {
     setEditText(comment.content);
     setIsEditing(false);
+    onEditingChange?.(false);
   };
 
   return (
@@ -96,10 +112,10 @@ export const CommentItem = ({ comment, isAuthor, onUpdate, onDelete }: CommentIt
         {isEditing ? (
           <View>
             <TextInput
+              ref={inputRef}
               value={editText}
               onChangeText={setEditText}
               multiline
-              autoFocus
               style={[styles.editInput, { color: colors.text, borderColor: colors.border, backgroundColor: colors.card }]}
             />
             <View style={styles.editActions}>
@@ -122,7 +138,11 @@ export const CommentItem = ({ comment, isAuthor, onUpdate, onDelete }: CommentIt
         )}
       </View>
 
-      <BottomSheet visible={isMenuOpen} onClose={() => setIsMenuOpen(false)}>
+      <BottomSheet
+        visible={isMenuOpen}
+        onClose={() => setIsMenuOpen(false)}
+        onClosed={handleEditAfterClose}
+      >
         <Pressable
           style={[styles.menuItem, { borderBottomColor: colors.border }]}
           onPress={handleEdit}
