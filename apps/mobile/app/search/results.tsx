@@ -1,8 +1,9 @@
-import React from 'react';
-import { View, StyleSheet, FlatList } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
 import { useTranslation } from '@ongo/i18n';
+import { useRecommendMutation } from '@ongo/api-client';
 import {
   ScreenLayout,
   Header,
@@ -14,11 +15,9 @@ import {
 } from '@ongo/ui';
 import { colors as designColors } from '@ongo/ui';
 
-import { MOCK_RESULTS } from '../../mocks';
-
 /**
  * 전통 음식 검색 결과를 보여주는 화면 컴포넌트
- * 입력된 쿼리에 근거해 AI 분석 배지 및 검색 결과를 정렬 렌더링합니다.
+ * POST /api/analysis/recommend 를 통해 AI 기반 음식 3개를 추천받아 렌더링합니다.
  * @author Antigravity
  */
 export const SearchResultsScreen = () => {
@@ -29,10 +28,16 @@ export const SearchResultsScreen = () => {
 
   const queryStr = q || '';
 
-  // Extract mock values based on search terms
-  const hasTaste = queryStr.includes('매콤') || queryStr.includes('매운') || queryStr.includes('빨간');
-  const hasColor = queryStr.includes('빨간') || queryStr.includes('빨강');
-  const hasForm = queryStr.includes('국물') || queryStr.includes('탕') || queryStr.includes('찌개');
+  const { mutate: recommend, data: result, isPending, isError } = useRecommendMutation();
+
+  useEffect(() => {
+    if (queryStr.trim()) {
+      recommend(queryStr);
+    }
+  }, [queryStr]);
+
+  const recommendations = result?.recommendations ?? [];
+  const extractedFeatures = result?.extractedFeatures ?? [];
 
   return (
     <ScreenLayout>
@@ -44,43 +49,64 @@ export const SearchResultsScreen = () => {
         </Text>
       </View>
 
-      <Text variant="caption" style={[styles.resultCount, { color: colors.textSecondary }]}>
-        {t('results.count', { count: MOCK_RESULTS.length })}
-      </Text>
-
-      {(hasTaste || hasColor || hasForm) && (
-        <AIAnalysisBadge
-          taste={hasTaste ? '매운맛' : undefined}
-          color={hasColor ? '빨강' : undefined}
-          form={hasForm ? '국/탕' : undefined}
-          resultCount={MOCK_RESULTS.length}
-          title={t('ai.analysisTitle')}
-          tasteLabel={t('ai.taste')}
-          colorLabel={t('ai.color')}
-          formLabel={t('ai.form')}
-          resultText={t('ai.resultCount', { count: MOCK_RESULTS.length })}
-        />
+      {isPending && (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={designColors.primary.DEFAULT} />
+          <Text variant="caption" style={[styles.loadingText, { color: colors.textSecondary }]}>
+            {t('results.loading', { defaultValue: 'AI가 음식을 추천하고 있어요...' })}
+          </Text>
+        </View>
       )}
 
-      <FlatList
-        data={MOCK_RESULTS}
-        keyExtractor={(item) => item.id}
-        showsVerticalScrollIndicator={false}
-        renderItem={({ item }) => (
-          <FoodResultCard
-            id={item.id}
-            nameKo={item.nameKo}
-            nameLocalized={item.nameLocalized}
-            emoji={item.emoji}
-            category={item.category}
-            era={item.era}
-            description={item.description}
-            onPress={() => router.push(`/food/${item.id}`)}
+      {isError && (
+        <View style={styles.loadingContainer}>
+          <Text variant="body" style={{ color: colors.textSecondary }}>
+            {t('results.error', { defaultValue: '추천 결과를 불러오지 못했어요. 다시 시도해주세요.' })}
+          </Text>
+        </View>
+      )}
+
+      {!isPending && !isError && (
+        <>
+          <Text variant="caption" style={[styles.resultCount, { color: colors.textSecondary }]}>
+            {t('results.count', { count: recommendations.length })}
+          </Text>
+
+          {extractedFeatures.length > 0 && (
+            <AIAnalysisBadge
+              taste={extractedFeatures[0]}
+              color={extractedFeatures[1]}
+              form={extractedFeatures[2]}
+              resultCount={recommendations.length}
+              title={t('ai.analysisTitle')}
+              tasteLabel={t('ai.taste')}
+              colorLabel={t('ai.color')}
+              formLabel={t('ai.form')}
+              resultText={t('ai.resultCount', { count: recommendations.length })}
+            />
+          )}
+
+          <FlatList
+            data={recommendations}
+            keyExtractor={(item) => item.foodId}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item }) => (
+              <FoodResultCard
+                id={item.foodId}
+                nameKo={item.foodName}
+                nameLocalized={undefined}
+                emoji={'🍲'}
+                category={item.category as Parameters<typeof FoodResultCard>[0]['category']}
+                era={undefined}
+                description={item.foodFeatures}
+                onPress={() => router.push(`/food/${item.foodId}`)}
+              />
+            )}
+            ListFooterComponent={<DataSourceTag source="특허청 한국전통지식포탈" />}
+            contentContainerStyle={styles.listContainer}
           />
-        )}
-        ListFooterComponent={<DataSourceTag source="특허청 한국전통지식포탈" />}
-        contentContainerStyle={styles.listContainer}
-      />
+        </>
+      )}
     </ScreenLayout>
   );
 };
@@ -97,6 +123,16 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     paddingBottom: 32,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 12,
+    paddingTop: 60,
+  },
+  loadingText: {
+    marginTop: 8,
   },
 });
 
