@@ -170,12 +170,8 @@ export const FoodDetailScreen = () => {
     <ScreenLayout scrollable style={{ paddingHorizontal: 0 }}>
       {/* Hero Image Area */}
       <View style={[styles.heroContainer, { backgroundColor: colors.primaryLight }]}>
-        {'imageUrl' in detail && detail.imageUrl ? (
+        {'imageUrl' in detail && detail.imageUrl && (
           <Image source={{ uri: detail.imageUrl }} style={StyleSheet.absoluteFill} contentFit="cover" />
-        ) : (
-          <View style={styles.emojiWrapper}>
-            <Text style={styles.largeEmoji}>{detail.emoji}</Text>
-          </View>
         )}
         
         {/* Overlays */}
