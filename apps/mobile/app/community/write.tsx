@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, TextInput, Pressable, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Image } from 'expo-image';
+import * as ImagePicker from 'expo-image-picker';
 
 import { useTranslation } from '@ongo/i18n';
 import {
@@ -17,7 +18,9 @@ import {
   useBoardDetailQuery,
   useCreateBoardMutation,
   useUpdateBoardMutation,
+  useUploadImagesMutation,
 } from '@ongo/api-client';
+import type { TImageFile } from '@ongo/api-client';
 
 import { RecipePickerModal } from './components/RecipePickerModal';
 import type { TLinkedRecipe } from './components/RecipePickerModal';
@@ -82,10 +85,12 @@ export const WritePostScreen = () => {
     return [];
   });
   const [isRecipeModalOpen, setIsRecipeModalOpen] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   const { data: existingPost } = useBoardDetailQuery(boardId);
   const { mutate: createBoard } = useCreateBoardMutation();
   const { mutate: updateBoard } = useUpdateBoardMutation();
+  const { mutateAsync: uploadImagesMutate } = useUploadImagesMutation();
 
   useEffect(() => {
     if (isEditMode && existingPost) {
@@ -96,36 +101,56 @@ export const WritePostScreen = () => {
     }
   }, [isEditMode, existingPost]);
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     if (!title.trim() || !content.trim()) return;
 
-    const payload = {
-      title: title.trim(),
-      content: content.trim(),
-      imageUrls: photos,
-      category: selectedCat,
-    };
+    setIsUploading(true);
+    try {
+      const localPhotos = photos.filter((uri) => !uri.startsWith('http'));
+      const existingUrls = photos.filter((uri) => uri.startsWith('http'));
 
-    if (isEditMode && boardId) {
-      updateBoard(
-        { boardId, data: payload },
-        { onSuccess: () => router.back() },
-      );
-      return;
+      let newUrls: string[] = [];
+      if (localPhotos.length > 0) {
+        const imageFiles: TImageFile[] = localPhotos.map((uri, i) => ({
+          uri,
+          name: `photo_${Date.now()}_${i}.jpg`,
+          type: 'image/jpeg',
+        }));
+        const uploadResult = await uploadImagesMutate(imageFiles);
+        newUrls = uploadResult.imageUrls;
+      }
+
+      const payload = {
+        title: title.trim(),
+        content: content.trim(),
+        imageUrls: [...existingUrls, ...newUrls],
+        category: selectedCat,
+      };
+
+      if (isEditMode && boardId) {
+        updateBoard(
+          { boardId, data: payload },
+          { onSuccess: () => router.back() },
+        );
+        return;
+      }
+      createBoard(payload, { onSuccess: () => router.back() });
+    } catch {
+      // 업로드 실패 시 화면에 머물러 재시도 가능
+    } finally {
+      setIsUploading(false);
     }
-
-    createBoard(
-      payload,
-      { onSuccess: () => router.back() },
-    );
   };
 
-  const addMockPhoto = () => {
-    if (photos.length < 5) {
-      setPhotos((prev) => [
-        ...prev,
-        `https://images.unsplash.com/photo-1546069901-ba9599a7e63c?sig=${Date.now()}`,
-      ]);
+  const handleAddPhoto = async () => {
+    if (photos.length >= 5) return;
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsMultipleSelection: false,
+      quality: 0.8,
+    });
+    if (!result.canceled && result.assets.length > 0) {
+      setPhotos((prev) => [...prev, result.assets[0].uri]);
     }
   };
 
@@ -146,13 +171,13 @@ export const WritePostScreen = () => {
           onBack={() => router.back()}
           backIcon="close"
           rightAction={
-            <Pressable onPress={handleRegister} disabled={isFormInvalid}>
+            <Pressable onPress={handleRegister} disabled={isFormInvalid || isUploading}>
               <Text
                 variant="label"
                 bold
-                style={{ color: isFormInvalid ? colors.textSecondary : designColors.primary.DEFAULT }}
+                style={{ color: (isFormInvalid || isUploading) ? colors.textSecondary : designColors.primary.DEFAULT }}
               >
-                {isEditMode ? t('write.edit') : t('write.register')}
+                {isUploading ? t('write.uploading') : (isEditMode ? t('write.edit') : t('write.register'))}
               </Text>
             </Pressable>
           }
@@ -217,7 +242,7 @@ export const WritePostScreen = () => {
             </Text>
             <View style={styles.row}>
               {photos.length < 5 && (
-                <Pressable style={[styles.uploadBtn, { borderColor: colors.border }]} onPress={addMockPhoto}>
+                <Pressable style={[styles.uploadBtn, { borderColor: colors.border }]} onPress={handleAddPhoto}>
                   <Icon name="write" size={20} color={colors.textSecondary} />
                   <Text variant="caption" style={{ color: colors.textSecondary, marginTop: 4 }}>
                     {t('write.add')}

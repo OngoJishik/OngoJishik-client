@@ -67,7 +67,8 @@
     "customRecipe": "Custom Entry",
     "customRecipePlaceholder": "Enter recipe name",
     "contentSection": "Write Post",
-    "titlePlaceholder": "Enter a title (Required)"
+    "titlePlaceholder": "Enter a title (Required)",
+    "uploading": "Uploading..."
   },
   "mypage": {
     "title": "My Page",

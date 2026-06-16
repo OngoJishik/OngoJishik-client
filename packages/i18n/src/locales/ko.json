@@ -67,7 +67,8 @@
     "customRecipe": "직접 입력",
     "customRecipePlaceholder": "레시피 이름을 입력하세요",
     "contentSection": "글 작성",
-    "titlePlaceholder": "제목을 입력하세요 (필수)"
+    "titlePlaceholder": "제목을 입력하세요 (필수)",
+    "uploading": "업로드 중..."
   },
   "mypage": {
     "title": "마이페이지",

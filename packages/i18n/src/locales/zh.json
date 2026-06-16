@@ -67,7 +67,8 @@
     "customRecipe": "自定义输入",
     "customRecipePlaceholder": "请输入食谱名称",
     "contentSection": "写文章",
-    "titlePlaceholder": "请输入标题（必填）"
+    "titlePlaceholder": "请输入标题（必填）",
+    "uploading": "上传中..."
   },
   "mypage": {
     "title": "个人中心",
