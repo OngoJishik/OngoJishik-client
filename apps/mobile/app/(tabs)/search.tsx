@@ -1,10 +1,15 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useAtom, useSetAtom } from 'jotai';
+import { useSetAtom } from 'jotai';
 
 import { useTranslation } from '@ongo/i18n';
-import { recentSearchAtom, searchHistoryAtom } from '@ongo/store';
+import { recentSearchAtom } from '@ongo/store';
+import {
+  useSearchHistoryQuery,
+  useDeleteAllSearchHistoryMutation,
+  useDeleteSearchHistoryMutation,
+} from '@ongo/api-client';
 import {
   ScreenLayout,
   Header,
@@ -16,6 +21,7 @@ import {
 
 /**
  * 전통 음식을 검색하는 탭 화면 컴포넌트
+ * 최근 검색 기록은 GET /api/searches/recent 서버 API로 관리됩니다.
  * @author Antigravity
  */
 export const SearchScreen = () => {
@@ -23,10 +29,15 @@ export const SearchScreen = () => {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const [searchVal, setSearchVal] = useState('');
-  
-  const [rawRecentSearches, setRecentSearches] = useAtom(searchHistoryAtom);
-  const recentSearches = rawRecentSearches instanceof Promise ? [] : rawRecentSearches;
+
+  // 검색어 입력 시 로컬 atom에도 저장 (홈 탭 등 다른 곳에서 참조 가능)
   const addRecentSearch = useSetAtom(recentSearchAtom);
+
+  const { data: historyData } = useSearchHistoryQuery();
+  const { mutate: deleteAll } = useDeleteAllSearchHistoryMutation();
+  const { mutate: deleteOne } = useDeleteSearchHistoryMutation();
+
+  const recentSearches = historyData?.searches ?? [];
 
   const handleSearch = (query: string) => {
     const trimmed = query.trim();
@@ -36,15 +47,12 @@ export const SearchScreen = () => {
     }
   };
 
-  const removeRecentSearch = (item: string) => {
-    setRecentSearches((prev) => {
-      const list = prev instanceof Promise ? [] : prev;
-      return list.filter((s) => s !== item);
-    });
+  const clearAllRecent = () => {
+    deleteAll();
   };
 
-  const clearAllRecent = () => {
-    setRecentSearches([]);
+  const removeRecentSearch = (searchId: number) => {
+    deleteOne(searchId);
   };
 
   return (
@@ -76,13 +84,13 @@ export const SearchScreen = () => {
           <Text variant="caption" style={{ color: colors.textSecondary }}>{t('search.noRecent')}</Text>
         ) : (
           recentSearches.map((item) => (
-            <View key={item} style={[styles.historyItem, { borderBottomColor: colors.border }]}>
-              <Pressable style={{ flex: 1 }} onPress={() => handleSearch(item)}>
+            <View key={item.searchId} style={[styles.historyItem, { borderBottomColor: colors.border }]}>
+              <Pressable style={{ flex: 1 }} onPress={() => handleSearch(item.query)}>
                 <Text variant="body" style={styles.historyText}>
-                  🕐 {item}
+                  🕐 {item.query}
                 </Text>
               </Pressable>
-              <Pressable onPress={() => removeRecentSearch(item)}>
+              <Pressable onPress={() => removeRecentSearch(item.searchId)}>
                 <Icon name="close" size={14} color={colors.textSecondary} />
               </Pressable>
             </View>
@@ -119,4 +127,5 @@ const styles = StyleSheet.create({
 });
 
 export { SearchScreen as default };
+
 
