@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, StyleSheet, FlatList, Pressable } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
+import { useQueryClient } from '@tanstack/react-query';
+import type { InfiniteData } from '@tanstack/react-query';
 
 import { useTranslation } from '@ongo/i18n';
 import {
@@ -12,28 +14,19 @@ import {
   useTheme,
 } from '@ongo/ui';
 import { colors as designColors } from '@ongo/ui';
-import { useBoardsInfiniteQuery, useToggleLikeMutation } from '@ongo/api-client';
+import {
+  useBoardsInfiniteQuery,
+  useToggleLikeMutation,
+  communityKeys,
+} from '@ongo/api-client';
+import type { TBoardCategory, TBoardSummary, TPage } from '@ongo/api-client';
 
-const FILTER_CATEGORIES = [
+const FILTER_CATEGORIES: { id: 'all' | TBoardCategory; labelKey: string }[] = [
   { id: 'all', labelKey: 'community.all' },
-  { id: 'review', labelKey: 'community.cookingReview' },
-  { id: 'recipe', labelKey: 'community.myRecipe' },
-  { id: 'qna', labelKey: 'community.qna' },
+  { id: 'REVIEW', labelKey: 'community.cookingReview' },
+  { id: 'RECIPE', labelKey: 'community.myRecipe' },
+  { id: 'QNA', labelKey: 'community.qna' },
 ];
-
-/**
- * JSON 이미지 문자열 파싱 헬퍼 함수
- * @author Antigravity
- */
-const parseImages = (imageUrl?: string): string[] => {
-  if (!imageUrl) return [];
-  try {
-    const parsed = JSON.parse(imageUrl);
-    return Array.isArray(parsed) ? parsed : [imageUrl];
-  } catch {
-    return [imageUrl];
-  }
-};
 
 /**
  * 커뮤니티 피드 화면 컴포넌트
@@ -44,7 +37,10 @@ export const CommunityScreen = () => {
   const router = useRouter();
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const [selectedFilter, setSelectedFilter] = useState('all');
+  const queryClient = useQueryClient();
+  const [selectedFilter, setSelectedFilter] = useState<'all' | TBoardCategory>('all');
+
+  const category = selectedFilter === 'all' ? undefined : selectedFilter;
 
   const {
     data,
@@ -52,24 +48,92 @@ export const CommunityScreen = () => {
     hasNextPage,
     isFetchingNextPage,
     refetch,
-  } = useBoardsInfiniteQuery(10);
+  } = useBoardsInfiniteQuery(10, category);
 
   const { mutate: toggleLike } = useToggleLikeMutation();
+
+  /**
+   * 탭 포커스 시 자동 데이터 갱신
+   * 게시글 작성/수정 후 돌아올 때 최신 목록 반영
+   */
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
+
+  const allBoards = data?.pages.flatMap((page) => page.content) || [];
 
   const handlePostPress = (boardId: number) => {
     router.push(`/community/${boardId}`);
   };
 
-  const handleLike = (boardId: number) => {
-    toggleLike({ boardId });
+  /**
+   * 게시글 좋아요 낙관적 업데이트 핸들러
+   * 즉시 UI를 반영하고 서버 응답 실패 시 롤백합니다.
+   * @author Antigravity
+   */
+  const handleLike = (boardId: number, currentIsLiked: boolean, currentLikeCount: number) => {
+    // 1. 낙관적 업데이트: 캐시의 board list 데이터를 즉시 변경
+    queryClient.setQueriesData<InfiniteData<TPage<TBoardSummary>>>(
+      { queryKey: communityKeys.boardLists() },
+      (old) => {
+        if (!old || !old.pages) return old;
+        return {
+          ...old,
+          pages: old.pages.map((page) => ({
+            ...page,
+            content: page.content.map((board) =>
+              board.boardId === boardId
+                ? {
+                    ...board,
+                    isLiked: !currentIsLiked,
+                    likeCount: currentIsLiked
+                      ? Math.max(0, board.likeCount - 1)
+                      : board.likeCount + 1,
+                  }
+                : board
+            ),
+          })),
+        };
+      }
+    );
+
+    // 2. 서버 요청
+    toggleLike(
+      { boardId, currentLiked: currentIsLiked },
+      {
+        onError: () => {
+          // 3. 실패 시 원래 값으로 롤백
+          queryClient.setQueriesData<InfiniteData<TPage<TBoardSummary>>>(
+            { queryKey: communityKeys.boardLists() },
+            (old) => {
+              if (!old || !old.pages) return old;
+              return {
+                ...old,
+                pages: old.pages.map((page) => ({
+                  ...page,
+                  content: page.content.map((board) =>
+                    board.boardId === boardId
+                      ? {
+                          ...board,
+                          isLiked: currentIsLiked,
+                          likeCount: currentLikeCount,
+                        }
+                      : board
+                  ),
+                })),
+              };
+            }
+          );
+        },
+        onSettled: () => {
+          // 4. 성공/실패 무관하게 서버 데이터로 최종 동기화
+          queryClient.invalidateQueries({ queryKey: communityKeys.boards() });
+        },
+      }
+    );
   };
-
-  const allBoards = data?.pages.flatMap((page) => page.content) || [];
-
-  const filteredPosts = allBoards.filter((board) => {
-    const category = board.category || 'review';
-    return selectedFilter === 'all' || category === selectedFilter;
-  });
 
   const handleLoadMore = () => {
     if (hasNextPage && !isFetchingNextPage) {
@@ -115,7 +179,7 @@ export const CommunityScreen = () => {
       </View>
 
       <FlatList
-        data={filteredPosts}
+        data={allBoards}
         keyExtractor={(item) => String(item.boardId)}
         showsVerticalScrollIndicator={false}
         onEndReached={handleLoadMore}
@@ -126,15 +190,15 @@ export const CommunityScreen = () => {
           <PostCard
             author={{ name: item.authorNickname || '익명' }}
             createdAt={item.createdAt}
-            category={item.category || 'review'}
-            images={parseImages(item.imageUrl)}
-            content="" // Feed list does not return full content; title is displayed
+            category={item.category}
+            images={item.imageUrls}
+            content=""
             title={item.title}
-            likeCount={0} // Default since not in Summary response yet
-            commentCount={0} // Default since not in Summary response yet
-            isLiked={false}
+            likeCount={item.likeCount}
+            commentCount={item.commentCount}
+            isLiked={item.isLiked}
             onPress={() => handlePostPress(item.boardId)}
-            onLike={() => handleLike(item.boardId)}
+            onLike={() => handleLike(item.boardId, item.isLiked, item.likeCount)}
           />
         )}
         contentContainerStyle={styles.listContent}
@@ -162,4 +226,3 @@ const styles = StyleSheet.create({
     paddingBottom: 48,
   },
 });
-

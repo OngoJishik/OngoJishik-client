@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, FlatList, KeyboardAvoidingView, Platform, Pressable } from 'react-native';
-import { useLocalSearchParams, useRouter, Href } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useAtomValue } from 'jotai';
 
 import { useTranslation } from '@ongo/i18n';
@@ -30,20 +30,6 @@ import { MOCK_POSTS, MOCK_COMMENTS } from '../../mocks';
 import type { TBoardCategory } from '@ongo/api-client';
 
 /**
- * JSON 이미지 문자열 파싱 헬퍼 함수
- * @author Antigravity
- */
-const parseImages = (imageUrl?: string): string[] => {
-  if (!imageUrl) return [];
-  try {
-    const parsed = JSON.parse(imageUrl);
-    return Array.isArray(parsed) ? parsed : [imageUrl];
-  } catch {
-    return [imageUrl];
-  }
-};
-
-/**
  * 커뮤니티 게시글 상세 및 댓글 조회/등록 화면 컴포넌트
  * @author Antigravity
  */
@@ -57,6 +43,7 @@ export const PostDetailScreen = () => {
   const userProfile = useAtomValue(userProfileAtom);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLikedLocal, setIsLikedLocal] = useState(false);
+  const [isEditingComment, setIsEditingComment] = useState(false);
 
   // Queries & Mutations
   const isRealBoard = !isNaN(boardId);
@@ -80,15 +67,17 @@ export const PostDetailScreen = () => {
   const mockPost = !isRealBoard ? (MOCK_POSTS.find((p) => p.id === postId) || MOCK_POSTS[0]) : null;
   const activePost = post || (mockPost ? {
     boardId: 9999,
-    title: 'Mock Post',
+    title: mockPost.title ?? 'Mock Post',
     content: mockPost.content,
-    imageUrl: JSON.stringify(mockPost.images),
+    imageUrls: mockPost.images ?? [],
     authorId: 9999,
     authorNickname: mockPost.author.name,
     createdAt: mockPost.createdAt,
     updatedAt: mockPost.createdAt,
     category: mockPost.category as TBoardCategory,
-    linkedRecipe: mockPost.linkedRecipe,
+    likeCount: 0,
+    commentCount: 0,
+    isLiked: false,
   } : null);
 
   const isAuthor = !!userProfile && !!activePost && activePost.authorId === Number(userProfile.id);
@@ -100,12 +89,10 @@ export const PostDetailScreen = () => {
       params: {
         postId: String(activePost.boardId),
         mode: 'edit',
-        initCategory: activePost.category || 'review',
+        initCategory: activePost.category ?? 'REVIEW',
         initContent: activePost.content,
         initTitle: activePost.title,
-        initLinkedRecipeNameKo: activePost.linkedRecipe?.nameKo ?? '',
-        initLinkedRecipeEmoji: activePost.linkedRecipe?.emoji ?? '',
-        initImages: JSON.stringify(parseImages(activePost.imageUrl)),
+        initImages: JSON.stringify(activePost.imageUrls),
       },
     });
   };
@@ -218,25 +205,22 @@ export const PostDetailScreen = () => {
         <FlatList
           data={comments}
           keyExtractor={(item) => item.id}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="none"
+          removeClippedSubviews={false}
           ListHeaderComponent={
             <View style={{ marginBottom: 16 }}>
               <PostDetail
                 author={{ name: activePost.authorNickname || '익명' }}
                 createdAt={activePost.createdAt}
-                category={activePost.category || 'review'}
-                images={parseImages(activePost.imageUrl)}
+                category={activePost.category}
+                images={activePost.imageUrls}
                 content={activePost.content}
                 title={activePost.title}
                 likeCount={likeCountData ?? 0}
                 commentCount={commentsData?.totalElements ?? 0}
                 isLiked={isLikedLocal}
-                linkedRecipe={activePost.linkedRecipe}
                 onLike={handleLike}
-                onRecipePress={() => {
-                  if (activePost.linkedRecipe?.id) {
-                    router.push(`/food/${activePost.linkedRecipe.id}` as Href);
-                  }
-                }}
               />
               <Text variant="h3" bold style={styles.commentHeader}>
                 {t('community.commentsCount', { count: commentsData?.totalElements ?? 0 })}
@@ -249,15 +233,18 @@ export const PostDetailScreen = () => {
               isAuthor={!!userProfile && item.author.id === String(userProfile.id)}
               onUpdate={handleUpdateComment}
               onDelete={handleDeleteComment}
+              onEditingChange={setIsEditingComment}
             />
           )}
           contentContainerStyle={styles.listContent}
         />
 
-        <CommentInput
-          onSubmit={handleAddComment}
-          placeholder={t('comment.placeholder')}
-        />
+        {!isEditingComment && (
+          <CommentInput
+            onSubmit={handleAddComment}
+            placeholder={t('comment.placeholder')}
+          />
+        )}
       </KeyboardAvoidingView>
 
       <PostMoreMenu

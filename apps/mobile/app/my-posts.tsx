@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { FlatList, View, StyleSheet } from 'react-native';
+import React from 'react';
+import { FlatList, View, StyleSheet, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { useTranslation } from '@ongo/i18n';
@@ -10,8 +10,7 @@ import {
   Text,
   useTheme,
 } from '@ongo/ui';
-
-import { MOCK_MY_POSTS } from '../mocks';
+import { useMyBoardsInfiniteQuery, useToggleLikeMutation } from '@ongo/api-client';
 
 /**
  * 내 게시글 목록 화면 컴포넌트
@@ -22,54 +21,84 @@ export const MyPostsScreen = () => {
   const router = useRouter();
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const [posts, setPosts] = useState(MOCK_MY_POSTS);
 
-  const handlePostPress = (postId: string) => {
-    router.push(`/community/${postId}`);
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    refetch,
+  } = useMyBoardsInfiniteQuery(10);
+
+  const { mutate: toggleLike } = useToggleLikeMutation();
+
+  const allPosts = data?.pages.flatMap((page) => page.content) ?? [];
+
+  const handlePostPress = (boardId: number) => {
+    router.push(`/community/${boardId}`);
   };
 
-  const handleLike = (postId: string) => {
-    setPosts((prev) =>
-      prev.map((post) =>
-        post.id === postId
-          ? {
-              ...post,
-              isLiked: !post.isLiked,
-              likeCount: post.isLiked ? post.likeCount - 1 : post.likeCount + 1,
-            }
-          : post
-      )
+  const handleLike = (boardId: number) => {
+    toggleLike({ boardId });
+  };
+
+  const handleLoadMore = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <ScreenLayout>
+        <Header title={t('myPosts.title')} titleIcon="write" onBack={() => router.back()} />
+        <View style={styles.emptyContainer}>
+          <ActivityIndicator color={colors.primary} />
+        </View>
+      </ScreenLayout>
     );
-  };
+  }
 
   return (
     <ScreenLayout>
       <Header title={t('myPosts.title')} titleIcon="write" onBack={() => router.back()} />
 
-      {posts.length === 0 ? (
+      {allPosts.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Text variant="bodySecondary">{t('myPosts.empty')}</Text>
         </View>
       ) : (
         <FlatList
-          data={posts}
-          keyExtractor={(item) => item.id}
+          data={allPosts}
+          keyExtractor={(item) => String(item.boardId)}
           showsVerticalScrollIndicator={false}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.5}
+          refreshing={isFetchingNextPage}
+          onRefresh={refetch}
           renderItem={({ item }) => (
             <PostCard
-              author={item.author}
+              author={{ name: item.authorNickname || '익명' }}
               createdAt={item.createdAt}
               category={item.category}
-              images={item.images}
-              linkedRecipe={item.linkedRecipe}
-              content={item.content}
+              images={item.imageUrls}
+              content=""
+              title={item.title}
               likeCount={item.likeCount}
               commentCount={item.commentCount}
               isLiked={item.isLiked}
-              onPress={() => handlePostPress(item.id)}
-              onLike={() => handleLike(item.id)}
+              onPress={() => handlePostPress(item.boardId)}
+              onLike={() => handleLike(item.boardId)}
             />
           )}
+          ListFooterComponent={
+            isFetchingNextPage ? (
+              <View style={styles.footerLoader}>
+                <ActivityIndicator color={colors.primary} />
+              </View>
+            ) : null
+          }
           contentContainerStyle={styles.listContent}
         />
       )}
@@ -87,5 +116,9 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingVertical: 16,
+  },
+  footerLoader: {
+    paddingVertical: 16,
+    alignItems: 'center',
   },
 });

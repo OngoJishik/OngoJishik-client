@@ -67,7 +67,8 @@
     "customRecipe": "直接入力",
     "customRecipePlaceholder": "レシピ名を入力してください",
     "contentSection": "投稿作成",
-    "titlePlaceholder": "タイトルを入力してください（必須）"
+    "titlePlaceholder": "タイトルを入力してください（必須）",
+    "uploading": "アップロード中..."
   },
   "mypage": {
     "title": "マイページ",

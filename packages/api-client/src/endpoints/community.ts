@@ -2,6 +2,7 @@ import { apiClient } from '../client';
 import type {
   TBoardSummary,
   TBoard,
+  TBoardCategory,
   TBoardCreateRequest,
   TBoardUpdateRequest,
   TComment,
@@ -24,10 +25,11 @@ export const communityEndpoints = {
     page: number = 0,
     size: number = 10,
     sortBy: string = 'createdAt',
-    direction: 'ASC' | 'DESC' = 'DESC'
+    direction: 'ASC' | 'DESC' = 'DESC',
+    category?: TBoardCategory
   ): Promise<TPage<TBoardSummary>> {
     const response = await apiClient.get<TPage<TBoardSummary>>('/api/boards', {
-      params: { page, size, sortBy, direction },
+      params: { page, size, sortBy, direction, ...(category ? { category } : {}) },
     });
     return response.data;
   },
@@ -41,10 +43,11 @@ export const communityEndpoints = {
     page: number = 0,
     size: number = 10,
     sortBy: string = 'createdAt',
-    direction: 'ASC' | 'DESC' = 'DESC'
+    direction: 'ASC' | 'DESC' = 'DESC',
+    category?: TBoardCategory
   ): Promise<TPage<TBoardSummary>> {
     const response = await apiClient.get<TPage<TBoardSummary>>('/api/boards/search', {
-      params: { title, page, size, sortBy, direction },
+      params: { title, page, size, sortBy, direction, ...(category ? { category } : {}) },
     });
     return response.data;
   },
@@ -82,6 +85,22 @@ export const communityEndpoints = {
    */
   async deleteBoard(boardId: number): Promise<void> {
     await apiClient.delete(`/api/boards/${boardId}`);
+  },
+
+  /**
+   * 내가 작성한 게시글 목록 조회 (페이징)
+   * @author Antigravity
+   */
+  async getMyBoards(
+    page: number = 0,
+    size: number = 10,
+    sortBy: string = 'createdAt',
+    direction: 'ASC' | 'DESC' = 'DESC'
+  ): Promise<TPage<TBoardSummary>> {
+    const response = await apiClient.get<TPage<TBoardSummary>>('/api/boards/me', {
+      params: { page, size, sortBy, direction },
+    });
+    return response.data;
   },
 
   /**
@@ -150,5 +169,3 @@ export const communityEndpoints = {
     return response.data;
   },
 };
-
-
