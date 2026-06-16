@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Pressable } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtomValue } from 'jotai';
 import { Image } from 'expo-image';
 
-import { useFoodDetailQuery, useFoodHistoryStoryQuery } from '@ongo/api-client';
+import { useFoodDetailQuery, useFoodDetailRawQuery, useAddBookmarkMutation, useDeleteBookmarkMutation } from '@ongo/api-client';
 import { useTranslation } from '@ongo/i18n';
-import { localFavoritesAtom, languageAtom } from '@ongo/store';
+import { languageAtom } from '@ongo/store';
 import {
   ScreenLayout,
   TabBar,
@@ -25,6 +25,7 @@ import { MOCK_DETAILS } from '../../mocks';
 
 /**
  * 전통 음식의 상세 정보를 다양한 탭과 스토리로 제공하는 화면 컴포넌트
+ * GET /api/analysis/{foodId} 기반 실제 데이터를 사용합니다.
  * @author Antigravity
  */
 export const FoodDetailScreen = () => {
@@ -32,18 +33,25 @@ export const FoodDetailScreen = () => {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const currentLang = useAtomValue(languageAtom);
-  const [rawFavorites, setFavorites] = useAtom(localFavoritesAtom);
-  const favorites = rawFavorites instanceof Promise ? [] : rawFavorites;
 
   const { id } = useLocalSearchParams();
-  const foodId = (id as string) || 'yukgaejang';
+  const foodId = (id as string) || '';
 
-  // Fetch from TanStack Query with local mock fallback
-  const { data: foodDetail } = useFoodDetailQuery(foodId);
-  const { data: historyStory } = useFoodHistoryStoryQuery(foodId);
+  // 실제 API 데이터 fetch (매핑된 TFoodDetail 형태)
+  const { data: foodDetail, isLoading } = useFoodDetailQuery(foodId);
+  // 원본 API 응답 (isBookmarked 초기값 활용)
+  const { data: rawDetail } = useFoodDetailRawQuery(foodId);
+
+  const { mutate: addBookmark } = useAddBookmarkMutation();
+  const { mutate: deleteBookmark } = useDeleteBookmarkMutation();
+
+  // isBookmarked: 서버 원본값 기반, 낙관적 업데이트는 QueryClient 캐시가 처리
+  const [optimisticFavorite, setOptimisticFavorite] = useState<boolean | null>(null);
+  const serverFavorite = rawDetail?.isBookmarked ?? false;
+  const isFavorite = optimisticFavorite !== null ? optimisticFavorite : serverFavorite;
 
   const detail = foodDetail || MOCK_DETAILS;
-  const storyText = historyStory?.story || detail.historyStory || '';
+  const storyText = detail.historyStory || '';
 
   const tabs = [
     t('detail.recipe'),
@@ -55,14 +63,22 @@ export const FoodDetailScreen = () => {
   const [activeTab, setActiveTab] = useState(tabs[0]);
   const [feedback, setFeedback] = useState<'up' | 'down' | null>(null);
 
-  const isFavorite = favorites.includes(foodId);
   const displayName = formatFoodName(detail.nameKo, detail.nameLocalized, currentLang);
 
   const handleFavoriteToggle = () => {
-    setFavorites((prev) => {
-      const list = prev instanceof Promise ? [] : prev;
-      return list.includes(foodId) ? list.filter((favId) => favId !== foodId) : [...list, foodId];
-    });
+    const next = !isFavorite;
+    setOptimisticFavorite(next);
+    if (next) {
+      addBookmark(foodId, {
+        onError: () => setOptimisticFavorite(!next),
+        onSettled: () => setOptimisticFavorite(null),
+      });
+    } else {
+      deleteBookmark(foodId, {
+        onError: () => setOptimisticFavorite(!next),
+        onSettled: () => setOptimisticFavorite(null),
+      });
+    }
   };
 
   const activeTabIndex = tabs.indexOf(activeTab);
