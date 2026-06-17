@@ -3,6 +3,8 @@ export * from './types/food';
 export * from './types/search';
 export * from './types/community';
 export * from './types/common';
+export * from './types/bookmark';
+export * from './types/search-history';
 
 export * from './endpoints/food';
 export * from './endpoints/history';
@@ -11,6 +13,7 @@ export * from './endpoints/auth';
 export * from './endpoints/user';
 export * from './endpoints/market';
 export * from './endpoints/upload';
+export * from './endpoints/search-history';
 
 export * from './hooks/queryKeys';
 export * from './hooks/useSearch';
@@ -20,3 +23,4 @@ export * from './hooks/useCommunity';
 export * from './hooks/useFavorites';
 export * from './hooks/useAuth';
 export * from './hooks/useUploadImages';
+export * from './hooks/useSearchHistory';

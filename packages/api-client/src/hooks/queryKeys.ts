@@ -13,6 +13,7 @@ export const foodKeys = {
   details: () => [...foodKeys.all, 'detail'] as const,
   detail: (id: string) => [...foodKeys.details(), id] as const,
   recommendation: () => [...foodKeys.all, 'recommendation'] as const,
+  recommend: (query: string) => [...foodKeys.all, 'recommend', { query }] as const,
   popular: () => [...foodKeys.all, 'popular'] as const,
 };
 
@@ -41,7 +42,7 @@ export const communityKeys = {
 };
 
 /**
- * 사용자 정보 및 즐겨찾기 관련 TanStack Query Key 팩토리 객체
+ * 사용자 정보 관련 TanStack Query Key 팩토리 객체
  * @author Antigravity
  */
 export const userKeys = {
@@ -60,3 +61,23 @@ export const historyKeys = {
   all: ['history'] as const,
   story: (foodId: string) => [...historyKeys.all, foodId] as const,
 };
+
+/**
+ * 즐겨찾기(북마크) 관련 TanStack Query Key 팩토리 객체
+ * @author Antigravity
+ */
+export const bookmarkKeys = {
+  all: ['bookmark'] as const,
+  list: () => [...bookmarkKeys.all, 'list'] as const,
+  detail: (foodId: string) => [...bookmarkKeys.all, 'detail', foodId] as const,
+};
+
+/**
+ * 검색 기록 관련 TanStack Query Key 팩토리 객체
+ * @author Antigravity
+ */
+export const searchHistoryKeys = {
+  all: ['searchHistory'] as const,
+  list: () => [...searchHistoryKeys.all, 'list'] as const,
+};
+

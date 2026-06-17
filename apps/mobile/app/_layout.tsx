@@ -18,12 +18,21 @@ const queryClient = new QueryClient({
   },
 });
 
-// Configure Google Sign-In
-GoogleSignin.configure({
-  webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
-  iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
-  offlineAccess: true,
-});
+// Configure Google Sign-In with safety checks
+const webClientId = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID;
+const iosClientId = process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID;
+
+if (webClientId) {
+  GoogleSignin.configure({
+    webClientId,
+    iosClientId,
+    offlineAccess: true,
+  });
+} else {
+  if (process.env.NODE_ENV !== 'production') {
+    console.warn('[GoogleSignin] EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID is missing. Google Sign-In will not be configured.');
+  }
+}
 
 /**
  * Jotai languageAtom 상태와 i18n 인스턴스의 활성 언어를 실시간 동기화하는 컴포넌트
