@@ -49,6 +49,7 @@ export const WritePostScreen = () => {
     initTitle,
     initLinkedRecipeNameKo,
     initLinkedRecipeEmoji,
+    initLinkedRecipeId,
     initImages,
   } = useLocalSearchParams<{
     postId?: string;
@@ -58,6 +59,7 @@ export const WritePostScreen = () => {
     initTitle?: string;
     initLinkedRecipeNameKo?: string;
     initLinkedRecipeEmoji?: string;
+    initLinkedRecipeId?: string;
     initImages?: string;
   }>();
   const isEditMode = mode === 'edit' && !!postId;
@@ -74,7 +76,11 @@ export const WritePostScreen = () => {
   );
   const [linkedRecipe, setLinkedRecipe] = useState<TLinkedRecipe | null>(() => {
     if (isEditMode && initLinkedRecipeNameKo && initLinkedRecipeEmoji) {
-      return { nameKo: String(initLinkedRecipeNameKo), emoji: String(initLinkedRecipeEmoji) };
+      return {
+        nameKo: String(initLinkedRecipeNameKo),
+        emoji: String(initLinkedRecipeEmoji),
+        recipeId: typeof initLinkedRecipeId === 'string' ? initLinkedRecipeId : undefined,
+      };
     }
     return null;
   });
@@ -125,6 +131,7 @@ export const WritePostScreen = () => {
         content: content.trim(),
         imageUrls: [...existingUrls, ...newUrls],
         category: selectedCat,
+        ...(linkedRecipe?.recipeId ? { recipeId: linkedRecipe.recipeId } : {}),
       };
 
       if (isEditMode && boardId) {

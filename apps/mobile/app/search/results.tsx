@@ -98,7 +98,7 @@ export const SearchResultsScreen = () => {
                 emoji={'🍲'}
                 category={item.category as Parameters<typeof FoodResultCard>[0]['category']}
                 era={undefined}
-                description={item.foodFeatures}
+                description={Array.isArray(item.features) ? item.features.join(', ') : ''}
                 onPress={() => router.push(`/food/${item.foodId}`)}
               />
             )}
