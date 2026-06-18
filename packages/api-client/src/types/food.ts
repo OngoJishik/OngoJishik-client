@@ -51,25 +51,34 @@ export type TLiteratureQuote = {
 };
 
 /**
- * 음식 추천 결과 단건 타입 (POST /api/analysis/recommend 응답)
+ * 음식 공통 요약 타입 — 즐겨찾기, 추천, 북마크 모든 API에서 공통으로 사용하는 FoodSummaryResponse
  * @author Antigravity
  */
-export type TRecommendFoodItem = {
+export type TFoodSummaryResponse = {
   foodId: string;
   foodName: string;
   category: string;
-  foodFeatures: string;
+  features: string[];
   foodPicture: string;
 };
+
+/**
+ * 음식 추천 결과 단건 타입 (POST /api/analysis/recommend 응답)
+ * FoodSummaryResponse 스키마와 동일 — features: string[]
+ * @author Antigravity
+ */
+export type TRecommendFoodItem = TFoodSummaryResponse;
 
 /**
  * 음식 추천 응답 타입 (POST /api/analysis/recommend)
  * @author Antigravity
  */
 export type TRecommendResponse = {
+  searchId?: number;
   originalQuery: string;
   extractedFeatures: string[];
   recommendations: TRecommendFoodItem[];
+  createdAt?: string;
 };
 
 /**
@@ -96,6 +105,10 @@ export type TFoodSource = {
 
 /**
  * 실제 API 음식 상세 응답 타입 (GET /api/analysis/{foodId})
+ * 백엔드 개선 반영:
+ * - ingredient(string) → ingredients(string[])
+ * - recipeSteps(string[]) → recipeSteps(TRecipeStep[])
+ * - features: string[] (통일)
  * @author Antigravity
  */
 export type TFoodDetailResponse = {
@@ -106,10 +119,9 @@ export type TFoodDetailResponse = {
   features: string[];
   imageUrl?: string;
   isBookmarked: boolean;
-  ingredient: string;
-  recipeSteps: string[];
+  ingredients: string[];
+  recipeSteps: TRecipeStep[];
   history: TFoodHistory;
   literature: { sources: TFoodSource[] };
   dataSource: string;
 };
-

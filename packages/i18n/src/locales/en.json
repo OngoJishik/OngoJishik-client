@@ -16,6 +16,10 @@
     "ingredients": "Ingredients",
     "historyStory": "History & Story",
     "literature": "Classic Literature",
+    "historyAndLiterature": "History & Literature",
+    "noRecipe": "No recipe available",
+    "noIngredients": "No ingredients available",
+    "noHistoryData": "No history or literature data available",
     "health": "Health & Nutrition",
     "aiImageDisclaimer": "This is an AI-generated image for illustration purposes",
     "dataSource": "Source: KIPO Korean Traditional Knowledge Portal"

@@ -22,6 +22,22 @@ export const MyPostsScreen = () => {
   const { colors } = useTheme();
   const { t } = useTranslation();
 
+  const getCategoryLabel = (category?: any) => {
+    if (!category) return '';
+    const categoryStr = typeof category === 'string' ? category : (category.id || category.code || category.name || String(category));
+    if (!categoryStr || typeof categoryStr !== 'string') return '';
+    switch (categoryStr.trim().toUpperCase()) {
+      case 'REVIEW':
+        return t('community.cookingReview');
+      case 'RECIPE':
+        return t('community.myRecipe');
+      case 'QNA':
+        return t('community.qna');
+      default:
+        return categoryStr;
+    }
+  };
+
   const {
     data,
     fetchNextPage,
@@ -81,7 +97,7 @@ export const MyPostsScreen = () => {
             <PostCard
               author={{ name: item.authorNickname || '익명' }}
               createdAt={item.createdAt}
-              category={item.category}
+              category={getCategoryLabel(item.category)}
               images={item.imageUrls}
               content=""
               title={item.title}

@@ -39,6 +39,8 @@ export const communityKeys = {
     [...communityKeys.all, 'likeCount', boardId] as const,
   myComments: (page?: number) =>
     [...communityKeys.all, 'myComments', { page }] as const,
+  popular: () =>
+    [...communityKeys.all, 'board', 'popular'] as const,
 };
 
 /**
@@ -70,6 +72,7 @@ export const bookmarkKeys = {
   all: ['bookmark'] as const,
   list: () => [...bookmarkKeys.all, 'list'] as const,
   detail: (foodId: string) => [...bookmarkKeys.all, 'detail', foodId] as const,
+  recipes: () => [...bookmarkKeys.all, 'recipes'] as const,
 };
 
 /**

@@ -31,6 +31,7 @@ export type TBoard = {
   content: string;
   imageUrls: string[];
   category: TBoardCategory;
+  recipeId?: string;
   likeCount: number;
   commentCount: number;
   isLiked: boolean;
@@ -49,6 +50,7 @@ export type TBoardCreateRequest = {
   content: string;
   imageUrls?: string[];
   category: TBoardCategory;
+  recipeId?: string;
 };
 
 /**

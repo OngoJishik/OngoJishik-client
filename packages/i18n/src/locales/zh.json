@@ -16,6 +16,10 @@
     "ingredients": "食材",
     "historyStory": "历史故事",
     "literature": "文献原著",
+    "historyAndLiterature": "历史与文献",
+    "noRecipe": "暂无食谱信息",
+    "noIngredients": "暂无食材信息",
+    "noHistoryData": "暂无历史及文献信息",
     "health": "健康信息",
     "aiImageDisclaimer": "此为AI生成的示意图，仅供参考",
     "dataSource": "来源：特许厅 韩国传统知识门户网站"

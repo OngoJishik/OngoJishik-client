@@ -44,6 +44,7 @@ export const SearchScreen = () => {
     if (trimmed) {
       addRecentSearch(trimmed);
       router.push(`/search/results?q=${encodeURIComponent(trimmed)}`);
+      setSearchVal('');
     }
   };
 

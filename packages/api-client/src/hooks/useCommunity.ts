@@ -303,3 +303,17 @@ export const useMyBoardsQuery = (page: number = 0, size: number = 10) => {
     staleTime: 60 * 1000, // 1m
   });
 };
+
+/**
+ * 인기 게시글 조회 훅 (GET /api/boards/popular)
+ * 좋아요 수가 많은 게시글 상위 5개를 반환합니다.
+ * @author Antigravity
+ */
+export const usePopularBoardsQuery = () => {
+  return useQuery({
+    queryKey: communityKeys.popular(),
+    queryFn: () => communityEndpoints.getPopularBoards(),
+    staleTime: 5 * 60 * 1000, // 5m
+    gcTime: 10 * 60 * 1000, // 10m
+  });
+};

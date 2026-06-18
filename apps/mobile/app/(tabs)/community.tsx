@@ -1,6 +1,6 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { View, StyleSheet, FlatList, Pressable } from 'react-native';
-import { useRouter, useFocusEffect } from 'expo-router';
+import { useRouter, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useQueryClient } from '@tanstack/react-query';
 import type { InfiniteData } from '@tanstack/react-query';
 
@@ -38,9 +38,39 @@ export const CommunityScreen = () => {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+  const { category: paramCategory } = useLocalSearchParams<{ category?: string }>();
   const [selectedFilter, setSelectedFilter] = useState<'all' | TBoardCategory>('all');
 
+  const getCategoryLabel = (category?: any) => {
+    if (!category) return '';
+    const categoryStr = typeof category === 'string' ? category : (category.id || category.code || category.name || String(category));
+    if (!categoryStr || typeof categoryStr !== 'string') return '';
+    switch (categoryStr.trim().toUpperCase()) {
+      case 'REVIEW':
+        return t('community.cookingReview');
+      case 'RECIPE':
+        return t('community.myRecipe');
+      case 'QNA':
+        return t('community.qna');
+      default:
+        return categoryStr;
+    }
+  };
+
   const category = selectedFilter === 'all' ? undefined : selectedFilter;
+
+  // 라우터로부터 전달받은 category 파라미터가 유효할 경우 해당 카테고리 필터 자동 선택 (대소문자 무관하게 매핑)
+  useEffect(() => {
+    if (paramCategory) {
+      const upperParam = typeof paramCategory === 'string' ? paramCategory : (paramCategory as any).id || (paramCategory as any).code || (paramCategory as any).name || '';
+      if (typeof upperParam === 'string') {
+        const cleanedParam = upperParam.trim().toUpperCase();
+        if (cleanedParam === 'REVIEW' || cleanedParam === 'RECIPE' || cleanedParam === 'QNA') {
+          setSelectedFilter(cleanedParam as TBoardCategory);
+        }
+      }
+    }
+  }, [paramCategory]);
 
   const {
     data,
@@ -190,7 +220,7 @@ export const CommunityScreen = () => {
           <PostCard
             author={{ name: item.authorNickname || '익명' }}
             createdAt={item.createdAt}
-            category={item.category}
+            category={getCategoryLabel(item.category)}
             images={item.imageUrls}
             content=""
             title={item.title}

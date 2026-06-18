@@ -66,7 +66,17 @@ apiClient.interceptors.response.use(
         console.warn('[API Response Error Data]', JSON.stringify(error.response.data, null, 2));
       }
     }
+
+    // APK 빌드 등에서도 API 호출 오류를 쉽게 확인할 수 있도록 전역 alert 팝업 추가
     const status = error.response ? error.response.status : null;
+    const errorMsg = error.response
+      ? `[API Error ${status}]\nURL: ${error.config?.url}\nResponse: ${JSON.stringify(error.response.data)}`
+      : `[API Error] ${error.message}\nURL: ${error.config?.url}`;
+
+    if (typeof alert !== 'undefined') {
+      alert(errorMsg);
+    }
+
     if (status === 401) {
       if (__DEV__) {
         console.warn('Unauthorized request - redirecting or clearing token');

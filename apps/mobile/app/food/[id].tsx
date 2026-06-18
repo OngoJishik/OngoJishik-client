@@ -21,8 +21,6 @@ import {
 } from '@ongo/ui';
 import { formatFoodName } from '@ongo/utils';
 
-import { MOCK_DETAILS } from '../../mocks';
-
 /**
  * 전통 음식의 상세 정보를 다양한 탭과 스토리로 제공하는 화면 컴포넌트
  * GET /api/analysis/{foodId} 기반 실제 데이터를 사용합니다.
@@ -50,14 +48,27 @@ export const FoodDetailScreen = () => {
   const serverFavorite = rawDetail?.isBookmarked ?? false;
   const isFavorite = optimisticFavorite !== null ? optimisticFavorite : serverFavorite;
 
-  const detail = foodDetail || MOCK_DETAILS;
-  const storyText = detail.historyStory || '';
+  const detail = foodDetail || {
+    id: '',
+    nameKo: '',
+    nameLocalized: '',
+    emoji: '🍲',
+    imageUrl: '',
+    category: 'ETC' as any,
+    description: '',
+    tags: [],
+    source: '',
+    ingredients: [],
+    recipeSteps: [],
+    historyStory: '',
+    ritualContext: '',
+    literatureQuotes: [],
+  };
 
   const tabs = [
     t('detail.recipe'),
     t('detail.ingredients'),
-    t('detail.historyStory'),
-    t('detail.literature'),
+    t('detail.historyAndLiterature'),
   ];
 
   const [activeTab, setActiveTab] = useState(tabs[0]);
@@ -82,13 +93,20 @@ export const FoodDetailScreen = () => {
   };
 
   const activeTabIndex = tabs.indexOf(activeTab);
-  const showFeedback = activeTabIndex === 2 || activeTabIndex === 3;
-
-  const literatureData = detail.literatureQuotes?.[0] || MOCK_DETAILS.literatureQuotes[0];
+  const showFeedback = activeTabIndex === 2;
 
   const renderTabContent = () => {
     switch (activeTabIndex) {
       case 1: // 식재료
+        if (!detail.ingredients || detail.ingredients.length === 0) {
+          return (
+            <View style={styles.emptyContainer}>
+              <Text variant="body" style={styles.emptyText}>
+                {t('detail.noIngredients')}
+              </Text>
+            </View>
+          );
+        }
         return (
           <View style={styles.tabContent}>
             {detail.ingredients.map((ing) => (
@@ -99,57 +117,74 @@ export const FoodDetailScreen = () => {
             ))}
           </View>
         );
-      case 2: // 역사이야기
+      case 2: // 역사&문헌
         {
-          const ritualText = detail.ritualContext ?? '';
+          const hasStory = !!detail.historyStory;
+          const hasRitual = !!detail.ritualContext;
+          const hasQuotes = !!detail.literatureQuotes && detail.literatureQuotes.length > 0;
+
+          if (!hasStory && !hasRitual && !hasQuotes) {
+            return (
+              <View style={styles.emptyContainer}>
+                <Text variant="body" style={styles.emptyText}>
+                  {t('detail.noHistoryData')}
+                </Text>
+              </View>
+            );
+          }
+
           return (
             <View style={styles.tabContent}>
-              <HistorySection
-                type="origin"
-                icon="📜"
-                title={t('history.originTitle', { defaultValue: '유래 이야기' })}
-                content={storyText}
-              />
-              <HistorySection
-                type="literature"
-                icon="📚"
-                title={t('history.literatureTitle', { defaultValue: '문헌 기록' })}
-                content={t('history.literatureQuoteText', { defaultValue: '고문헌 기록에 묘사된 내용입니다.' })}
-                citation={{
-                  quote: literatureData.quoteOriginal,
-                  source: `${literatureData.sourceName} (${literatureData.era})`,
-                  onViewOriginal: () => {
-                    if (__DEV__) console.log('View original literature pressed');
-                  }
-                }}
-                citationLabel={t('history.citation')}
-                viewOriginalLabel={t('history.viewOriginal')}
-              />
-              <HistorySection
-                type="ritual"
-                icon="🎎"
-                title={t('history.ritualTitle', { defaultValue: '의례와의 연결' })}
-                content={ritualText}
-              />
-            </View>
-          );
-        }
-      case 3: // 문헌
-        {
-          return (
-            <View style={styles.tabContent}>
-              <LiteratureQuote
-                sourceName={literatureData.sourceName}
-                quoteOriginal={literatureData.quoteOriginal}
-                quoteTranslation={literatureData.quoteTranslation}
-                era={literatureData.era}
-                translationLabel={t('history.modernTranslation')}
-              />
+              {hasStory && (
+                <HistorySection
+                  type="origin"
+                  icon="📜"
+                  title={t('history.originTitle', { defaultValue: '유래 이야기' })}
+                  content={detail.historyStory ?? ''}
+                />
+              )}
+              {hasRitual && (
+                <HistorySection
+                  type="ritual"
+                  icon="🎎"
+                  title={t('history.ritualTitle', { defaultValue: '의례와의 연결' })}
+                  content={detail.ritualContext ?? ''}
+                />
+              )}
+              {hasQuotes && (
+                <View style={styles.literatureSection}>
+                  <View style={styles.literatureHeader}>
+                    <Text style={styles.literatureIcon}>📚</Text>
+                    <Text variant="h3" bold style={[styles.literatureTitleText, { color: colors.text }]}>
+                      {t('history.literatureTitle', { defaultValue: '문헌 기록' })}
+                    </Text>
+                  </View>
+                  {detail.literatureQuotes?.map((quote, idx) => (
+                    <LiteratureQuote
+                      key={idx}
+                      sourceName={quote.sourceName}
+                      quoteOriginal={quote.quoteOriginal}
+                      quoteTranslation={quote.quoteTranslation}
+                      era={quote.era}
+                      translationLabel={t('history.modernTranslation')}
+                    />
+                  ))}
+                </View>
+              )}
             </View>
           );
         }
       case 0: // 조리법
       default:
+        if (!detail.recipeSteps || detail.recipeSteps.length === 0) {
+          return (
+            <View style={styles.emptyContainer}>
+              <Text variant="body" style={styles.emptyText}>
+                {t('detail.noRecipe')}
+              </Text>
+            </View>
+          );
+        }
         return (
           <View style={styles.tabContent}>
             {detail.recipeSteps.map((step) => (
@@ -222,7 +257,15 @@ export const FoodDetailScreen = () => {
 
         <TabBar tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
 
-        {renderTabContent()}
+        {isLoading ? (
+          <View style={styles.tabContent}>
+            <View style={[styles.skeletonItem, { backgroundColor: colors.border }]} />
+            <View style={[styles.skeletonItem, { backgroundColor: colors.border }]} />
+            <View style={[styles.skeletonItem, { backgroundColor: colors.border }]} />
+          </View>
+        ) : (
+          renderTabContent()
+        )}
 
         {showFeedback && (
           <FeedbackButtons
@@ -369,6 +412,38 @@ const styles = StyleSheet.create({
   },
   marketBtn: {
     flex: 1,
+  },
+  skeletonItem: {
+    height: 60,
+    borderRadius: 8,
+    marginBottom: 12,
+    width: '100%',
+    opacity: 0.6,
+  },
+  literatureSection: {
+    marginVertical: 12,
+  },
+  literatureHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+    paddingHorizontal: 4,
+  },
+  literatureIcon: {
+    fontSize: 22,
+    marginRight: 8,
+  },
+  literatureTitleText: {
+    fontSize: 16,
+  },
+  emptyContainer: {
+    paddingVertical: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyText: {
+    textAlign: 'center',
+    color: '#888888',
   },
 });
 

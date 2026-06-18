@@ -168,4 +168,14 @@ export const communityEndpoints = {
     const response = await apiClient.get<number>(`/api/boards/${boardId}/likes/count`);
     return response.data;
   },
+
+  /**
+   * 인기 게시글 조회 (GET /api/boards/popular)
+   * 좋아요 수가 많은 게시글 상위 5개를 반환합니다.
+   * @author Antigravity
+   */
+  async getPopularBoards(): Promise<TBoardSummary[]> {
+    const response = await apiClient.get<TBoardSummary[]>('/api/boards/popular');
+    return response.data;
+  },
 };

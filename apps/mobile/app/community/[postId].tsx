@@ -10,6 +10,7 @@ import {
   PostDetail,
   CommentInput,
   Text,
+  Icon,
   useTheme,
 } from '@ongo/ui';
 import { userProfileAtom } from '@ongo/store';
@@ -39,6 +40,22 @@ export const PostDetailScreen = () => {
   const { t } = useTranslation();
   const { postId } = useLocalSearchParams<{ postId: string }>();
   const boardId = parseInt(postId ?? '', 10);
+
+  const getCategoryLabel = (category?: any) => {
+    if (!category) return '';
+    const categoryStr = typeof category === 'string' ? category : (category.id || category.code || category.name || String(category));
+    if (!categoryStr || typeof categoryStr !== 'string') return '';
+    switch (categoryStr.trim().toUpperCase()) {
+      case 'REVIEW':
+        return t('community.cookingReview');
+      case 'RECIPE':
+        return t('community.myRecipe');
+      case 'QNA':
+        return t('community.qna');
+      default:
+        return categoryStr;
+    }
+  };
 
   const userProfile = useAtomValue(userProfileAtom);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -93,8 +110,15 @@ export const PostDetailScreen = () => {
         initContent: activePost.content,
         initTitle: activePost.title,
         initImages: JSON.stringify(activePost.imageUrls),
+        ...(activePost.recipeId ? { initLinkedRecipeId: activePost.recipeId } : {}),
       },
     });
+  };
+
+  const handleRecipePress = () => {
+    if (activePost?.recipeId) {
+      router.push(`/food/${activePost.recipeId}`);
+    }
   };
 
   const handleDelete = () => {
@@ -210,10 +234,23 @@ export const PostDetailScreen = () => {
           removeClippedSubviews={false}
           ListHeaderComponent={
             <View style={{ marginBottom: 16 }}>
+              {/* 연결 레시피 칩 — recipeId가 있을 때만 표시 */}
+              {activePost.recipeId && (
+                <Pressable
+                  style={[styles.recipeChip, { backgroundColor: colors.primaryLight, borderColor: colors.border }]}
+                  onPress={handleRecipePress}
+                >
+                  <Text style={{ fontSize: 14, marginRight: 4 }}>🍲</Text>
+                  <Text variant="caption" bold style={{ color: colors.primary }}>
+                    {t('community.linkedRecipe')}
+                  </Text>
+                  <Icon name="back" size={12} color={colors.primary} style={{ transform: [{ rotate: '180deg' }], marginLeft: 4 }} />
+                </Pressable>
+              )}
               <PostDetail
                 author={{ name: activePost.authorNickname || '익명' }}
                 createdAt={activePost.createdAt}
-                category={activePost.category}
+                category={getCategoryLabel(activePost.category)}
                 images={activePost.imageUrls}
                 content={activePost.content}
                 title={activePost.title}
@@ -260,6 +297,17 @@ export const PostDetailScreen = () => {
 const styles = StyleSheet.create({
   keyboardAvoiding: {
     flex: 1,
+  },
+  recipeChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    borderWidth: 1,
+    marginTop: 8,
+    marginBottom: 4,
   },
   commentHeader: {
     fontSize: 15,
