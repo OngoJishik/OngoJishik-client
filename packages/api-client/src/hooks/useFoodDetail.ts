@@ -7,19 +7,13 @@ import type { TFoodDetail } from '../types/food';
 
 /**
  * API 응답(`TFoodDetailResponse`)을 기존 UI 타입(`TFoodDetail`)으로 변환하는 매핑 헬퍼
- * TODO: ingredient가 string으로 내려오므로 쉼표 파싱 사용. 서버 스펙 개선 시 제거 필요.
+ * 백엔드 개선 반영: ingredients 배열, recipeSteps 구조체 배열을 직접 사용합니다.
  * @author Antigravity
  */
 export const mapFoodDetailResponse = (res: TFoodDetailResponse): TFoodDetail => {
-  const ingredients = res.ingredient
-    ? res.ingredient.split(',').map((s) => s.trim()).filter(Boolean)
-    : [];
+  const ingredients = res.ingredients ?? [];
 
-  const recipeSteps = (res.recipeSteps ?? []).map((desc, idx) => ({
-    stepNumber: idx + 1,
-    title: `${idx + 1}단계`,
-    description: desc,
-  }));
+  const recipeSteps = res.recipeSteps ?? [];
 
   const literatureQuotes = (res.literature?.sources ?? []).map((src) => ({
     sourceName: src.title,

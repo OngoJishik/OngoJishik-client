@@ -1,6 +1,6 @@
 import { apiClient } from '../client';
 import type { TUserProfile } from '../types/common';
-import type { TBookmarkResponse } from '../types/bookmark';
+import type { TBookmarkResponse, TBookmarkedRecipe } from '../types/bookmark';
 
 /**
  * 사용자 정보 및 즐겨찾기 관련 API 엔드포인트 객체
@@ -35,6 +35,16 @@ export const userEndpoints = {
   },
 
   /**
+   * 게시글 작성/수정 시 recipeId로 선택 가능한 북마크 음식 레시피 목록 조회
+   * (GET /api/bookmarks/recipes)
+   * @author Antigravity
+   */
+  async getBookmarkedRecipes(): Promise<TBookmarkedRecipe[]> {
+    const response = await apiClient.get<TBookmarkedRecipe[]>('/api/bookmarks/recipes');
+    return response.data;
+  },
+
+  /**
    * 음식 즐겨찾기 추가 (POST /api/bookmarks/{foodId})
    * @author Antigravity
    */
@@ -51,4 +61,3 @@ export const userEndpoints = {
     await apiClient.delete(`/api/bookmarks/${foodId}`);
   },
 };
-
