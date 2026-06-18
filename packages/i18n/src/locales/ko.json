@@ -16,6 +16,10 @@
     "ingredients": "식재료",
     "historyStory": "역사 이야기",
     "literature": "문헌 원문",
+    "historyAndLiterature": "역사&문헌",
+    "noRecipe": "조리법 정보가 없습니다",
+    "noIngredients": "식재료 정보가 없습니다",
+    "noHistoryData": "역사 및 문헌 정보가 없습니다",
     "health": "건강 정보",
     "aiImageDisclaimer": "사용자 이해를 돕기 위한 연출 이미지입니다",
     "dataSource": "출처: 특허청 한국전통지식포탈"

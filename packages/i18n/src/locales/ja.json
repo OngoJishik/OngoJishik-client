@@ -16,6 +16,10 @@
     "ingredients": "食材",
     "historyStory": "歴史ストーリー",
     "literature": "古典文献",
+    "historyAndLiterature": "歴史と文献",
+    "noRecipe": "レシピ情報がありません",
+    "noIngredients": "食材情報がありません",
+    "noHistoryData": "歴史および文献情報がありません",
     "health": "健康情報",
     "aiImageDisclaimer": "ユーザーの理解を助けるための演出イメージです",
     "dataSource": "出典：特許庁 韓国伝統知識ポータル"
