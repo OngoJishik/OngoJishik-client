@@ -15,7 +15,7 @@ if (__DEV__ && !process.env.EXPO_PUBLIC_API_BASE_URL) {
 
 export const apiClient = axios.create({
   baseURL: BASE_URL,
-  timeout: 10000,
+  timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
   },

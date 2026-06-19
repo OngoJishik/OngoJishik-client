@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { userEndpoints } from '../endpoints/user';
 import { foodKeys, bookmarkKeys } from './queryKeys';
-import type { TBookmarkResponse } from '../types/bookmark';
+import type { TBookmarkResponse, TBookmarkListResponse } from '../types/bookmark';
 import type { TFoodDetailResponse } from '../types/food';
 
 /**
@@ -44,14 +44,25 @@ export const useAddBookmarkMutation = () => {
       await queryClient.cancelQueries({ queryKey: bookmarkKeys.list() });
       await queryClient.cancelQueries({ queryKey: [...foodKeys.detail(foodId), 'raw'] });
 
-      const previousList = queryClient.getQueryData<TBookmarkResponse[]>(bookmarkKeys.list());
+      const previousList = queryClient.getQueryData<TBookmarkListResponse>(bookmarkKeys.list());
       const previousRawDetail = queryClient.getQueryData<TFoodDetailResponse>([...foodKeys.detail(foodId), 'raw']);
 
-      // 낙관적으로 목록에 임시 항목 추가
-      queryClient.setQueryData<TBookmarkResponse[]>(bookmarkKeys.list(), (old = []) => [
-        ...old,
-        { foodId, foodName: '', category: '', features: [], foodPicture: '' },
-      ]);
+      // 낙관적으로 목록에 임시 항목 추가 및 totalCount 1 증가
+      queryClient.setQueryData<TBookmarkListResponse>(bookmarkKeys.list(), (old) => {
+        if (!old) {
+          return {
+            totalCount: 1,
+            bookmarks: [{ foodId, foodName: '', category: '', features: [], foodPicture: '' }],
+          };
+        }
+        return {
+          totalCount: old.totalCount + 1,
+          bookmarks: [
+            ...old.bookmarks,
+            { foodId, foodName: '', category: '', features: [], foodPicture: '' },
+          ],
+        };
+      });
 
       // 낙관적으로 상세 정보 북마크 상태를 true로 설정
       if (previousRawDetail) {
@@ -95,13 +106,21 @@ export const useDeleteBookmarkMutation = () => {
       await queryClient.cancelQueries({ queryKey: bookmarkKeys.list() });
       await queryClient.cancelQueries({ queryKey: [...foodKeys.detail(foodId), 'raw'] });
 
-      const previousList = queryClient.getQueryData<TBookmarkResponse[]>(bookmarkKeys.list());
+      const previousList = queryClient.getQueryData<TBookmarkListResponse>(bookmarkKeys.list());
       const previousRawDetail = queryClient.getQueryData<TFoodDetailResponse>([...foodKeys.detail(foodId), 'raw']);
 
-      // 낙관적으로 목록에서 제거
-      queryClient.setQueryData<TBookmarkResponse[]>(bookmarkKeys.list(), (old = []) =>
-        old.filter((item) => item.foodId !== foodId)
-      );
+      // 낙관적으로 목록에서 제거 및 totalCount 감소
+      queryClient.setQueryData<TBookmarkListResponse>(bookmarkKeys.list(), (old) => {
+        if (!old) {
+          return { totalCount: 0, bookmarks: [] };
+        }
+        const filtered = old.bookmarks.filter((item) => item.foodId !== foodId);
+        const removedCount = old.bookmarks.length - filtered.length;
+        return {
+          totalCount: Math.max(0, old.totalCount - removedCount),
+          bookmarks: filtered,
+        };
+      });
 
       // 낙관적으로 상세 정보 북마크 상태를 false로 설정
       if (previousRawDetail) {

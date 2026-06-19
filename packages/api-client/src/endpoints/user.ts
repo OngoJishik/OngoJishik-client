@@ -1,6 +1,6 @@
 import { apiClient } from '../client';
 import type { TUserProfile } from '../types/common';
-import type { TBookmarkResponse, TBookmarkedRecipe } from '../types/bookmark';
+import type { TBookmarkResponse, TBookmarkListResponse, TBookmarkedRecipe } from '../types/bookmark';
 
 /**
  * 사용자 정보 및 즐겨찾기 관련 API 엔드포인트 객체
@@ -29,8 +29,8 @@ export const userEndpoints = {
    * 내 즐겨찾기(북마크) 목록 조회 (GET /api/bookmarks)
    * @author Antigravity
    */
-  async getBookmarks(): Promise<TBookmarkResponse[]> {
-    const response = await apiClient.get<TBookmarkResponse[]>('/api/bookmarks');
+  async getBookmarks(): Promise<TBookmarkListResponse> {
+    const response = await apiClient.get<TBookmarkListResponse>('/api/bookmarks');
     return response.data;
   },
 
