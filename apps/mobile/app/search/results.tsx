@@ -96,6 +96,7 @@ export const SearchResultsScreen = () => {
                 nameKo={item.foodName}
                 nameLocalized={undefined}
                 emoji={'🍲'}
+                imageUrl={item.foodPicture}
                 category={item.category as Parameters<typeof FoodResultCard>[0]['category']}
                 era={undefined}
                 description={Array.isArray(item.features) ? item.features.join(', ') : ''}
