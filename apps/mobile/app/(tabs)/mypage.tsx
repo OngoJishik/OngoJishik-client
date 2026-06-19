@@ -14,7 +14,7 @@ import {
   Icon,
   useTheme,
 } from '@ongo/ui';
-import { useLogoutMutation, useMyBoardsQuery } from '@ongo/api-client';
+import { useLogoutMutation, useMyBoardsQuery, useFavoritesQuery } from '@ongo/api-client';
 import {
   currentUserAtom,
   localFavoritesAtom,
@@ -47,6 +47,9 @@ export const MyPageScreen = () => {
   // 내 게시글 총 개수 조회 (size=1로 totalElements만 효율적으로 가져옴)
   const { data: myBoardsData } = useMyBoardsQuery(0, 1);
   const postCount = myBoardsData?.totalElements ?? currentUser?.postCount ?? 0;
+
+  // 내 즐겨찾기 총 개수 및 목록 조회
+  const { data: bookmarksData } = useFavoritesQuery();
 
   const handleLogout = () => {
     Alert.alert(
@@ -85,23 +88,14 @@ export const MyPageScreen = () => {
 
   const displayName = currentUser?.name ?? '전통요리사_하나';
   const displayEmail = currentUser?.email ?? 'hana@gmail.com';
-  const favCount = favorites.length;
+  const favCount = bookmarksData?.totalCount ?? 0;
   const searchCount = searchHistory.length;
 
   return (
     <ScreenLayout scrollable>
       <Header
         title={t('mypage.title')}
-          titleIcon="mypage"
-        rightAction={
-          <Pressable onPress={() => {
-            if (__DEV__) {
-              console.log('Settings pressed');
-            }
-          }}>
-            <Icon name="settings" size={22} color={colors.text} />
-          </Pressable>
-        }
+        titleIcon="mypage"
       />
 
       <View style={styles.profileSection}>
@@ -151,7 +145,7 @@ export const MyPageScreen = () => {
           icon="🔍"
           iconName="search"
           description={t('mypage.searchHistoryDesc')}
-          onPress={() => router.push('/(tabs)/search')}
+          onPress={() => router.push('/search-history')}
         />
         <MenuItem
           title={t('mypage.myPosts')}
