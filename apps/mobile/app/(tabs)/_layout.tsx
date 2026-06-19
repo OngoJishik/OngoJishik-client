@@ -1,15 +1,17 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
+import { useAtomValue } from 'jotai';
 
 import { useTranslation } from '@ongo/i18n';
 import { BottomNav, NavItem } from '@ongo/ui';
+import { isHomeSearchActiveAtom } from '@ongo/store';
 
 export function TabLayout() {
   const { t } = useTranslation();
+  const isSearchActive = useAtomValue(isHomeSearchActiveAtom);
 
   const navItems: NavItem[] = [
     { key: 'index', label: t('tabs.home'), iconName: 'home' },
-    { key: 'search', label: t('tabs.search'), iconName: 'search' },
     { key: 'community', label: t('tabs.community'), iconName: 'community' },
     { key: 'mypage', label: t('tabs.mypage'), iconName: 'mypage' },
   ];
@@ -20,6 +22,10 @@ export function TabLayout() {
         headerShown: false,
       }}
       tabBar={({ state, navigation }) => {
+        if (isSearchActive) {
+          return null;
+        }
+        
         const activeKey = state.routes[state.index].name;
         
         const handleSelect = (key: string) => {
@@ -45,7 +51,6 @@ export function TabLayout() {
       }}
     >
       <Tabs.Screen name="index" />
-      <Tabs.Screen name="search" />
       <Tabs.Screen name="community" />
       <Tabs.Screen name="mypage" />
     </Tabs>
