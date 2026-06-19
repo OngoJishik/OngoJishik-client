@@ -5,6 +5,7 @@ export * from './types/community';
 export * from './types/common';
 export * from './types/bookmark';
 export * from './types/search-history';
+export * from './types/home';
 
 export * from './endpoints/food';
 export * from './endpoints/history';
@@ -14,6 +15,7 @@ export * from './endpoints/user';
 export * from './endpoints/market';
 export * from './endpoints/upload';
 export * from './endpoints/search-history';
+export * from './endpoints/home';
 
 export * from './hooks/queryKeys';
 export * from './hooks/useSearch';
@@ -24,3 +26,4 @@ export * from './hooks/useFavorites';
 export * from './hooks/useAuth';
 export * from './hooks/useUploadImages';
 export * from './hooks/useSearchHistory';
+export * from './hooks/useHome';

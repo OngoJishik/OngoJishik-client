@@ -84,3 +84,12 @@ export const searchHistoryKeys = {
   list: () => [...searchHistoryKeys.all, 'list'] as const,
 };
 
+/**
+ * 홈화면 관련 TanStack Query Key 팩토리 객체
+ * @author Antigravity
+ */
+export const homeKeys = {
+  all: ['home'] as const,
+  todayFood: () => [...homeKeys.all, 'todayFood'] as const,
+};
+

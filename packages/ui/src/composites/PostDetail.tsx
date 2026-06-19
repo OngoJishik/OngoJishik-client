@@ -18,7 +18,7 @@ export interface PostDetailProps {
   likeCount: number;
   commentCount: number;
   isLiked: boolean;
-  linkedRecipe?: { id: string; nameKo: string; emoji: string; description?: string };
+  linkedRecipe?: { id: string; nameKo: string; emoji: string; description?: string; isClickable?: boolean };
   onLike: () => void;
   onRecipePress?: () => void;
   title?: string;
@@ -98,13 +98,14 @@ export const PostDetail: React.FC<PostDetailProps> = ({
       </Text>
 
       {/* RecipeLink Card */}
-      {linkedRecipe && onRecipePress && (
+      {linkedRecipe && (
         <RecipeLink
           foodId={linkedRecipe.id}
           nameKo={linkedRecipe.nameKo}
           emoji={linkedRecipe.emoji}
-          description={linkedRecipe.description || '산림경제 기반 전통 조리법'}
+          description={linkedRecipe.description || ''}
           onPress={onRecipePress}
+          isClickable={linkedRecipe.isClickable}
         />
       )}
     </View>

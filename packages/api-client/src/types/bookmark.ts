@@ -13,6 +13,15 @@ export type TBookmarkResponse = {
 };
 
 /**
+ * 내 즐겨찾기(북마크) 목록 조회 응답 타입 (GET /api/bookmarks)
+ * @author Antigravity
+ */
+export type TBookmarkListResponse = {
+  totalCount: number;
+  bookmarks: TBookmarkResponse[];
+};
+
+/**
  * 게시글 작성/수정 시 recipeId로 선택 가능한 북마크 음식의 레시피 정보
  * GET /api/bookmarks/recipes 응답 (BookmarkedRecipeResponse)
  * @author Antigravity

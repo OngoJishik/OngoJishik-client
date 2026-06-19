@@ -25,3 +25,10 @@ export const searchHistoryAtom = atomWithStorage<string[]>(
   createJSONStorage(() => AsyncStorage)
 );
 
+/**
+ * 홈 화면 검색 활성화 여부 상태 Atom
+ * @author Antigravity
+ */
+export const isHomeSearchActiveAtom = atom<boolean>(false);
+
+
