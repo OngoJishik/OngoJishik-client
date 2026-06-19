@@ -6,6 +6,7 @@ import { spacing } from '../../tokens/spacing';
 interface ScreenLayoutProps {
   children: React.ReactNode;
   scrollable?: boolean;
+  scrollEnabled?: boolean;
   style?: ViewStyle;
   contentContainerStyle?: ViewStyle;
 }
@@ -13,6 +14,7 @@ interface ScreenLayoutProps {
 export const ScreenLayout: React.FC<ScreenLayoutProps> = ({
   children,
   scrollable = false,
+  scrollEnabled = true,
   style,
   contentContainerStyle,
 }) => {
@@ -32,6 +34,7 @@ export const ScreenLayout: React.FC<ScreenLayoutProps> = ({
           style={containerStyle}
           contentContainerStyle={[styles.scrollContent, contentContainerStyle]}
           showsVerticalScrollIndicator={false}
+          scrollEnabled={scrollEnabled}
         >
           {children}
         </ScrollView>

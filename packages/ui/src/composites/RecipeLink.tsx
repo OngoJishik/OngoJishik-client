@@ -11,7 +11,8 @@ export interface RecipeLinkProps {
   nameKo: string;
   emoji: string;
   description: string;
-  onPress: () => void;
+  onPress?: () => void;
+  isClickable?: boolean;
 }
 
 /**
@@ -23,27 +24,38 @@ export const RecipeLink: React.FC<RecipeLinkProps> = ({
   emoji,
   description,
   onPress,
+  isClickable = true,
 }) => {
   const { colors } = useTheme();
 
-  return (
-    <Pressable onPress={onPress}>
-      <Card style={styles.card} bordered>
-        <View style={styles.container}>
-          <Text style={styles.emoji}>{emoji}</Text>
-          <View style={styles.content}>
-            <Text variant="body" bold style={{ color: colors.text }}>
-              {nameKo} 레시피 보기
-            </Text>
+  const cardContent = (
+    <Card style={styles.card} bordered>
+      <View style={styles.container}>
+        <Text style={styles.emoji}>{emoji}</Text>
+        <View style={styles.content}>
+          <Text variant="body" bold style={{ color: colors.text }}>
+            {isClickable ? `${nameKo} 레시피 보기` : nameKo}
+          </Text>
+          {description ? (
             <Text variant="caption" style={{ color: colors.textSecondary, marginTop: 2 }} numberOfLines={1}>
               {description}
             </Text>
-          </View>
-          <Icon name="chevron-right" size={20} color={colors.textTertiary} />
+          ) : null}
         </View>
-      </Card>
-    </Pressable>
+        {isClickable && <Icon name="chevron-right" size={20} color={colors.textTertiary} />}
+      </View>
+    </Card>
   );
+
+  if (isClickable && onPress) {
+    return (
+      <Pressable onPress={onPress}>
+        {cardContent}
+      </Pressable>
+    );
+  }
+
+  return cardContent;
 };
 
 const styles = StyleSheet.create({
