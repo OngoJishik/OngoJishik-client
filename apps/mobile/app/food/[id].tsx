@@ -1,10 +1,16 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Pressable } from 'react-native';
+import { View, StyleSheet, Pressable, ActivityIndicator, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useAtomValue } from 'jotai';
 import { Image } from 'expo-image';
 
-import { useFoodDetailQuery, useFoodDetailRawQuery, useAddBookmarkMutation, useDeleteBookmarkMutation } from '@ongo/api-client';
+import {
+  useFoodDetailQuery,
+  useFoodDetailRawQuery,
+  useAddBookmarkMutation,
+  useDeleteBookmarkMutation,
+  useImageJobQuery,
+} from '@ongo/api-client';
 import { useTranslation } from '@ongo/i18n';
 import { languageAtom } from '@ongo/store';
 import {
@@ -63,7 +69,29 @@ export const FoodDetailScreen = () => {
     historyStory: '',
     ritualContext: '',
     literatureQuotes: [],
+    imageStatus: undefined,
+    imageJobId: undefined,
   };
+
+  // 최종 이미지 URL 및 PENDING 상태 결정
+  const isImagePending = detail.imageStatus === 'PENDING' && !!detail.imageJobId;
+  const { data: jobData, isTimedOut } = useImageJobQuery(detail.imageJobId ?? 0, isImagePending);
+
+  let imageUrl = detail.imageUrl;
+  let currentImageStatus = detail.imageStatus;
+
+  if (isImagePending) {
+    if (jobData?.status === 'COMPLETED' && jobData.imageUrl) {
+      imageUrl = jobData.imageUrl;
+      currentImageStatus = 'COMPLETED';
+    } else if (jobData?.status === 'FAILED' || isTimedOut) {
+      imageUrl = '';
+      currentImageStatus = 'FAILED';
+    } else {
+      imageUrl = '';
+      currentImageStatus = 'PENDING';
+    }
+  }
 
   const tabs = [
     t('detail.recipe'),
@@ -167,6 +195,9 @@ export const FoodDetailScreen = () => {
                       quoteTranslation={quote.quoteTranslation}
                       era={quote.era}
                       translationLabel={t('history.modernTranslation')}
+                      author={quote.author}
+                      publishYear={quote.publishYear}
+                      originalUrl={quote.originalUrl}
                     />
                   ))}
                 </View>
@@ -205,10 +236,18 @@ export const FoodDetailScreen = () => {
     <ScreenLayout scrollable style={{ paddingHorizontal: 0 }}>
       {/* Hero Image Area */}
       <View style={[styles.heroContainer, { backgroundColor: colors.primaryLight }]}>
-        {'imageUrl' in detail && detail.imageUrl && (
-          <Image source={{ uri: detail.imageUrl }} style={StyleSheet.absoluteFill} contentFit="cover" />
+        {currentImageStatus === 'PENDING' ? (
+          <View style={styles.emojiWrapper}>
+            <ActivityIndicator size="large" color={colors.primary} />
+          </View>
+        ) : imageUrl ? (
+          <Image source={{ uri: imageUrl }} style={StyleSheet.absoluteFill} contentFit="cover" />
+        ) : (
+          <View style={styles.emojiWrapper}>
+            <Text style={styles.largeEmoji}>{detail.emoji || '🍲'}</Text>
+          </View>
         )}
-        
+
         {/* Overlays */}
         <Pressable style={styles.overlayBackBtn} onPress={() => router.back()}>
           <Icon name="back" size={24} color="#FFFFFF" />
@@ -295,9 +334,10 @@ export const FoodDetailScreen = () => {
           <Button
             title={t('food.marketButton')}
             onPress={() => {
-              if (__DEV__) {
-                console.log('Link to traditional markets');
-              }
+              Alert.alert(
+                t('common.confirm', { defaultValue: '확인' }),
+                t('food.marketLinkComingSoon')
+              );
             }}
             style={styles.marketBtn}
           />

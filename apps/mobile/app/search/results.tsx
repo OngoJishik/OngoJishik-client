@@ -3,7 +3,7 @@ import { View, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
 import { useTranslation } from '@ongo/i18n';
-import { useRecommendMutation } from '@ongo/api-client';
+import { useRecommendMutation, useImageJobQuery } from '@ongo/api-client';
 import {
   ScreenLayout,
   Header,
@@ -14,6 +14,52 @@ import {
   useTheme,
 } from '@ongo/ui';
 import { colors as designColors } from '@ongo/ui';
+
+import type { TRecommendFoodItem } from '@ongo/api-client';
+
+/**
+ * 개별 추천 음식을 렌더링하고 이미지 생성 PENDING 시 상태 조회를 수행하는 래퍼 컴포넌트
+ * @author Antigravity
+ */
+const RecommendationItem: React.FC<{
+  item: TRecommendFoodItem;
+  onPress: () => void;
+}> = ({ item, onPress }) => {
+  const isPending = item.imageStatus === 'PENDING';
+  const { data: jobData, isTimedOut } = useImageJobQuery(item.imageJobId, isPending);
+
+  // 최종 이미지 URL과 상태 결정
+  let imageUrl: string | undefined = item.foodPicture || undefined;
+  let status: 'PENDING' | 'COMPLETED' | 'FAILED' | undefined = item.imageStatus;
+
+  if (isPending) {
+    if (jobData?.status === 'COMPLETED' && jobData.imageUrl) {
+      imageUrl = jobData.imageUrl;
+      status = 'COMPLETED';
+    } else if (jobData?.status === 'FAILED' || isTimedOut) {
+      imageUrl = undefined;
+      status = 'FAILED';
+    } else {
+      imageUrl = undefined;
+      status = 'PENDING';
+    }
+  }
+
+  return (
+    <FoodResultCard
+      id={item.foodId}
+      nameKo={item.foodName}
+      nameLocalized={undefined}
+      emoji="🍲"
+      imageUrl={imageUrl}
+      category={item.category as Parameters<typeof FoodResultCard>[0]['category']}
+      era={undefined}
+      description={Array.isArray(item.features) ? item.features.join(', ') : ''}
+      onPress={onPress}
+      imageStatus={status}
+    />
+  );
+};
 
 /**
  * 전통 음식 검색 결과를 보여주는 화면 컴포넌트
@@ -91,15 +137,8 @@ export const SearchResultsScreen = () => {
             keyExtractor={(item) => item.foodId}
             showsVerticalScrollIndicator={false}
             renderItem={({ item }) => (
-              <FoodResultCard
-                id={item.foodId}
-                nameKo={item.foodName}
-                nameLocalized={undefined}
-                emoji={'🍲'}
-                imageUrl={item.foodPicture}
-                category={item.category as Parameters<typeof FoodResultCard>[0]['category']}
-                era={undefined}
-                description={Array.isArray(item.features) ? item.features.join(', ') : ''}
+              <RecommendationItem
+                item={item}
                 onPress={() => router.push(`/food/${item.foodId}`)}
               />
             )}

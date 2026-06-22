@@ -1,5 +1,5 @@
 import { apiClient } from '../client';
-import type { TFood, TFoodDetail, TRecommendResponse, TFoodDetailResponse } from '../types/food';
+import type { TFood, TFoodDetail, TRecommendResponse, TFoodDetailResponse, TImageJobResponse } from '../types/food';
 import type { TSearchFilters, TAiSearchAnalysis } from '../types/search';
 
 /**
@@ -34,6 +34,15 @@ export const foodEndpoints = {
    */
   async getRecommendation(query: string): Promise<TRecommendResponse> {
     const response = await apiClient.post<TRecommendResponse>('/api/analysis/recommend', { query });
+    return response.data;
+  },
+
+  /**
+   * 이미지 생성 작업 상태 조회 (GET /api/analysis/image-jobs/{jobId})
+   * @author Antigravity
+   */
+  async getImageJobStatus(jobId: number): Promise<TImageJobResponse> {
+    const response = await apiClient.get<TImageJobResponse>(`/api/analysis/image-jobs/${jobId}`);
     return response.data;
   },
 

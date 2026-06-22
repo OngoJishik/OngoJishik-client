@@ -154,7 +154,8 @@
     "count": "{{count}} results"
   },
   "food": {
-    "marketButton": "📋 View Ingredient Markets (Traditional Market)"
+    "marketButton": "📋 View Ingredient Markets (Traditional Market)",
+    "marketLinkComingSoon": "The service linking traditional markets and ingredient stores will be provided in the future."
   },
   "feedback": {
     "question": "Was this historical information helpful?",

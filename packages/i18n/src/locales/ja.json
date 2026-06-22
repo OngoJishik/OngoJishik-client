@@ -154,7 +154,8 @@
     "count": "{{count}}件の結果"
   },
   "food": {
-    "marketButton": "📋 材料の購入先を見る (伝統市場)"
+    "marketButton": "📋 材料の購入先を見る (伝統市場)",
+    "marketLinkComingSoon": "伝統市場および材料購入先の連携サービスは、今後提供される予定です。"
   },
   "feedback": {
     "question": "この歴史情報は役に立ちましたか？",

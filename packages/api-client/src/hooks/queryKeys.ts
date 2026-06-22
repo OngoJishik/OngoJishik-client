@@ -15,6 +15,7 @@ export const foodKeys = {
   recommendation: () => [...foodKeys.all, 'recommendation'] as const,
   recommend: (query: string) => [...foodKeys.all, 'recommend', { query }] as const,
   popular: () => [...foodKeys.all, 'popular'] as const,
+  imageJob: (jobId: number) => [...foodKeys.all, 'imageJob', jobId] as const,
 };
 
 /**

@@ -28,7 +28,7 @@ export const AppInfoScreen = () => {
         {/* 앱 버전 정보 카드 */}
         <View style={[styles.versionCard, { backgroundColor: colors.primaryLight }]}>
           <Text variant="h3" bold style={{ color: colors.primary }}>
-            온고지식 (On-go 지식)
+            온고지식 (溫故 지식)
           </Text>
           <Text variant="caption" style={{ color: colors.textSecondary, marginTop: 4 }}>
             {t('appInfo.version', '버전')} v1.0.0

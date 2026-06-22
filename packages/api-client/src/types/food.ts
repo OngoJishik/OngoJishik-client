@@ -14,6 +14,8 @@ export type TFood = {
   description: string;
   tags: string[];
   source: string;
+  imageStatus?: 'PENDING' | 'COMPLETED' | 'FAILED';
+  imageJobId?: number;
 };
 
 /**
@@ -44,10 +46,14 @@ export type TRecipeStep = {
  * @author Antigravity
  */
 export type TLiteratureQuote = {
+  sourceId?: string;
   sourceName: string;
   quoteOriginal: string;
   quoteTranslation?: string;
   era: string;
+  author?: string;
+  publishYear?: string;
+  originalUrl?: string;
 };
 
 /**
@@ -64,10 +70,29 @@ export type TFoodSummaryResponse = {
 
 /**
  * 음식 추천 결과 단건 타입 (POST /api/analysis/recommend 응답)
- * FoodSummaryResponse 스키마와 동일 — features: string[]
  * @author Antigravity
  */
-export type TRecommendFoodItem = TFoodSummaryResponse;
+export type TRecommendFoodItem = {
+  foodId: string;
+  foodName: string;
+  category: string;
+  features: string[];
+  foodPicture: string | null;
+  imageStatus: 'PENDING' | 'COMPLETED' | 'FAILED';
+  imageJobId: number;
+};
+
+/**
+ * 이미지 생성 작업 상태 조회 응답 타입 (GET /api/analysis/image-jobs/{jobId})
+ * @author Antigravity
+ */
+export type TImageJobResponse = {
+  jobId: number;
+  foodId: string;
+  status: 'PENDING' | 'COMPLETED' | 'FAILED';
+  imageUrl: string | null;
+  errorMessage?: string;
+};
 
 /**
  * 음식 추천 응답 타입 (POST /api/analysis/recommend)
@@ -118,10 +143,13 @@ export type TFoodDetailResponse = {
   category: string;
   features: string[];
   imageUrl?: string;
+  foodPicture?: string;
   isBookmarked: boolean;
   ingredients: string[];
   recipeSteps: TRecipeStep[];
-  history: TFoodHistory;
+  history?: TFoodHistory;
   literature: { sources: TFoodSource[] };
   dataSource: string;
+  imageStatus?: 'PENDING' | 'COMPLETED' | 'FAILED';
+  imageJobId?: number;
 };

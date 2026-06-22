@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Pressable, Linking } from 'react-native';
 import { Text } from '../primitives/Text';
 import { Card } from '../primitives/Card';
 import { useTheme } from '../../theme/useTheme';
@@ -13,14 +13,25 @@ interface LiteratureQuoteProps {
   quoteTranslation?: string;
   era: string;
   translationLabel?: string;
+  author?: string;
+  publishYear?: string;
+  originalUrl?: string;
 }
 
+/**
+ * 고문헌 기록 인용 카드 컴포넌트
+ * 저자, 발행년도 및 원문 URL 바로가기 기능을 포함합니다.
+ * @author Antigravity
+ */
 export const LiteratureQuote: React.FC<LiteratureQuoteProps> = ({
   sourceName,
   quoteOriginal,
   quoteTranslation,
   era,
   translationLabel = '현대어 풀이',
+  author,
+  publishYear,
+  originalUrl,
 }) => {
   const { colors } = useTheme();
 
@@ -32,8 +43,13 @@ export const LiteratureQuote: React.FC<LiteratureQuoteProps> = ({
             {era}
           </Text>
         </View>
-        <Text variant="label" bold style={[styles.source, { color: colors.text }]}>
+        <Text variant="label" bold style={[styles.source, { color: colors.text, flex: 1 }]}>
           {sourceName}
+          {(author || publishYear) && (
+            <Text variant="caption" style={{ color: colors.textSecondary, fontWeight: 'normal' }}>
+              {` (${[author, publishYear].filter(Boolean).join(' | ')})`}
+            </Text>
+          )}
         </Text>
       </View>
       <View style={[styles.quoteWrapper, { borderLeftColor: colors.primary }]}>
@@ -46,6 +62,27 @@ export const LiteratureQuote: React.FC<LiteratureQuoteProps> = ({
           </Text>
         )}
       </View>
+      {originalUrl && (
+        <View style={styles.linkWrapper}>
+          <Pressable
+            onPress={() => {
+              Linking.openURL(originalUrl).catch((err) => {
+                if (__DEV__) {
+                  console.warn('Failed to open URL:', err);
+                }
+              });
+            }}
+            style={({ pressed }) => [
+              styles.linkButton,
+              pressed && { opacity: 0.6 }
+            ]}
+          >
+            <Text variant="caption" bold style={{ color: colors.primary }}>
+              원문 바로가기 ↗
+            </Text>
+          </Pressable>
+        </View>
+      )}
     </Card>
   );
 };
@@ -84,5 +121,13 @@ const styles = StyleSheet.create({
   translation: {
     marginTop: spacing.sm,
     lineHeight: 18,
+  },
+  linkWrapper: {
+    alignItems: 'flex-end',
+    marginTop: spacing.sm,
+  },
+  linkButton: {
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.sm,
   },
 });

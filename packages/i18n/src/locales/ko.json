@@ -154,7 +154,8 @@
     "count": "{{count}}개 결과"
   },
   "food": {
-    "marketButton": "📋 재료 구매처 보기 (전통시장)"
+    "marketButton": "📋 재료 구매처 보기 (전통시장)",
+    "marketLinkComingSoon": "전통시장 및 재료 구매처 연계 서비스는 추후 제공될 예정입니다."
   },
   "feedback": {
     "question": "이 역사 정보가 도움이 되었나요?",
