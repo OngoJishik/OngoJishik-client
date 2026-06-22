@@ -6,11 +6,12 @@ import { useTranslation } from '@ongo/i18n';
 import {
   ScreenLayout,
   Header,
-  PostCard,
   Text,
   useTheme,
 } from '@ongo/ui';
 import { useMyBoardsInfiniteQuery, useToggleLikeMutation } from '@ongo/api-client';
+
+import { CommunityPostCard } from './community/components/CommunityPostCard';
 
 /**
  * 내 게시글 목록 화면 컴포넌트
@@ -94,16 +95,9 @@ export const MyPostsScreen = () => {
           refreshing={isFetchingNextPage}
           onRefresh={refetch}
           renderItem={({ item }) => (
-            <PostCard
-              author={{ name: item.authorNickname || '익명' }}
-              createdAt={item.createdAt}
-              category={getCategoryLabel(item.category)}
-              images={item.imageUrls}
-              content=""
-              title={item.title}
-              likeCount={item.likeCount}
-              commentCount={item.commentCount}
-              isLiked={item.isLiked}
+            <CommunityPostCard
+              item={item}
+              getCategoryLabel={getCategoryLabel}
               onPress={() => handlePostPress(item.boardId)}
               onLike={() => handleLike(item.boardId)}
             />

@@ -8,7 +8,6 @@ import { useTranslation } from '@ongo/i18n';
 import {
   ScreenLayout,
   Header,
-  PostCard,
   Text,
   Icon,
   useTheme,
@@ -20,6 +19,8 @@ import {
   communityKeys,
 } from '@ongo/api-client';
 import type { TBoardCategory, TBoardSummary, TPage } from '@ongo/api-client';
+
+import { CommunityPostCard } from '../community/components/CommunityPostCard';
 
 const FILTER_CATEGORIES: { id: 'all' | TBoardCategory; labelKey: string }[] = [
   { id: 'all', labelKey: 'community.all' },
@@ -217,16 +218,9 @@ export const CommunityScreen = () => {
         refreshing={isFetchingNextPage}
         onRefresh={refetch}
         renderItem={({ item }) => (
-          <PostCard
-            author={{ name: item.authorNickname || '익명' }}
-            createdAt={item.createdAt}
-            category={getCategoryLabel(item.category)}
-            images={item.imageUrls}
-            content=""
-            title={item.title}
-            likeCount={item.likeCount}
-            commentCount={item.commentCount}
-            isLiked={item.isLiked}
+          <CommunityPostCard
+            item={item}
+            getCategoryLabel={getCategoryLabel}
             onPress={() => handlePostPress(item.boardId)}
             onLike={() => handleLike(item.boardId, item.isLiked, item.likeCount)}
           />
