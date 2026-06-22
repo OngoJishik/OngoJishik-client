@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { View, StyleSheet, Pressable, Alert } from 'react-native';
-import { useRouter, Href } from 'expo-router';
+import { useRouter, Href, useFocusEffect } from 'expo-router';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
@@ -14,7 +14,7 @@ import {
   Icon,
   useTheme,
 } from '@ongo/ui';
-import { useLogoutMutation, useMyBoardsQuery, useFavoritesQuery } from '@ongo/api-client';
+import { useLogoutMutation, useMyBoardsQuery, useFavoritesQuery, useSearchHistoryQuery } from '@ongo/api-client';
 import {
   currentUserAtom,
   localFavoritesAtom,
@@ -45,11 +45,23 @@ export const MyPageScreen = () => {
   const setUserProfile = useSetAtom(userProfileAtom);
 
   // 내 게시글 총 개수 조회 (size=1로 totalElements만 효율적으로 가져옴)
-  const { data: myBoardsData } = useMyBoardsQuery(0, 1);
+  const { data: myBoardsData, refetch: refetchMyBoards } = useMyBoardsQuery(0, 1);
   const postCount = myBoardsData?.totalElements ?? currentUser?.postCount ?? 0;
 
   // 내 즐겨찾기 총 개수 및 목록 조회
-  const { data: bookmarksData } = useFavoritesQuery();
+  const { data: bookmarksData, refetch: refetchFavorites } = useFavoritesQuery();
+
+  // 최근 검색 기록 총 개수 조회
+  const { data: historyData, refetch: refetchSearchHistory } = useSearchHistoryQuery();
+
+  // 화면 포커스 시 모든 카운트 데이터 강제 갱신 (실시간 동기화 보장)
+  useFocusEffect(
+    useCallback(() => {
+      refetchMyBoards();
+      refetchFavorites();
+      refetchSearchHistory();
+    }, [refetchMyBoards, refetchFavorites, refetchSearchHistory])
+  );
 
   const handleLogout = () => {
     Alert.alert(
@@ -89,7 +101,7 @@ export const MyPageScreen = () => {
   const displayName = currentUser?.name ?? '전통요리사_하나';
   const displayEmail = currentUser?.email ?? 'hana@gmail.com';
   const favCount = bookmarksData?.totalCount ?? 0;
-  const searchCount = searchHistory.length;
+  const searchCount = historyData?.totalCount ?? searchHistory.length ?? 0;
 
   return (
     <ScreenLayout scrollable>
@@ -178,23 +190,17 @@ export const MyPageScreen = () => {
           onPress={() => router.push('/settings/language')}
         />
         <MenuItem
-          title={t('mypage.notifications')}
-          icon="🔔"
-          iconName="bell"
-          description={t('mypage.notificationsDesc')}
-          rightElement={<Text variant="caption" style={{ color: colors.textSecondary }}>{t('common.on')}</Text>}
-          onPress={() => router.push('/settings/notifications')}
+          title={t('mypage.permissions')}
+          icon="🔒"
+          description={t('mypage.permissionsDesc')}
+          onPress={() => router.push('/settings/permissions' as Href)}
         />
         <MenuItem
           title={t('mypage.appInfo')}
           icon="ℹ️"
           description={t('mypage.appInfoDesc')}
           rightElement={<Text variant="caption" style={{ color: colors.textSecondary }}>v1.0.0</Text>}
-          onPress={() => {
-            if (__DEV__) {
-              console.log('App Info pressed');
-            }
-          }}
+          onPress={() => router.push('/settings/info' as Href)}
         />
         <MenuItem
           title={t('mypage.logout', { defaultValue: '로그아웃' })}
