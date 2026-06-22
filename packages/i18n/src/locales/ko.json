@@ -68,6 +68,7 @@
     "addRecipeTag": "레시피 태그 추가",
     "recipePicker": "레시피 선택",
     "favoriteRecipes": "즐겨찾기 레시피",
+    "noFavoriteRecipes": "즐겨찾기가 없습니다.",
     "customRecipe": "직접 입력",
     "customRecipePlaceholder": "레시피 이름을 입력하세요",
     "contentSection": "글 작성",
@@ -83,7 +84,7 @@
     "myPosts": "내 게시글",
     "settingsTitle": "설정 및 정보",
     "language": "언어 설정",
-    "notifications": "알림 설정",
+    "permissions": "권한 설정",
     "appInfo": "앱 정보",
     "korean": "한국어",
     "profileSubText": "한국어 · 가입일 2024.03",
@@ -93,7 +94,7 @@
     "myComments": "내가 작성한 댓글",
     "myCommentsDesc": "내가 작성한 댓글들을 확인합니다.",
     "languageDesc": "앱 표시 언어 변경",
-    "notificationsDesc": "푸시 및 알림 수신 설정",
+    "permissionsDesc": "알림 및 사진 접근 권한 설정",
     "appInfoDesc": "버전 정보 및 이용약관"
   },
   "favorites": {
@@ -122,14 +123,30 @@
     "ritualTitle": "의례와의 연결",
     "literatureQuoteText": "고문헌 기록에 묘사된 내용입니다."
   },
-  "notifications": {
-    "title": "알림 설정",
-    "pushTitle": "푸시 알림 받기",
-    "pushDesc": "앱에서 보내는 중요 공지 및 푸시 알림",
-    "favoriteTitle": "즐겨찾기 보양 알림",
-    "favoriteDesc": "즐겨찾기한 전통 요리 추천 및 역사 스토리 알림",
-    "marketingTitle": "마케팅 정보 수신",
-    "marketingDesc": "이벤트, 혜택 정보 및 전통 요리 탐구 정보 알림"
+  "permissions": {
+    "title": "권한 설정",
+    "notificationTitle": "알림 권한",
+    "notificationDesc": "중요 공지 및 추천 알림을 받아볼 수 있습니다.",
+    "photoTitle": "사진 및 미디어 권한",
+    "photoDesc": "커뮤니티 글 작성 시 기기의 사진을 첨부할 수 있습니다.",
+    "guideTitle": "권한 설정 안내",
+    "guideNotificationOff": "알림 권한을 비활성화하려면 기기 설정에서 알림을 직접 꺼야 합니다. 설정 화면으로 이동하시겠습니까?",
+    "guidePhotoOff": "사진 권한을 비활성화하려면 기기 설정에서 사진 접근 권한을 직접 변경해야 합니다. 설정 화면으로 이동하시겠습니까?",
+    "guideNotificationOn": "알림 권한이 거부되어 있습니다. 권한을 활성화하려면 설정 화면으로 이동하여 알림을 허용해주세요.",
+    "guidePhotoOn": "사진 권한이 거부되어 있습니다. 권한을 활성화하려면 설정 화면으로 이동하여 사진 라이브러리 접근을 허용해주세요."
+  },
+  "appInfo": {
+    "title": "앱 정보",
+    "version": "버전",
+    "termsTitle": "서비스 이용약관",
+    "definitionsTitle": "1. 용어의 정의",
+    "definitionsDesc": "본 약관에서 사용하는 주요 용어는 다음과 같습니다.\n- '회사'란 온고지식 서비스를 제공하는 사업자를 의미합니다.\n- '회원'이란 회사에 개인정보를 제공하여 회원등록을 한 자로서, 회사의 서비스를 계속적으로 이용할 수 있는 자를 말합니다.\n- '서비스'란 회사가 제공하는 한국 전통 음식 AI 추천 및 커뮤니티 서비스를 의미합니다.\n- '게시물'이란 회원이 서비스를 이용하면서 게시한 글, 사진, 댓글 등의 정보를 의미합니다.",
+    "obligationsTitle": "2. 이용자의 의무 및 면책 사항",
+    "obligationsDesc": "회원은 타인의 명의를 도용하거나 불법 행위를 해서는 안 되며, 서비스 이용 시 관련 법령을 준수해야 합니다. 회사는 천재지변, 시스템 점검, 또는 특허청 한국전통지식포탈 등 외부 API 데이터의 오류나 일시 중단으로 인하여 발생한 손해에 대해서는 책임을 지지 않습니다.",
+    "suspensionTitle": "3. 이용정지 및 탈퇴",
+    "suspensionDesc": "회원은 언제든지 앱 내 설정을 통해 회원 탈퇴를 신청할 수 있습니다. 회원이 타인에게 유해한 게시글을 작성하거나 서비스 운영을 방해하는 경우, 회사는 회원의 서비스 이용을 정지하거나 회원 자격을 상실시킬 수 있습니다.",
+    "disputeTitle": "4. 분쟁 해결 및 관할",
+    "disputeDesc": "서비스 이용과 관련하여 발생한 분쟁에 대해 회사와 회원은 상호 협의하여 원만하게 해결하도록 노력합니다. 협의로 해결되지 않는 분쟁에 대한 소송은 서울중앙지방법원을 관할 법원으로 합니다."
   },
   "results": {
     "title": "검색 결과",

@@ -68,6 +68,7 @@
     "addRecipeTag": "Add Recipe Tag",
     "recipePicker": "Select Recipe",
     "favoriteRecipes": "Favorite Recipes",
+    "noFavoriteRecipes": "No favorite recipes found.",
     "customRecipe": "Custom Entry",
     "customRecipePlaceholder": "Enter recipe name",
     "contentSection": "Write Post",
@@ -83,7 +84,7 @@
     "myPosts": "My Posts",
     "settingsTitle": "Settings & Info",
     "language": "Language Settings",
-    "notifications": "Notifications",
+    "permissions": "Permission Settings",
     "appInfo": "App Info",
     "korean": "Korean",
     "profileSubText": "English · Joined 2024.03",
@@ -93,7 +94,7 @@
     "myComments": "My Comments",
     "myCommentsDesc": "View and manage comments you wrote.",
     "languageDesc": "Change app display language",
-    "notificationsDesc": "Push and notification settings",
+    "permissionsDesc": "Manage notification and photo access permissions",
     "appInfoDesc": "Version info and terms of use"
   },
   "favorites": {
@@ -122,14 +123,30 @@
     "ritualTitle": "Connection to Rituals",
     "literatureQuoteText": "Content described in classical literature."
   },
-  "notifications": {
-    "title": "Notification Settings",
-    "pushTitle": "Receive Push Notifications",
-    "pushDesc": "Important announcements and notifications from the app",
-    "favoriteTitle": "Favorite Recommendation Alerts",
-    "favoriteDesc": "Traditional food recommendations and historical story alerts for favorites",
-    "marketingTitle": "Receive Marketing Info",
-    "marketingDesc": "Alerts for events, benefits, and traditional food exploration info"
+  "permissions": {
+    "title": "Permission Settings",
+    "notificationTitle": "Notification Permission",
+    "notificationDesc": "Receive notifications and helpful information from the app.",
+    "photoTitle": "Photos & Media Permission",
+    "photoDesc": "Attach photos from your device when writing posts in community.",
+    "guideTitle": "Permission Settings Guide",
+    "guideNotificationOff": "To turn off notification permissions, you must disable notifications in the device settings. Go to settings?",
+    "guidePhotoOff": "To turn off photo permissions, you must change photo access permissions in the device settings. Go to settings?",
+    "guideNotificationOn": "Notification permission is denied. To enable it, please go to settings and allow notifications.",
+    "guidePhotoOn": "Photo permission is denied. To enable it, please go to settings and allow photos access."
+  },
+  "appInfo": {
+    "title": "App Info",
+    "version": "Version",
+    "termsTitle": "Terms of Service",
+    "definitionsTitle": "1. Definitions",
+    "definitionsDesc": "The terms used in these Terms are defined as follows:\n- 'Company' refers to the provider of the OngoJishik service.\n- 'Member' refers to a person who has registered as a member by providing personal information to the Company.\n- 'Service' refers to the Korean traditional food AI recommendation and community service provided by the Company.\n- 'Post' refers to writings, photos, comments, etc., posted by a Member while using the service.",
+    "obligationsTitle": "2. User Obligations & Disclaimers",
+    "obligationsDesc": "Members shall not steal another person's name or engage in illegal acts, and must comply with relevant laws when using the service. The Company is not liable for damages caused by natural disasters, system maintenance, or errors/interruptions of external APIs (e.g., KIPO Traditional Knowledge Portal).",
+    "suspensionTitle": "3. Suspension & Withdrawal",
+    "suspensionDesc": "Members can request membership withdrawal through the in-app settings at any time. If a Member writes posts harmful to others or disrupts service operations, the Company may suspend service use or terminate membership.",
+    "disputeTitle": "4. Dispute Resolution & Jurisdiction",
+    "disputeDesc": "In the event of a dispute related to service use, the Company and the Member shall attempt to resolve it amicably through mutual consultation. Any lawsuit regarding disputes that cannot be settled amicably shall be brought before the Seoul Central District Court."
   },
   "results": {
     "title": "Search Results",
