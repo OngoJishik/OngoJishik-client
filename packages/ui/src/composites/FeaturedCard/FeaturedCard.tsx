@@ -48,15 +48,15 @@ export const FeaturedCard = ({
           colors={[designColors.primary.DEFAULT, designColors.primary.dark]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
-          style={{ padding: spacing.lg }}
+          style={{ padding: spacing.lg, height: '100%' }}
         >
           <View style={styles.row}>
             <View style={styles.textContainer}>
               <Badge label={badgeLabel} variant="secondary" style={styles.badge} />
-              <Text variant="h1" bold style={[styles.title, { color: designColors.white }]}>
+              <Text variant="h1" bold numberOfLines={1} style={[styles.title, { color: designColors.white }]}>
                 {displayName}
               </Text>
-              <Text variant="caption" style={[styles.subtitle, { color: designColors.featured.subtitle }]}>
+              <Text variant="caption" numberOfLines={1} style={[styles.subtitle, { color: designColors.featured.subtitle }]}>
                 "{subtitle}"
               </Text>
               <Text variant="caption" numberOfLines={2} style={{ color: designColors.featured.description }}>
