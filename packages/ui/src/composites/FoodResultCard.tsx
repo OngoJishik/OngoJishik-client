@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Pressable } from 'react-native';
+import { View, StyleSheet, Pressable, ActivityIndicator } from 'react-native';
 import { Image } from 'expo-image';
 import { Text } from '../primitives/Text';
 import { Card } from '../primitives/Card';
@@ -21,6 +21,7 @@ export interface FoodResultCardProps {
   era?: string;
   description: string;
   onPress: () => void;
+  imageStatus?: 'PENDING' | 'COMPLETED' | 'FAILED';
 }
 
 /**
@@ -36,6 +37,7 @@ export const FoodResultCard: React.FC<FoodResultCardProps> = ({
   era,
   description,
   onPress,
+  imageStatus,
 }) => {
   const { colors } = useTheme();
 
@@ -46,7 +48,9 @@ export const FoodResultCard: React.FC<FoodResultCardProps> = ({
       <Card style={styles.card} bordered>
         <View style={styles.row}>
           <View style={[styles.imageWrapper, { backgroundColor: colors.primaryLight }]}>
-            {imageUrl ? (
+            {imageStatus === 'PENDING' ? (
+              <ActivityIndicator size="small" color={designColors.primary.DEFAULT} />
+            ) : imageUrl ? (
               <Image source={{ uri: imageUrl }} style={styles.image} contentFit="cover" transition={200} />
             ) : (
               <Text style={styles.emoji}>{emoji}</Text>

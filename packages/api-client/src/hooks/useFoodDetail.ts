@@ -16,10 +16,14 @@ export const mapFoodDetailResponse = (res: TFoodDetailResponse): TFoodDetail => 
   const recipeSteps = res.recipeSteps ?? [];
 
   const literatureQuotes = (res.literature?.sources ?? []).map((src) => ({
+    sourceId: src.sourceId,
     sourceName: src.title,
     quoteOriginal: src.content,
     quoteTranslation: undefined,
     era: src.publishYear,
+    author: src.author,
+    publishYear: src.publishYear,
+    originalUrl: src.originalUrl,
   }));
 
   return {
@@ -27,7 +31,7 @@ export const mapFoodDetailResponse = (res: TFoodDetailResponse): TFoodDetail => 
     nameKo: res.foodName,
     nameLocalized: res.foodNameTranslated,
     emoji: '🍲',
-    imageUrl: res.imageUrl,
+    imageUrl: res.imageUrl || res.foodPicture,
     category: res.category as TFoodDetail['category'],
     description: res.features?.join(', ') ?? '',
     tags: res.features ?? [],
@@ -37,6 +41,8 @@ export const mapFoodDetailResponse = (res: TFoodDetailResponse): TFoodDetail => 
     historyStory: res.history?.origin ?? '',
     ritualContext: res.history?.ceremony ?? '',
     literatureQuotes,
+    imageStatus: res.imageStatus,
+    imageJobId: res.imageJobId,
   };
 };
 

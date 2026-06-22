@@ -154,7 +154,8 @@
     "count": "{{count}}个结果"
   },
   "food": {
-    "marketButton": "📋 查看食材购买处 (传统市场)"
+    "marketButton": "📋 查看食材购买处 (传统市场)",
+    "marketLinkComingSoon": "传统市场与食材购买处的联动服务将在日后提供。"
   },
   "feedback": {
     "question": "这个历史信息对您有帮助吗？",
