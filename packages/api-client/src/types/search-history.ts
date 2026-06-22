@@ -13,5 +13,7 @@ export type TSearchHistoryItem = {
  * @author Antigravity
  */
 export type TSearchHistoryList = {
+  totalCount: number;
   searches: TSearchHistoryItem[];
 };
+
