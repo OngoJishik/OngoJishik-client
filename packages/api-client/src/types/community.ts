@@ -13,6 +13,7 @@ export type TBoardSummary = {
   title: string;
   imageUrls: string[];
   category: TBoardCategory;
+  recipeId?: string;
   likeCount: number;
   commentCount: number;
   isLiked: boolean;

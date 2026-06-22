@@ -9,6 +9,7 @@ export const styles = StyleSheet.create({
   },
   card: {
     padding: spacing.lg,
+    height: 150,
   },
   row: {
     flexDirection: 'row',

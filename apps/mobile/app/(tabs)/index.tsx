@@ -216,12 +216,31 @@ export const HomeScreen = () => {
   const [isSearching, setIsSearching] = useAtom(isHomeSearchActiveAtom);
   const addRecentSearch = useSetAtom(recentSearchAtom);
 
+  const scrollViewRef = useRef<ScrollView>(null);
+
   // 인기 게시글 상위 5개 (GET /api/boards/popular)
   const { data: popularBoards } = usePopularBoardsQuery();
 
   // 오늘의 추천 전통음식 목록 조회 (GET /api/home)
   const { data: todayFoodsData, isLoading: isRecommendationLoading } = useTodayFoodsQuery();
   const todayRecommendations = todayFoodsData?.foods ?? [];
+
+  // 캐러셀 자동 롤링 (4초 단위)
+  useEffect(() => {
+    if (todayRecommendations.length <= 1) return;
+
+    const interval = setInterval(() => {
+      const snapInterval = width - 20;
+      const nextSlide = (activeSlide + 1) % todayRecommendations.length;
+      scrollViewRef.current?.scrollTo({
+        x: nextSlide * snapInterval,
+        animated: true,
+      });
+      setActiveSlide(nextSlide);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [activeSlide, todayRecommendations.length]);
 
   const handleCarouselScroll = (event: any) => {
     const contentOffset = event.nativeEvent.contentOffset.x;
@@ -292,6 +311,7 @@ export const HomeScreen = () => {
       {todayRecommendations.length > 0 ? (
         <View style={styles.carouselWrapper}>
           <ScrollView
+            ref={scrollViewRef}
             horizontal
             decelerationRate="fast"
             snapToInterval={width - 20}

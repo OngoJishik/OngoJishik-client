@@ -73,10 +73,10 @@ export const PostCard = ({
         )}
 
         {linkedRecipe && (
-          <View style={[styles.recipeTag, { backgroundColor: colors.primary }]}>
+          <View style={[styles.recipeTag, { backgroundColor: colors.primaryLight }]}>
             <Text style={{ marginRight: spacing.xs }}>{linkedRecipe.emoji}</Text>
-            <Text variant="caption" style={[styles.recipeTagText, { color: designColors.white }]}>
-              {linkedRecipe.nameKo} 레시피 연계
+            <Text variant="caption" style={[styles.recipeTagText, { color: colors.primary }]}>
+              #{linkedRecipe.nameKo}
             </Text>
           </View>
         )}

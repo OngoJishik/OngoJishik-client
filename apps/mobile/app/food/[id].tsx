@@ -109,8 +109,8 @@ export const FoodDetailScreen = () => {
         }
         return (
           <View style={styles.tabContent}>
-            {detail.ingredients.map((ing) => (
-              <View key={ing} style={[styles.ingredientRow, { borderBottomColor: colors.border }]}>
+            {detail.ingredients.map((ing, idx) => (
+              <View key={`${ing}-${idx}`} style={[styles.ingredientRow, { borderBottomColor: colors.border }]}>
                 <Text style={{ marginRight: 8, color: colors.primary }}>•</Text>
                 <Text variant="body">{ing}</Text>
               </View>
@@ -242,8 +242,8 @@ export const FoodDetailScreen = () => {
             </Text>
           )}
           <View style={styles.tagContainer}>
-            {detail.tags.map((tag) => (
-              <View key={tag} style={[styles.tag, { backgroundColor: colors.primaryLight }]}>
+            {detail.tags.map((tag, idx) => (
+              <View key={`${tag}-${idx}`} style={[styles.tag, { backgroundColor: colors.primaryLight }]}>
                 <Text variant="caption" style={{ color: colors.textSecondary }}>
                   #{tag}
                 </Text>

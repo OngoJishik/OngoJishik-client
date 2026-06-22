@@ -68,6 +68,7 @@
     "addRecipeTag": "レシピタグ追加",
     "recipePicker": "レシピ選択",
     "favoriteRecipes": "お気に入りレシピ",
+    "noFavoriteRecipes": "お気に入りレシピはありません。",
     "customRecipe": "直接入力",
     "customRecipePlaceholder": "レシピ名を入力してください",
     "contentSection": "投稿作成",
@@ -83,7 +84,7 @@
     "myPosts": "マイ投稿",
     "settingsTitle": "設定と情報",
     "language": "言語設定",
-    "notifications": "通知設定",
+    "permissions": "権限設定",
     "appInfo": "アプリ情報",
     "korean": "韓国語",
     "profileSubText": "日本語 · 登録日 2024.03",
@@ -93,7 +94,7 @@
     "myComments": "マイコメント",
     "myCommentsDesc": "自分が作成したコメントを確認します。",
     "languageDesc": "アプリ表示言語の変更",
-    "notificationsDesc": "プッシュ通知設定",
+    "permissionsDesc": "通知および写真アクセス権限の設定",
     "appInfoDesc": "バージョン情報と利用規約"
   },
   "favorites": {
@@ -122,14 +123,30 @@
     "ritualTitle": "儀礼との関連",
     "literatureQuoteText": "古典文献に描かれた内容です。"
   },
-  "notifications": {
-    "title": "通知設定",
-    "pushTitle": "プッシュ通知の受信",
-    "pushDesc": "アプリの重要なお知らせやプッシュ通知",
-    "favoriteTitle": "お気に入りおすすめ通知",
-    "favoriteDesc": "お気に入り登録した伝統料理の推薦および歴史ストーリー通知",
-    "marketingTitle": "マーケティング情報の受信",
-    "marketingDesc": "イベント、特典情報、および伝統料理の探求情報に関するお知らせ"
+  "permissions": {
+    "title": "権限設定",
+    "notificationTitle": "通知権限",
+    "notificationDesc": "アプリからのお知らせや役立つ情報を受け取ります。",
+    "photoTitle": "写真とメディアの権限",
+    "photoDesc": "コミュニティへの投稿時に端末の写真を追加します。",
+    "guideTitle": "権限設定の案内",
+    "guideNotificationOff": "通知権限をオフにするには、端末の設定で通知を無効にする必要があります。設定画面に移動しますか？",
+    "guidePhotoOff": "写真権限をオフにするには、端末の設定で写真アクセス権限を変更する必要があります。設定画面に移動しますか？",
+    "guideNotificationOn": "通知権限が拒否されています。有効にするには、設定画面に移動して通知を許可してください。",
+    "guidePhotoOn": "写真権限が拒否されています。有効にするには、設定画面に移動して写真アクセスを許可してください。"
+  },
+  "appInfo": {
+    "title": "アプリ情報",
+    "version": "バージョン",
+    "termsTitle": "利用規約",
+    "definitionsTitle": "1. 用語の定義",
+    "definitionsDesc": "本規約で使用する主な用語は次の通りです。\n- 「会社」とは、温故知新サービスを提供する事業者を指します。\n- 「会員」とは、会社に個人情報を提供して会員登録を行い、サービスを継続的に利用できる者を指します。\n- 「サービス」とは、会社が提供する韓国伝統料理AI推薦およびコミュニティサービスを指します。\n- 「投稿」とは、会員がサービスを利用して投稿した記事、写真、コメント等の情報を指します。",
+    "obligationsTitle": "2. 利用者の義務および免責事項",
+    "obligationsDesc": "会員は他人の名義を盗用したり、違法行為を行ってはならず、サービス利用時は関連法令を遵守する必要があります。会社は天災地変、システム点検、または特許庁韓国伝統知識ポータル等の外部APIデータの誤りや一時中断により発生した損害について責任を負いません。",
+    "suspensionTitle": "3. 利用停止および退会",
+    "suspensionDesc": "会員はいつでもアプリ内の設定から退会を申請できます。会員が他人に有害な投稿を作成したり、サービス運営を妨害する場合、会社は会員のサービス利用を停止するか、会員資格を喪失させることができます。",
+    "disputeTitle": "4. 紛争解決および管轄",
+    "disputeDesc": "サービス利用に関して発生した紛争について、会社と会員は相互に協議し、円満に解決するよう努めます。協議によって解決しない紛争についての訴訟は、ソウル中央地方裁判所を管轄裁判所とします。"
   },
   "results": {
     "title": "検索結果",

@@ -43,7 +43,15 @@ export const Avatar: React.FC<AvatarProps> = ({ sourceUrl, name, size = 40, styl
           transition={200}
         />
       ) : (
-        <Text bold style={{ color: colors.primary, fontSize: size * 0.45 }}>
+        <Text
+          bold
+          style={{
+            color: colors.primary,
+            fontSize: size * 0.45,
+            lineHeight: undefined,
+            includeFontPadding: false,
+          }}
+        >
           {initials}
         </Text>
       )}
