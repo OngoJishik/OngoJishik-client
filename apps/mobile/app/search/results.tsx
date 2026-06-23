@@ -139,7 +139,16 @@ export const SearchResultsScreen = () => {
             renderItem={({ item }) => (
               <RecommendationItem
                 item={item}
-                onPress={() => router.push(`/food/${item.foodId}`)}
+                onPress={() =>
+                  router.push({
+                    pathname: '/food/[id]',
+                    params: {
+                      id: item.foodId,
+                      imageJobId: item.imageJobId,
+                      imageStatus: item.imageStatus,
+                    },
+                  })
+                }
               />
             )}
             ListFooterComponent={<DataSourceTag source="특허청 한국전통지식포탈" />}
