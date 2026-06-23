@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Pressable, ActivityIndicator, Alert } from 'react-native';
+import React, { useState, useEffect, useMemo } from 'react';
+import { View, StyleSheet, Pressable, ActivityIndicator, Alert, Linking, ScrollView } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useAtomValue } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { Image } from 'expo-image';
+import * as Location from 'expo-location';
 
 import {
   useFoodDetailQuery,
@@ -10,9 +11,11 @@ import {
   useAddBookmarkMutation,
   useDeleteBookmarkMutation,
   useImageJobQuery,
+  useNearbyMarketsQuery,
+  TMarketCategory,
 } from '@ongo/api-client';
 import { useTranslation } from '@ongo/i18n';
-import { languageAtom } from '@ongo/store';
+import { languageAtom, userLocationAtom, marketBottomSheetAtom } from '@ongo/store';
 import {
   ScreenLayout,
   TabBar,
@@ -24,8 +27,40 @@ import {
   Text,
   Icon,
   useTheme,
+  BottomSheet,
+  MarketCard,
+  spacing,
 } from '@ongo/ui';
 import { formatFoodName } from '@ongo/utils';
+
+/**
+ * 음식 식재료 목록을 전통시장 카테고리 목록으로 매핑하는 헬퍼 함수
+ * @param ingredients 식재료 문자열 배열
+ * @returns 전통시장 카테고리 배열
+ * @author Antigravity
+ */
+const mapIngredientsToMarketCategories = (ingredients: string[]): TMarketCategory[] => {
+  const matched = new Set<TMarketCategory>();
+  const rules: { cat: TMarketCategory; keywords: string[] }[] = [
+    { cat: 'GRAIN', keywords: ['쌀', '찹쌀', '보리', '밀', '수수', '조', '곡물', '잡곡', '깨'] },
+    { cat: 'VEGETABLE', keywords: ['배추', '무', '파', '마늘', '고추', '양파', '버섯', '당근', '나물', '야채', '채소', '시금치', '고사리', '미나리'] },
+    { cat: 'FRUIT', keywords: ['사과', '배', '감', '밤', '대추', '귤', '포도', '참외', '수박', '과일', '청과'] },
+    { cat: 'SEAFOOD', keywords: ['고등어', '조기', '명태', '오징어', '조개', '낙지', '새우', '게', '김', '미역', '수산', '해산물', '생선', '굴'] },
+    { cat: 'MEAT', keywords: ['쇠고기', '돼지고기', '닭고기', '정육', '고기', '육류', '소고기', '돼지', '소', '닭', '오리'] },
+    { cat: 'SAUCE', keywords: ['간장', '된장', '고추장', '젓갈', '식초', '설탕', '소금', '양념', '장류'] },
+    { cat: 'HERB_MED', keywords: ['인삼', '홍삼', '감초', '약재', '당귀', '황기', '약초'] },
+  ];
+
+  for (const ing of ingredients) {
+    for (const rule of rules) {
+      if (rule.keywords.some((kw) => ing.includes(kw))) {
+        matched.add(rule.cat);
+      }
+    }
+  }
+
+  return matched.size > 0 ? Array.from(matched) : [];
+};
 
 /**
  * 전통 음식의 상세 정보를 다양한 탭과 스토리로 제공하는 화면 컴포넌트
@@ -38,7 +73,7 @@ export const FoodDetailScreen = () => {
   const { t } = useTranslation();
   const currentLang = useAtomValue(languageAtom);
 
-  const { id } = useLocalSearchParams();
+  const { id, imageJobId: paramImageJobId, imageStatus: paramImageStatus } = useLocalSearchParams();
   const foodId = (id as string) || '';
 
   // 실제 API 데이터 fetch (매핑된 TFoodDetail 형태)
@@ -53,6 +88,85 @@ export const FoodDetailScreen = () => {
   const [optimisticFavorite, setOptimisticFavorite] = useState<boolean | null>(null);
   const serverFavorite = rawDetail?.isBookmarked ?? false;
   const isFavorite = optimisticFavorite !== null ? optimisticFavorite : serverFavorite;
+
+  // 위치 권한 및 전통시장 조회용 상태
+  const [userLocation, setUserLocation] = useAtom(userLocationAtom);
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useAtom(marketBottomSheetAtom);
+  const [hasLocationPermission, setHasLocationPermission] = useState<boolean | null>(null);
+
+  // 마운트 시 권한 상태 조회
+  useEffect(() => {
+    Location.getForegroundPermissionsAsync()
+      .then(({ status }) => {
+        setHasLocationPermission(status === 'granted');
+      })
+      .catch(() => {});
+  }, [userLocation]);
+
+  // 식재료 기반 마켓 카테고리 매핑
+  const ingredientCategories = useMemo(() => {
+    return mapIngredientsToMarketCategories(foodDetail?.ingredients ?? []);
+  }, [foodDetail?.ingredients]);
+
+  // 근처 시장 조회 Query
+  const {
+    data: nearbyMarkets,
+    isLoading: isMarketsLoading,
+    isFetching: isMarketsFetching,
+    refetch: refetchMarkets,
+  } = useNearbyMarketsQuery({
+    lat: userLocation?.lat,
+    lng: userLocation?.lng,
+    ingredientCategories,
+  });
+
+  const handleMarketPress = async () => {
+    try {
+      // 이미 위치 정보가 있다면 빠른 응답성을 위해 바텀시트를 즉시 오픈하고, 백그라운드에서 신규 위치 갱신을 수행합니다.
+      if (userLocation) {
+        setIsBottomSheetOpen(true);
+        refetchMarkets();
+      }
+
+      const { status: existingStatus } = await Location.getForegroundPermissionsAsync();
+
+      if (existingStatus === 'granted') {
+        const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
+        setUserLocation({ lat: loc.coords.latitude, lng: loc.coords.longitude });
+        setHasLocationPermission(true);
+        setIsBottomSheetOpen(true);
+        refetchMarkets();
+      } else if (existingStatus === 'denied') {
+        Alert.alert(
+          t('permissions.guideTitle', { defaultValue: '권한 설정 안내' }),
+          t('market.buttonDisabledHint', { defaultValue: '주변 시장을 보려면 위치 권한이 필요합니다. 설정에서 권한을 허용해 주세요.' }),
+          [
+            { text: t('common.cancel'), style: 'cancel' },
+            { text: t('common.confirm'), onPress: () => Linking.openSettings() },
+          ]
+        );
+      } else {
+        const { status: requestStatus } = await Location.requestForegroundPermissionsAsync();
+        if (requestStatus === 'granted') {
+          const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
+          setUserLocation({ lat: loc.coords.latitude, lng: loc.coords.longitude });
+          setHasLocationPermission(true);
+          setIsBottomSheetOpen(true);
+          refetchMarkets();
+        } else {
+          Alert.alert(
+            t('permissions.guideTitle', { defaultValue: '권한 설정 안내' }),
+            t('market.buttonDisabledHint', { defaultValue: '주변 시장을 보려면 위치 권한이 필요합니다.' })
+          );
+        }
+      }
+    } catch (error) {
+      if (__DEV__) {
+        console.warn('Failed to get location:', error);
+      }
+      Alert.alert('Error', '위치 정보를 가져오는데 실패했습니다.');
+    }
+  };
 
   const detail = foodDetail || {
     id: '',
@@ -74,11 +188,21 @@ export const FoodDetailScreen = () => {
   };
 
   // 최종 이미지 URL 및 PENDING 상태 결정
-  const isImagePending = detail.imageStatus === 'PENDING' && !!detail.imageJobId;
-  const { data: jobData, isTimedOut } = useImageJobQuery(detail.imageJobId ?? 0, isImagePending);
+  const queryJobId = paramImageJobId ? parseInt(paramImageJobId as string, 10) : undefined;
+  const queryImageStatus = paramImageStatus as 'PENDING' | 'COMPLETED' | 'FAILED' | undefined;
+
+  // 파라미터 또는 API 응답의 이미지 상태 결정 (API 응답이 이미 완료되었으면 완료로 유지)
+  const effectiveImageStatus = detail.imageStatus === 'COMPLETED'
+    ? 'COMPLETED'
+    : (queryImageStatus || detail.imageStatus);
+
+  const effectiveJobId = detail.imageJobId || queryJobId;
+
+  const isImagePending = effectiveImageStatus === 'PENDING' && !!effectiveJobId;
+  const { data: jobData, isTimedOut } = useImageJobQuery(effectiveJobId ?? 0, isImagePending);
 
   let imageUrl = detail.imageUrl;
-  let currentImageStatus = detail.imageStatus;
+  let currentImageStatus = effectiveImageStatus;
 
   if (isImagePending) {
     if (jobData?.status === 'COMPLETED' && jobData.imageUrl) {
@@ -317,32 +441,87 @@ export const FoodDetailScreen = () => {
           />
         )}
 
-        <View style={styles.bottomActions}>
-          <Pressable
-            style={[
-              styles.favBtn,
-              { borderColor: isFavorite ? colors.primary : colors.border },
-            ]}
-            onPress={handleFavoriteToggle}
-          >
-            <Icon
-              name={isFavorite ? 'star-filled' : 'star'}
-              size={24}
-              color={isFavorite ? colors.primary : colors.textSecondary}
+        <View style={styles.bottomActionsContainer}>
+          <View style={styles.bottomActions}>
+            <Pressable
+              style={[
+                styles.favBtn,
+                { borderColor: isFavorite ? colors.primary : colors.border },
+              ]}
+              onPress={handleFavoriteToggle}
+            >
+              <Icon
+                name={isFavorite ? 'star-filled' : 'star'}
+                size={24}
+                color={isFavorite ? colors.primary : colors.textSecondary}
+              />
+            </Pressable>
+            <Button
+              title={t('market.buttonLabel', { defaultValue: '근처 전통시장 보기' })}
+              onPress={handleMarketPress}
+              style={styles.marketBtn}
             />
-          </Pressable>
-          <Button
-            title={t('food.marketButton')}
-            onPress={() => {
-              Alert.alert(
-                t('common.confirm', { defaultValue: '확인' }),
-                t('food.marketLinkComingSoon')
-              );
-            }}
-            style={styles.marketBtn}
-          />
+          </View>
+          {hasLocationPermission === false && !userLocation && (
+            <Text variant="caption" style={[styles.disabledHintText, { color: colors.textSecondary }]}>
+              {t('market.buttonDisabledHint')}
+            </Text>
+          )}
         </View>
       </View>
+
+      <BottomSheet
+        visible={isBottomSheetOpen}
+        onClose={() => setIsBottomSheetOpen(false)}
+        maxHeight="75%"
+      >
+        <View style={[styles.sheetHeader, { borderBottomColor: colors.border }]}>
+          <Text variant="h2" bold style={[styles.sheetTitle, { color: colors.text }]}>
+            {t('market.nearbyTitle')}
+          </Text>
+        </View>
+        <ScrollView contentContainerStyle={styles.sheetScrollContent}>
+          {isMarketsLoading || isMarketsFetching ? (
+            <View style={styles.sheetCenterContainer}>
+              <ActivityIndicator size="large" color={colors.primary} />
+              <Text variant="body" style={{ marginTop: spacing.md, color: colors.textSecondary }}>
+                {t('market.loadingLabel')}
+              </Text>
+            </View>
+          ) : !nearbyMarkets || nearbyMarkets.length === 0 ? (
+            <View style={styles.sheetCenterContainer}>
+              <Text style={styles.largeEmojiFallback}>🏪</Text>
+              <Text variant="body" style={[styles.emptyText, { color: colors.textSecondary }]}>
+                {t('market.emptyResult')}
+              </Text>
+            </View>
+          ) : (
+            <>
+              {nearbyMarkets.map((market) => (
+                <MarketCard
+                  key={market.id}
+                  name={market.name}
+                  distanceKm={market.distanceKm}
+                  addressRoad={market.addressRoad}
+                  openCycle={market.openCycle}
+                  categoryLabel={market.categoryLabel}
+                  hasParking={market.hasParking}
+                  categoryGuideText={
+                    market.categoryLabel
+                      ? t('market.categoryLabel', { categories: market.categoryLabel })
+                      : t('market.noCategory')
+                  }
+                  parkingLabel={t('market.hasParking')}
+                  openCycleLabel={t('market.openCycleLabel', { cycle: market.openCycle })}
+                />
+              ))}
+            </>
+          )}
+          <Text variant="caption" style={[styles.dataSourceText, { color: colors.textTertiary }]}>
+            {t('market.dataSource')}
+          </Text>
+        </ScrollView>
+      </BottomSheet>
     </ScreenLayout>
   );
 };
@@ -436,10 +615,13 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderBottomWidth: 1,
   },
+  bottomActionsContainer: {
+    marginVertical: 24,
+    width: '100%',
+  },
   bottomActions: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 24,
   },
   favBtn: {
     width: 48,
@@ -452,6 +634,39 @@ const styles = StyleSheet.create({
   },
   marketBtn: {
     flex: 1,
+  },
+  disabledHintText: {
+    marginTop: 8,
+    textAlign: 'center',
+    fontSize: 12,
+  },
+  sheetHeader: {
+    paddingHorizontal: 20,
+    paddingTop: 8,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+  },
+  sheetTitle: {
+    fontSize: 18,
+  },
+  sheetScrollContent: {
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+  },
+  sheetCenterContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 40,
+  },
+  largeEmojiFallback: {
+    fontSize: 48,
+    marginBottom: 16,
+  },
+  dataSourceText: {
+    marginTop: spacing.md,
+    fontSize: 10,
+    textAlign: 'center',
+    lineHeight: 14,
   },
   skeletonItem: {
     height: 60,

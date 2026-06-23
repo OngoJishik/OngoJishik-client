@@ -7,6 +7,7 @@ import {
   Platform,
   Animated,
   KeyboardAvoidingView,
+  PanResponder,
 } from 'react-native';
 
 import { useTheme } from '../../../theme/useTheme';
@@ -33,11 +34,35 @@ export const BottomSheet = ({ visible, onClose, onClosed, children, maxHeight }:
   const isMountedRef = useRef(false);
   const overlayOpacity = useRef(new Animated.Value(0)).current;
   const sheetTranslateY = useRef(new Animated.Value(TRANSLATE_Y_INITIAL)).current;
+  const panY = useRef(new Animated.Value(0)).current;
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderMove: (e, gestureState) => {
+        if (gestureState.dy > 0) {
+          panY.setValue(gestureState.dy);
+        }
+      },
+      onPanResponderRelease: (e, gestureState) => {
+        if (gestureState.dy > 80) {
+          onClose();
+        } else {
+          Animated.spring(panY, {
+            toValue: 0,
+            useNativeDriver: true,
+          }).start();
+        }
+      },
+    })
+  ).current;
 
   useEffect(() => {
     if (visible) {
       overlayOpacity.setValue(0);
       sheetTranslateY.setValue(TRANSLATE_Y_INITIAL);
+      panY.setValue(0);
       isMountedRef.current = true;
       setIsMounted(true);
       // open animation은 Modal의 onShow에서 실행 (Modal이 실제 렌더된 후)
@@ -45,6 +70,7 @@ export const BottomSheet = ({ visible, onClose, onClosed, children, maxHeight }:
       Animated.parallel([
         Animated.timing(overlayOpacity, { toValue: 0, duration: ANIM_DURATION, useNativeDriver: true }),
         Animated.timing(sheetTranslateY, { toValue: TRANSLATE_Y_INITIAL, duration: ANIM_DURATION, useNativeDriver: true }),
+        Animated.timing(panY, { toValue: 0, duration: ANIM_DURATION, useNativeDriver: true }),
       ]).start(({ finished }) => {
         if (finished) {
           isMountedRef.current = false;
@@ -61,6 +87,8 @@ export const BottomSheet = ({ visible, onClose, onClosed, children, maxHeight }:
       Animated.timing(sheetTranslateY, { toValue: 0, duration: ANIM_DURATION, useNativeDriver: true }),
     ]).start();
   };
+
+  const translateY = Animated.add(sheetTranslateY, panY);
 
   return (
     <Modal
@@ -81,11 +109,13 @@ export const BottomSheet = ({ visible, onClose, onClosed, children, maxHeight }:
         <Animated.View
           style={[
             styles.sheet,
-            { backgroundColor: colors.background, transform: [{ translateY: sheetTranslateY }] },
+            { backgroundColor: colors.background, transform: [{ translateY }] },
             maxHeight != null && { maxHeight },
           ]}
         >
-          <View style={[styles.handle, { backgroundColor: colors.border }]} />
+          <View style={styles.dragArea} {...panResponder.panHandlers}>
+            <View style={[styles.handle, { backgroundColor: colors.border }]} />
+          </View>
           {children}
         </Animated.View>
       </KeyboardAvoidingView>
@@ -107,12 +137,18 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     paddingBottom: Platform.OS === 'ios' ? 34 : 24,
   },
+  dragArea: {
+    width: '100%',
+    height: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+  },
   handle: {
     width: 36,
     height: 4,
     borderRadius: 2,
     alignSelf: 'center',
-    marginTop: 12,
-    marginBottom: 8,
   },
 });

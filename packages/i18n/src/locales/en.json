@@ -87,7 +87,7 @@
     "permissions": "Permission Settings",
     "appInfo": "App Info",
     "korean": "Korean",
-    "profileSubText": "English · Joined 2024.03",
+    "profileSubText": "English",
     "favoritesDesc": "List of favorite foods",
     "searchHistoryDesc": "Manage recent search history",
     "myPostsDesc": "Community posts I've written",
@@ -156,6 +156,19 @@
   "food": {
     "marketButton": "📋 View Ingredient Markets (Traditional Market)",
     "marketLinkComingSoon": "The service linking traditional markets and ingredient stores will be provided in the future."
+  },
+  "market": {
+    "nearbyTitle": "Nearby Traditional Markets",
+    "buttonLabel": "View Nearby Traditional Markets",
+    "buttonDisabledHint": "Location permission is required to view nearby markets",
+    "categoryLabel": "Offers {{categories}}",
+    "noCategory": "Nearby traditional market",
+    "emptyResult": "No traditional markets found",
+    "distanceUnit": "{{km}}km",
+    "dataSource": "Source: SEMAS Traditional Market Status (Provided by vworld, updated monthly)",
+    "openCycleLabel": "Hours: {{cycle}}",
+    "hasParking": "Parking available",
+    "loadingLabel": "Loading market information..."
   },
   "feedback": {
     "question": "Was this historical information helpful?",

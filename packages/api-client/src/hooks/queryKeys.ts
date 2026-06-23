@@ -1,5 +1,6 @@
 import type { TSearchFilters } from '../types/search';
 import type { TBoardCategory } from '../types/community';
+import type { TMarketCategory } from '../types/market';
 
 /**
  * 음식 관련 TanStack Query Key 팩토리 객체
@@ -92,5 +93,15 @@ export const searchHistoryKeys = {
 export const homeKeys = {
   all: ['home'] as const,
   todayFood: () => [...homeKeys.all, 'todayFood'] as const,
+};
+
+/**
+ * 전통시장 관련 TanStack Query Key 팩토리 객체
+ * @author Antigravity
+ */
+export const marketKeys = {
+  all: ['market'] as const,
+  nearby: (lat: number, lng: number, categories?: TMarketCategory[]) =>
+    [...marketKeys.all, 'nearby', { lat, lng, categories }] as const,
 };
 
