@@ -42,6 +42,7 @@ export * from './composites/PhotoGallery';
 export * from './composites/RecipeLink';
 export * from './composites/PostDetail';
 export * from './composites/BottomSheet';
+export * from './composites/MarketCard';
 
 // Layouts
 export * from './layouts/ScreenLayout';
