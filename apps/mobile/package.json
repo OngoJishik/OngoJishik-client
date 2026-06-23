@@ -22,6 +22,7 @@
     "@react-native-google-signin/google-signin": "^16.1.2",
     "@tanstack/react-query": "catalog:",
     "expo": "~52.0.0",
+    "expo-location": "~18.0.10",
     "expo-asset": "~11.0.5",
     "expo-constants": "~17.0.8",
     "expo-image": "~2.0.7",

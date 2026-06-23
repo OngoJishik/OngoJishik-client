@@ -6,6 +6,7 @@ export * from './types/common';
 export * from './types/bookmark';
 export * from './types/search-history';
 export * from './types/home';
+export * from './types/market';
 
 export * from './endpoints/food';
 export * from './endpoints/history';
@@ -27,3 +28,4 @@ export * from './hooks/useAuth';
 export * from './hooks/useUploadImages';
 export * from './hooks/useSearchHistory';
 export * from './hooks/useHome';
+export * from './hooks/useNearbyMarkets';
