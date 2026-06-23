@@ -18,3 +18,10 @@ export const activeTabAtom = atom<string>('home');
  */
 export const searchModalOpenAtom = atom<boolean>(false);
 
+/**
+ * 전통시장 상세 바텀시트 노출 여부 상태 Atom
+ * @author Antigravity
+ */
+export const marketBottomSheetAtom = atom<boolean>(false);
+
+

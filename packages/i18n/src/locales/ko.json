@@ -87,7 +87,7 @@
     "permissions": "권한 설정",
     "appInfo": "앱 정보",
     "korean": "한국어",
-    "profileSubText": "한국어 · 가입일 2024.03",
+    "profileSubText": "한국어",
     "favoritesDesc": "즐겨찾기한 음식 목록",
     "searchHistoryDesc": "최근 검색 기록 관리",
     "myPostsDesc": "내가 작성한 커뮤니티 글",
@@ -156,6 +156,19 @@
   "food": {
     "marketButton": "📋 재료 구매처 보기 (전통시장)",
     "marketLinkComingSoon": "전통시장 및 재료 구매처 연계 서비스는 추후 제공될 예정입니다."
+  },
+  "market": {
+    "nearbyTitle": "근처 전통시장",
+    "buttonLabel": "근처 전통시장 보기",
+    "buttonDisabledHint": "주변 시장을 보려면 위치 권한이 필요합니다",
+    "categoryLabel": "{{categories}}를 취급하는 시장입니다",
+    "noCategory": "근처 전통시장입니다",
+    "emptyResult": "조회된 전통시장이 없습니다",
+    "distanceUnit": "{{km}}km",
+    "dataSource": "출처: 소상공인시장진흥공단 전통시장 현황 (vworld 제공, 월 1회 갱신)",
+    "openCycleLabel": "운영: {{cycle}}",
+    "hasParking": "주차 가능",
+    "loadingLabel": "시장 정보를 불러오는 중..."
   },
   "feedback": {
     "question": "이 역사 정보가 도움이 되었나요?",
