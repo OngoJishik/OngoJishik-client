@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, StyleSheet, Alert } from 'react-native';
-import { useSetAtom } from 'jotai';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { Image } from 'expo-image';
+import { useSetAtom } from 'jotai';
 
 import { useTranslation } from '@ongo/i18n';
 import { ScreenLayout, Button, Text, useTheme } from '@ongo/ui';
@@ -64,8 +65,13 @@ export const LoginScreen = () => {
   return (
     <ScreenLayout style={styles.container}>
       <View style={styles.content}>
+        <Image
+          source={require('../../assets/icons/icon.png')}
+          style={styles.logo}
+          contentFit="contain"
+        />
         <Text variant="h1" bold style={[styles.title, { color: colors.text }]}>
-          🍚 {t('auth.loginTitle', { defaultValue: '온고지식 로그인' })}
+          {t('auth.loginTitle', { defaultValue: '온고지식 로그인' })}
         </Text>
         <Text variant="body" style={[styles.description, { color: colors.textSecondary }]}>
           {t('auth.loginDesc', { defaultValue: '한국 전통 음식 추천 및 역사 탐색 서비스' })}
@@ -91,6 +97,12 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingHorizontal: 24,
     alignItems: 'center',
+  },
+  logo: {
+    width: 88,
+    height: 88,
+    marginBottom: 24,
+    borderRadius: 20,
   },
   title: {
     fontSize: 28,
