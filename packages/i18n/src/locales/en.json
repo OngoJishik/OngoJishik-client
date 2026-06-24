@@ -94,7 +94,7 @@
     "myComments": "My Comments",
     "myCommentsDesc": "View and manage comments you wrote.",
     "languageDesc": "Change app display language",
-    "permissionsDesc": "Manage notification and photo access permissions",
+    "permissionsDesc": "Manage notification, photo, and location permissions",
     "appInfoDesc": "Version info and terms of use"
   },
   "favorites": {
@@ -129,11 +129,15 @@
     "notificationDesc": "Receive notifications and helpful information from the app.",
     "photoTitle": "Photos & Media Permission",
     "photoDesc": "Attach photos from your device when writing posts in community.",
+    "locationTitle": "Location Permission",
+    "locationDesc": "Find traditional food restaurants nearby based on your current location.",
     "guideTitle": "Permission Settings Guide",
     "guideNotificationOff": "To turn off notification permissions, you must disable notifications in the device settings. Go to settings?",
     "guidePhotoOff": "To turn off photo permissions, you must change photo access permissions in the device settings. Go to settings?",
+    "guideLocationOff": "To turn off location permissions, you must change location permissions in the device settings. Go to settings?",
     "guideNotificationOn": "Notification permission is denied. To enable it, please go to settings and allow notifications.",
-    "guidePhotoOn": "Photo permission is denied. To enable it, please go to settings and allow photos access."
+    "guidePhotoOn": "Photo permission is denied. To enable it, please go to settings and allow photos access.",
+    "guideLocationOn": "Location permission is denied. To enable it, please go to settings and allow location access."
   },
   "appInfo": {
     "title": "App Info",

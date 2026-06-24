@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, StyleSheet, Switch, AppState, AppStateStatus, Platform, Linking, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
-import * as Notifications from 'expo-notifications';
 import * as ImagePicker from 'expo-image-picker';
+import * as Location from 'expo-location';
+import * as Notifications from 'expo-notifications';
 
 import { useTranslation } from '@ongo/i18n';
 import {
@@ -15,7 +16,7 @@ import { colors as designColors } from '@ongo/ui';
 
 /**
  * 권한 설정 화면 컴포넌트
- * 알림 권한 및 사진 라이브러리 권한의 실제 OS 상태를 감지하고 설정할 수 있는 UI를 제공합니다.
+ * 알림 권한, 사진 라이브러리 권한 및 위치 정보 권한의 실제 OS 상태를 감지하고 설정할 수 있는 UI를 제공합니다.
  * @author Antigravity
  */
 export const PermissionSettingsScreen = () => {
@@ -25,6 +26,7 @@ export const PermissionSettingsScreen = () => {
 
   const [notificationEnabled, setNotificationEnabled] = useState(false);
   const [photoEnabled, setPhotoEnabled] = useState(false);
+  const [locationEnabled, setLocationEnabled] = useState(false);
 
   // Switch Colors aligned with Figma spec
   const trackColorConfig = {
@@ -46,6 +48,10 @@ export const PermissionSettingsScreen = () => {
       // 2. 사진 권한 조회
       const photoSettings = await ImagePicker.getMediaLibraryPermissionsAsync();
       setPhotoEnabled(photoSettings.granted);
+
+      // 3. 위치 권한 조회
+      const locationSettings = await Location.getForegroundPermissionsAsync();
+      setLocationEnabled(locationSettings.granted);
     } catch (error) {
       if (__DEV__) {
         console.warn('Failed to check permission status:', error);
@@ -170,6 +176,56 @@ export const PermissionSettingsScreen = () => {
     }
   };
 
+  /**
+   * 위치 권한 토글 핸들러
+   */
+  const handleLocationToggle = async (value: boolean) => {
+    if (value) {
+      // 꺼짐 -> 켜짐 시도
+      try {
+        const requestResult = await Location.requestForegroundPermissionsAsync();
+        if (requestResult.granted) {
+          setLocationEnabled(true);
+        } else {
+          // 권한이 거부된 경우 설정창 안내 얼럿 노출
+          Alert.alert(
+            t('permissions.guideTitle', '권한 설정 안내'),
+            t('permissions.guideLocationOn'),
+            [
+              { text: t('common.cancel', '취소'), style: 'cancel' },
+              {
+                text: t('common.confirm', '확인'),
+                onPress: () => {
+                  Linking.openSettings();
+                },
+              },
+            ]
+          );
+        }
+      } catch (error) {
+        if (__DEV__) {
+          console.error('Request location permission error:', error);
+        }
+      }
+    } else {
+      // 켜짐 -> 꺼짐 시도
+      // OS 수준에서 직접 끌 수 없으므로 시스템 설정 이동 안내 노출
+      Alert.alert(
+        t('permissions.guideTitle', '권한 설정 안내'),
+        t('permissions.guideLocationOff'),
+        [
+          { text: t('common.cancel', '취소'), style: 'cancel' },
+          {
+            text: t('common.confirm', '확인'),
+            onPress: () => {
+              Linking.openSettings();
+            },
+          },
+        ]
+      );
+    }
+  };
+
   return (
     <ScreenLayout>
       <Header title={t('permissions.title', '권한 설정')} onBack={() => router.back()} />
@@ -208,6 +264,24 @@ export const PermissionSettingsScreen = () => {
             onValueChange={handlePhotoToggle}
             trackColor={trackColorConfig}
             thumbColor={thumbColorConfig(photoEnabled)}
+          />
+        </View>
+
+        {/* 위치 권한 */}
+        <View style={[styles.item, { borderBottomColor: colors.border }]}>
+          <View style={styles.meta}>
+            <Text variant="label" bold>
+              {t('permissions.locationTitle', '위치 권한')}
+            </Text>
+            <Text variant="caption" style={{ color: colors.textSecondary, marginTop: 4 }}>
+              {t('permissions.locationDesc')}
+            </Text>
+          </View>
+          <Switch
+            value={locationEnabled}
+            onValueChange={handleLocationToggle}
+            trackColor={trackColorConfig}
+            thumbColor={thumbColorConfig(locationEnabled)}
           />
         </View>
       </View>

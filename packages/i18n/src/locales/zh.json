@@ -94,7 +94,7 @@
     "myComments": "我的评论",
     "myCommentsDesc": "查看和管理您撰写的评论。",
     "languageDesc": "更改应用显示语言",
-    "permissionsDesc": "管理通知及照片访问权限",
+    "permissionsDesc": "管理通知、照片及定位访问权限",
     "appInfoDesc": "版本信息和使用条款"
   },
   "favorites": {
@@ -129,11 +129,15 @@
     "notificationDesc": "接收来自应用的重要通知和有用信息。",
     "photoTitle": "照片与媒体权限",
     "photoDesc": "发布社区帖子时添加设备中的照片。",
+    "locationTitle": "定位权限",
+    "locationDesc": "允许根据您当前的位置寻找周边的传统餐厅信息。",
     "guideTitle": "权限设置提示",
     "guideNotificationOff": "要关闭通知权限，您必须在设备设置中禁用通知。前往设置页面吗？",
     "guidePhotoOff": "要关闭照片权限，您必须在设备设置中更改照片访问权限。前往设置页面吗？",
+    "guideLocationOff": "若要关闭定位权限，您必须在设备设置中直接更改定位权限。前往设置界面吗？",
     "guideNotificationOn": "通知权限已被拒绝。要启用它，请前往设置并允许通知。",
-    "guidePhotoOn": "照片权限已被拒绝。要启用它，请前往设置并允许访问照片。"
+    "guidePhotoOn": "照片权限已被拒绝。要启用它，请前往设置并允许访问照片。",
+    "guideLocationOn": "定位权限已被拒绝。若要激活权限，请前往设置界面允许访问定位。"
   },
   "appInfo": {
     "title": "应用信息",
