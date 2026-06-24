@@ -84,8 +84,9 @@ export const useNearbyMarketsQuery = (params: {
   lat?: number;
   lng?: number;
   ingredientCategories?: TMarketCategory[];
+  enabled?: boolean;
 }) => {
-  const { lat, lng, ingredientCategories } = params;
+  const { lat, lng, ingredientCategories, enabled = true } = params;
   const apiKey = process.env.EXPO_PUBLIC_VWORLD_API_KEY || '';
 
   if (__DEV__ && !apiKey) {
@@ -206,7 +207,7 @@ export const useNearbyMarketsQuery = (params: {
         throw error;
       }
     },
-    enabled: lat !== undefined && lng !== undefined && !!apiKey,
+    enabled: enabled && lat !== undefined && lng !== undefined && !!apiKey,
     staleTime: 0, // 항상 만료 상태로 간주하여 컴포넌트 마운트/활성화 시 매번 백그라운드 요청을 새로 보냄
     gcTime: 5 * 60 * 1000, // 5분 동안 미사용 캐시 유지
   });

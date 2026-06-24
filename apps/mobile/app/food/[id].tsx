@@ -118,6 +118,7 @@ export const FoodDetailScreen = () => {
     lat: userLocation?.lat,
     lng: userLocation?.lng,
     ingredientCategories,
+    enabled: isBottomSheetOpen,
   });
 
   const handleMarketPress = async () => {
