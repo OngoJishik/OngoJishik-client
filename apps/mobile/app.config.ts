@@ -17,7 +17,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ios: {
     supportsTablet: true,
     bundleIdentifier: 'com.ongo.jishik',
-    buildNumber: '2',
+    buildNumber: '3',
   },
   android: {
     adaptiveIcon: {
@@ -25,7 +25,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundColor: '#FAFAF8',
     },
     package: 'com.ongo.jishik',
-    versionCode: 2,
+    versionCode: 3,
   },
   web: {
     favicon: './assets/icons/favicon.png',
@@ -38,6 +38,16 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       '@react-native-google-signin/google-signin',
       {
         iosUrlScheme: process.env.EXPO_PUBLIC_GOOGLE_IOS_URL_SCHEME || 'com.googleusercontent.apps.placeholder',
+      },
+    ],
+    [
+      'expo-build-properties',
+      {
+        android: {
+          compileSdkVersion: 35,
+          targetSdkVersion: 35,
+          buildToolsVersion: '35.0.0',
+        },
       },
     ],
   ],
