@@ -52,7 +52,8 @@
     "editPostTitle": "投稿編集",
     "deleteConfirmTitle": "投稿削除",
     "deleteConfirmMessage": "本当に削除しますか？削除した投稿は復元できません。",
-    "postNotFound": "投稿が見つかりません。"
+    "postNotFound": "投稿が見つかりません。",
+    "noPosts": "投稿がありません。"
   },
   "write": {
     "title": "新規投稿",
