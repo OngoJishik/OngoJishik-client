@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { View, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useAtomValue } from 'jotai';
@@ -16,6 +16,7 @@ import {
 } from '@ongo/ui';
 import { colors as designColors } from '@ongo/ui';
 import { languageAtom } from '@ongo/store';
+import { classifyFeatures } from '@ongo/utils';
 
 import type { TRecommendFoodItem } from '@ongo/api-client';
 
@@ -108,6 +109,10 @@ export const SearchResultsScreen = () => {
   const recommendations = result?.recommendations ?? [];
   const extractedFeatures = result?.extractedFeatures ?? [];
 
+  const classifiedFeatures = useMemo(() => {
+    return classifyFeatures(extractedFeatures);
+  }, [extractedFeatures]);
+
   return (
     <ScreenLayout>
       <Header title={t('results.title')} onBack={() => router.back()} />
@@ -141,11 +146,13 @@ export const SearchResultsScreen = () => {
             {t('results.count', { count: recommendations.length })}
           </Text>
 
-          {extractedFeatures.length > 0 && (
+          {(classifiedFeatures.taste.length > 0 ||
+            classifiedFeatures.color.length > 0 ||
+            classifiedFeatures.form.length > 0) && (
             <AIAnalysisBadge
-              taste={extractedFeatures[0]}
-              color={extractedFeatures[1]}
-              form={extractedFeatures[2]}
+              taste={classifiedFeatures.taste}
+              color={classifiedFeatures.color}
+              form={classifiedFeatures.form}
               resultCount={recommendations.length}
               title={t('ai.analysisTitle')}
               tasteLabel={t('ai.taste')}
