@@ -4,6 +4,7 @@ import { Provider as JotaiProvider, useAtomValue } from 'jotai';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { useTranslation } from '@ongo/i18n';
 import { ThemeProvider } from '@ongo/ui';
@@ -108,15 +109,17 @@ function AuthNavigator() {
  */
 export function RootLayout() {
   return (
-    <JotaiProvider>
-      <QueryClientProvider client={queryClient}>
-        <I18nInitializer>
-          <ThemeProvider>
-            <AuthNavigator />
-          </ThemeProvider>
-        </I18nInitializer>
-      </QueryClientProvider>
-    </JotaiProvider>
+    <SafeAreaProvider>
+      <JotaiProvider>
+        <QueryClientProvider client={queryClient}>
+          <I18nInitializer>
+            <ThemeProvider>
+              <AuthNavigator />
+            </ThemeProvider>
+          </I18nInitializer>
+        </QueryClientProvider>
+      </JotaiProvider>
+    </SafeAreaProvider>
   );
 }
 
