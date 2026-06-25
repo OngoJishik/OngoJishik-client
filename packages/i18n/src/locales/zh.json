@@ -52,7 +52,8 @@
     "editPostTitle": "编辑帖子",
     "deleteConfirmTitle": "删除帖子",
     "deleteConfirmMessage": "确定要删除吗？删除后无法恢复。",
-    "postNotFound": "找不到帖子。"
+    "postNotFound": "找不到帖子。",
+    "noPosts": "暂无帖子。"
   },
   "write": {
     "title": "发布帖子",

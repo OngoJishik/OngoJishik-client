@@ -12,6 +12,7 @@ import {
   useDeleteBookmarkMutation,
   useImageJobQuery,
   useNearbyMarketsQuery,
+  useTranslatedFoodDetail,
   TMarketCategory,
 } from '@ongo/api-client';
 import { useTranslation } from '@ongo/i18n';
@@ -80,6 +81,10 @@ export const FoodDetailScreen = () => {
   const { data: foodDetail, isLoading } = useFoodDetailQuery(foodId);
   // 원본 API 응답 (isBookmarked 초기값 활용)
   const { data: rawDetail } = useFoodDetailRawQuery(foodId);
+
+  // 현재 언어로 음식 상세 번역
+  const { translatedDetail, isTranslating: isTranslatingDetail, translationError: detailTranslationError } =
+    useTranslatedFoodDetail(foodDetail, currentLang);
 
   const { mutate: addBookmark } = useAddBookmarkMutation();
   const { mutate: deleteBookmark } = useDeleteBookmarkMutation();
@@ -169,7 +174,7 @@ export const FoodDetailScreen = () => {
     }
   };
 
-  const detail = foodDetail || {
+  const detail = translatedDetail || foodDetail || {
     id: '',
     nameKo: '',
     nameLocalized: '',
@@ -405,6 +410,11 @@ export const FoodDetailScreen = () => {
               {detail.nameLocalized}
             </Text>
           )}
+          {detailTranslationError && !isTranslatingDetail && (
+            <Text variant="caption" style={{ color: colors.textSecondary, marginBottom: 6, fontSize: 11 }}>
+              {t('results.translationFailed', { defaultValue: '번역 실패 — 원문으로 표시합니다' })}
+            </Text>
+          )}
           <View style={styles.tagContainer}>
             {detail.tags.map((tag, idx) => (
               <View key={`${tag}-${idx}`} style={[styles.tag, { backgroundColor: colors.primaryLight }]}>
@@ -421,7 +431,7 @@ export const FoodDetailScreen = () => {
 
         <TabBar tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
 
-        {isLoading ? (
+        {(isLoading || isTranslatingDetail) ? (
           <View style={styles.tabContent}>
             <View style={[styles.skeletonItem, { backgroundColor: colors.border }]} />
             <View style={[styles.skeletonItem, { backgroundColor: colors.border }]} />

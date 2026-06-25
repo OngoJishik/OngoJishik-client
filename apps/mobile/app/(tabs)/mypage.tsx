@@ -186,7 +186,6 @@ export const MyPageScreen = () => {
           title={t('mypage.language')}
           icon="⚙️"
           description={t('mypage.languageDesc')}
-          rightElement={<Text variant="caption" style={{ color: colors.textSecondary }}>{t('mypage.korean')}</Text>}
           onPress={() => router.push('/settings/language')}
         />
         <MenuItem
