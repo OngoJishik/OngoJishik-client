@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 import { View, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useAtomValue } from 'jotai';
 
 import { useTranslation } from '@ongo/i18n';
-import { useRecommendMutation, useImageJobQuery } from '@ongo/api-client';
+import { useRecommendMutation, useImageJobQuery, useTranslatedFoodItem } from '@ongo/api-client';
 import {
   ScreenLayout,
   Header,
@@ -14,17 +15,23 @@ import {
   useTheme,
 } from '@ongo/ui';
 import { colors as designColors } from '@ongo/ui';
+import { languageAtom } from '@ongo/store';
 
 import type { TRecommendFoodItem } from '@ongo/api-client';
 
 /**
- * 개별 추천 음식을 렌더링하고 이미지 생성 PENDING 시 상태 조회를 수행하는 래퍼 컴포넌트
+ * 개별 추천 음식을 번역하고 이미지 생성 PENDING 시 상태 조회를 수행하는 래퍼 컴포넌트
  * @author Antigravity
  */
 const RecommendationItem: React.FC<{
   item: TRecommendFoodItem;
   onPress: () => void;
 }> = ({ item, onPress }) => {
+  const lang = useAtomValue(languageAtom);
+  const { translatedItem, isTranslating, translationError } = useTranslatedFoodItem(item, lang);
+  const { colors } = useTheme();
+  const { t } = useTranslation();
+
   const isPending = item.imageStatus === 'PENDING';
   const { data: jobData, isTimedOut } = useImageJobQuery(item.imageJobId, isPending);
 
@@ -46,20 +53,36 @@ const RecommendationItem: React.FC<{
   }
 
   return (
-    <FoodResultCard
-      id={item.foodId}
-      nameKo={item.foodName}
-      nameLocalized={undefined}
-      emoji="🍲"
-      imageUrl={imageUrl}
-      category={item.category as Parameters<typeof FoodResultCard>[0]['category']}
-      era={undefined}
-      description={Array.isArray(item.features) ? item.features.join(', ') : ''}
-      onPress={onPress}
-      imageStatus={status}
-    />
+    <View>
+      {isTranslating && (
+        <View style={styles.translatingOverlay}>
+          <ActivityIndicator size="small" color={designColors.primary.DEFAULT} />
+          <Text variant="caption" style={{ color: colors.textSecondary, marginLeft: 6 }}>
+            {t('results.translating', { defaultValue: '번역 중...' })}
+          </Text>
+        </View>
+      )}
+      {translationError && !isTranslating && (
+        <Text variant="caption" style={{ color: colors.textSecondary, marginBottom: 4, fontSize: 11 }}>
+          {t('results.translationFailed', { defaultValue: '번역 실패 — 원문으로 표시합니다' })}
+        </Text>
+      )}
+      <FoodResultCard
+        id={translatedItem.foodId}
+        nameKo={translatedItem.foodName}
+        nameLocalized={undefined}
+        emoji="🍲"
+        imageUrl={imageUrl}
+        category={translatedItem.category as Parameters<typeof FoodResultCard>[0]['category']}
+        era={undefined}
+        description={Array.isArray(translatedItem.features) ? translatedItem.features.join(', ') : ''}
+        onPress={onPress}
+        imageStatus={status}
+      />
+    </View>
   );
 };
+
 
 /**
  * 전통 음식 검색 결과를 보여주는 화면 컴포넌트
@@ -182,6 +205,12 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     marginTop: 8,
+  },
+  translatingOverlay: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 4,
+    paddingVertical: 6,
   },
 });
 
