@@ -38,6 +38,9 @@ patchedDependencies:
   expo-modules-autolinking@2.0.8:
     hash: xr6gleylnbj4lgb3ruvsggzemi
     path: patches/expo-modules-autolinking@2.0.8.patch
+  expo-modules-core:
+    hash: 5rhn6pbz5a7af3morkr4parb3y
+    path: patches/expo-modules-core.patch
 
 importers:
 
@@ -7172,7 +7175,7 @@ snapshots:
       require-from-string: 2.0.2
       resolve-from: 5.0.0
 
-  expo-modules-core@2.2.3:
+  expo-modules-core@2.2.3(patch_hash=5rhn6pbz5a7af3morkr4parb3y):
     dependencies:
       invariant: 2.2.4
 
@@ -7248,7 +7251,7 @@ snapshots:
       expo-font: 13.0.4(expo@52.0.49(@babel/core@7.29.7)(@babel/preset-env@7.29.7(@babel/core@7.29.7))(@expo/metro-runtime@4.0.1(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.7(@babel/core@7.29.7))(@types/react@18.3.29)(react@18.3.1)))(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.7(@babel/core@7.29.7))(@types/react@18.3.29)(react@18.3.1))(react@18.3.1))(react@18.3.1)
       expo-keep-awake: 14.0.3(expo@52.0.49(@babel/core@7.29.7)(@babel/preset-env@7.29.7(@babel/core@7.29.7))(@expo/metro-runtime@4.0.1(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.7(@babel/core@7.29.7))(@types/react@18.3.29)(react@18.3.1)))(react-native@0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.7(@babel/core@7.29.7))(@types/react@18.3.29)(react@18.3.1))(react@18.3.1))(react@18.3.1)
       expo-modules-autolinking: 2.0.8(patch_hash=xr6gleylnbj4lgb3ruvsggzemi)
-      expo-modules-core: 2.2.3
+      expo-modules-core: 2.2.3(patch_hash=5rhn6pbz5a7af3morkr4parb3y)
       fbemitter: 3.0.0
       react: 18.3.1
       react-native: 0.76.9(@babel/core@7.29.7)(@babel/preset-env@7.29.7(@babel/core@7.29.7))(@types/react@18.3.29)(react@18.3.1)

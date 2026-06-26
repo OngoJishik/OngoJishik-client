@@ -12,11 +12,9 @@ config.transformer = {
   unstable_allowRequireContext: true,
 };
 
-// 2. Set EXPO_ROUTER_APP_ROOT to the relative path from expo-router/_ctx.js location.
-//    expo-router/_ctx.js lives at node_modules/expo-router/_ctx.js, so from there
-//    '../../apps/mobile/app' resolves to apps/mobile/app — the correct route directory.
-//    Must be a RELATIVE path (not absolute) so Metro can statically analyze it at bundle time.
-process.env.EXPO_ROUTER_APP_ROOT = '../../apps/mobile/app';
+// 2. No manual EXPO_ROUTER_APP_ROOT needed.
+//    babel-preset-expo computes this from caller.routerRoot + caller.projectRoot (set by Expo CLI).
+//    build.gradle root = file("../../") → project root = apps/mobile → routerRoot resolves to apps/mobile/app correctly.
 
 // 3. Watch all files within the monorepo workspace (preserve Expo defaults)
 config.watchFolders = [workspaceRoot, ...(config.watchFolders ?? [])];
