@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, Alert } from 'react-native';
+import { useRouter } from 'expo-router';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { Image } from 'expo-image';
 import { useSetAtom } from 'jotai';
@@ -16,6 +17,7 @@ import { authTokenAtom, refreshTokenAtom, userProfileAtom } from '@ongo/store';
 export const LoginScreen = () => {
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const router = useRouter();
 
   const { mutateAsync: loginWithGoogle, isPending } = useGoogleLoginMutation();
   const setAuthToken = useSetAtom(authTokenAtom);
@@ -49,7 +51,7 @@ export const LoginScreen = () => {
       setRefreshToken(result.refreshToken);
       setUserProfile(userProfile);
 
-      // AuthNavigator inside _layout.tsx will automatically redirect to /(tabs)
+      router.replace('/(tabs)');
     } catch (error) {
       if (__DEV__) {
         console.error('Google login failed:', error);

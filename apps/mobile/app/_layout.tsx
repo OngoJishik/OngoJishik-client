@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { Stack, useRouter, useSegments } from 'expo-router';
+import React, { Suspense, useEffect } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { Stack, Redirect, useSegments } from 'expo-router';
 import { Provider as JotaiProvider, useAtomValue } from 'jotai';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { useTranslation } from '@ongo/i18n';
 import { ThemeProvider } from '@ongo/ui';
-import { languageAtom, isAuthenticatedAtom } from '@ongo/store';
+import { languageAtom, authTokenAtom } from '@ongo/store';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -57,51 +57,44 @@ function I18nInitializer({ children }: { children: React.ReactNode }) {
 }
 
 /**
- * 인증 상태에 따라 라우팅을 분기 및 영속 상태 동기화를 대기하는 컴포넌트
+ * 인증 상태에 따라 라우팅을 분기하는 컴포넌트
+ * 인증 판단은 isAuthenticatedAtom(getOnInit) 단일 소스에서 가져오고,
+ * 라우팅은 선언적 <Redirect>로 처리해 effect/네비게이터 마운트 타이밍에 영향받지 않음
  * @author Antigravity
  */
 function AuthNavigator() {
   const segments = useSegments();
-  const router = useRouter();
-  const isAuthenticated = useAtomValue(isAuthenticatedAtom);
-  const [isReady, setIsReady] = useState(false);
+  // authTokenAtom을 직접 구독한다. getOnInit으로 AsyncStorage 읽기가 끝날 때까지 이 읽기는
+  // Suspense로 대기되고, 해소되면 실제 값(문자열 토큰 또는 null)을 반환한다.
+  // (파생 isAuthenticatedAtom은 동기 atom이라 미해소 Promise를 truthy로 오판하는 문제가 있어 직접 판정)
+  const authToken = useAtomValue(authTokenAtom);
+  const isAuthenticated = typeof authToken === 'string' && authToken.length > 0;
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        // Manually retrieve the token once to synchronize loading screen
-        await AsyncStorage.getItem('ongo_auth_token');
-      } catch (e) {
-        if (__DEV__) {
-          console.error('Error checking auth token on start:', e);
-        }
-      } finally {
-        setIsReady(true);
-      }
-    };
-    checkAuth();
-  }, []);
+  const inAuthGroup = segments[0] === '(auth)';
+  const needsLogin = !isAuthenticated && !inAuthGroup;
+  const needsTabs = isAuthenticated && inAuthGroup;
 
-  useEffect(() => {
-    if (!isReady) return;
-
-    const inAuthGroup = segments[0] === '(auth)';
-
-    if (!isAuthenticated && !inAuthGroup) {
-      // Redirect to login if not authenticated and trying to access tabs/screens
-      router.replace('/(auth)/login');
-    } else if (isAuthenticated && inAuthGroup) {
-      // Redirect to tabs if authenticated and on login screen
-      router.replace('/(tabs)');
-    }
-  }, [isAuthenticated, segments, isReady, router]);
-
-  if (!isReady) {
-    return null; // Or a generic loading indicator
-  }
-
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <>
+      <Stack screenOptions={{ headerShown: false }} />
+      {needsLogin && <Redirect href="/(auth)/login" />}
+      {needsTabs && <Redirect href="/(tabs)" />}
+      {/* 리다이렉트가 적용되어 segments가 갱신되기 전까지 직전 화면(메인)이 깜빡이지 않도록 가림 */}
+      {(needsLogin || needsTabs) && <View style={styles.overlay} />}
+    </>
+  );
 }
+
+const styles = StyleSheet.create({
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: '#FAFAF8',
+  },
+});
 
 /**
  * 모바일 앱 최상위 Root Layout 컴포넌트
@@ -114,7 +107,9 @@ export function RootLayout() {
         <QueryClientProvider client={queryClient}>
           <I18nInitializer>
             <ThemeProvider>
-              <AuthNavigator />
+              <Suspense fallback={<View style={styles.overlay} />}>
+                <AuthNavigator />
+              </Suspense>
             </ThemeProvider>
           </I18nInitializer>
         </QueryClientProvider>

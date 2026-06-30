@@ -91,6 +91,7 @@ export const MyPageScreen = () => {
                   console.error('Google SignOut error:', e);
                 }
               }
+              router.replace('/(auth)/login');
             }
           },
         },

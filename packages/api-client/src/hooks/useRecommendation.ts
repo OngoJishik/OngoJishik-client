@@ -24,7 +24,7 @@ export const usePopularFoodsQuery = () => {
   return useQuery({
     queryKey: foodKeys.popular(),
     queryFn: () => foodEndpoints.getPopularFoods(),
-    staleTime: 10 * 60 * 1000, // 10m
+    staleTime: 60 * 1000, // 1m
     gcTime: 2 * 60 * 60 * 1000, // 2h
   });
 };
