@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, FlatList, KeyboardAvoidingView, Platform, Pressable } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, StyleSheet, FlatList, KeyboardAvoidingView, Keyboard, Platform, Pressable } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useAtomValue } from 'jotai';
 
@@ -30,6 +30,17 @@ import { CommentItem } from './components/CommentItem';
 import { PostMoreMenu } from './components/PostMoreMenu';
 import { MOCK_POSTS, MOCK_COMMENTS, MOCK_FOODS, MOCK_DETAILS } from '../../mocks';
 import type { TBoardCategory } from '@ongo/api-client';
+
+// Android 15 edge-to-edge에서 일부 키보드(Gboard)는 IME 높이에 상단 추천/이모지 바를
+// 포함하지 않고 보고한다. 그 결과 behavior="padding"만으로는 입력창이 추천 바에 가려지므로,
+// 추천 바 한 줄 높이(~52px)만큼 추가로 띄운다. iOS는 보정이 필요 없어 0.
+// (기기/키보드별로 추천 바 높이가 달라 필요 시 미세 조정)
+//
+// NOTE: KeyboardAvoidingView의 keyboardVerticalOffset으로 주면 안 된다. Android에서 키보드가
+// 닫힐 때(keyboardDidHide)의 relativeKeyboardHeight 계산이 offset만큼 0이 아닌 값으로 남아
+// 입력창이 원위치로 복귀하지 못한다. 따라서 offset은 0으로 두고, 키보드가 열려 있는 동안에만
+// CommentInput 하단에 여백으로 적용한다.
+const SUGGESTION_BAR_OFFSET = Platform.OS === 'android' ? 52 : 0;
 
 /**
  * 커뮤니티 게시글 상세 및 댓글 조회/등록 화면 컴포넌트
@@ -62,6 +73,26 @@ export const PostDetailScreen = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLikedLocal, setIsLikedLocal] = useState(false);
   const [isEditingComment, setIsEditingComment] = useState(false);
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+  const commentListRef = useRef<FlatList>(null);
+
+  // 키보드가 열려 있는 동안에만 추천 바 여백을 적용하기 위해 가시성을 추적한다.
+  useEffect(() => {
+    const showSub = Keyboard.addListener('keyboardDidShow', () => setIsKeyboardVisible(true));
+    const hideSub = Keyboard.addListener('keyboardDidHide', () => setIsKeyboardVisible(false));
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
+
+  // 댓글 편집 진입 시 해당 행을 키보드 위로 올린다 (Android 15 edge-to-edge에서 adjustResize가
+  // 무력화되어 입력창이 키보드에 가려지므로, 포커스/키보드 애니메이션 이후 명시적으로 스크롤).
+  const handleEditStartScroll = (index: number) => {
+    setTimeout(() => {
+      commentListRef.current?.scrollToIndex({ index, viewPosition: 0, animated: true });
+    }, 350);
+  };
 
   // Queries & Mutations
   const isRealBoard = !isNaN(boardId);
@@ -273,7 +304,7 @@ export const PostDetailScreen = () => {
   return (
     <ScreenLayout>
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        behavior="padding"
         style={styles.keyboardAvoiding}
       >
         <Header
@@ -289,11 +320,17 @@ export const PostDetailScreen = () => {
         />
 
         <FlatList
+          ref={commentListRef}
           data={comments}
           keyExtractor={(item) => item.id}
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="none"
           removeClippedSubviews={false}
+          onScrollToIndexFailed={(info) => {
+            setTimeout(() => {
+              commentListRef.current?.scrollToIndex({ index: info.index, viewPosition: 0, animated: true });
+            }, 300);
+          }}
           ListHeaderComponent={
             <View style={{ marginBottom: 16 }}>
               <PostDetail
@@ -315,23 +352,26 @@ export const PostDetailScreen = () => {
               </Text>
             </View>
           }
-          renderItem={({ item }) => (
+          renderItem={({ item, index }) => (
             <CommentItem
               comment={item}
               isAuthor={!!userProfile && item.author.id === String(userProfile.id)}
               onUpdate={handleUpdateComment}
               onDelete={handleDeleteComment}
               onEditingChange={setIsEditingComment}
+              onEditStart={() => handleEditStartScroll(index)}
             />
           )}
           contentContainerStyle={styles.listContent}
         />
 
         {!isEditingComment && (
-          <CommentInput
-            onSubmit={handleAddComment}
-            placeholder={t('comment.placeholder')}
-          />
+          <View style={{ paddingBottom: isKeyboardVisible ? SUGGESTION_BAR_OFFSET : 0 }}>
+            <CommentInput
+              onSubmit={handleAddComment}
+              placeholder={t('comment.placeholder')}
+            />
+          </View>
         )}
       </KeyboardAvoidingView>
 

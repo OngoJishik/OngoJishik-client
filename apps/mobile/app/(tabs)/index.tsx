@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { View, Pressable, StyleSheet, ScrollView, Dimensions, Animated, FlatList, BackHandler, KeyboardAvoidingView, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { Image } from 'expo-image';
 import { useSetAtom, useAtom } from 'jotai';
 
@@ -219,7 +219,14 @@ export const HomeScreen = () => {
   const scrollViewRef = useRef<ScrollView>(null);
 
   // 인기 게시글 상위 5개 (GET /api/boards/popular)
-  const { data: popularBoards } = usePopularBoardsQuery();
+  const { data: popularBoards, refetch: refetchPopularBoards } = usePopularBoardsQuery();
+
+  // 탭 포커스 시 인기 게시글 강제 갱신 (좋아요 수 실시간 반영)
+  useFocusEffect(
+    useCallback(() => {
+      refetchPopularBoards();
+    }, [refetchPopularBoards])
+  );
 
   // 오늘의 추천 전통음식 목록 조회 (GET /api/home)
   const { data: todayFoodsData, isLoading: isRecommendationLoading } = useTodayFoodsQuery();

@@ -24,6 +24,7 @@ export type CommentItemProps = {
   onUpdate: (commentId: string, content: string) => void;
   onDelete: (commentId: string) => void;
   onEditingChange?: (isEditing: boolean) => void;
+  onEditStart?: () => void;
 };
 
 // BottomSheet(Modal) 닫힌 애니메이션(250ms) + Modal 언마운트 대기 + 여유
@@ -34,7 +35,7 @@ const CLOSE_ANIM_MS = 420;
  * 본인 댓글에만 ⋯ 메뉴(수정/삭제)를 표시하고, 수정 시 인라인 TextInput으로 전환됩니다.
  * @author Antigravity
  */
-export const CommentItem = ({ comment, isAuthor, onUpdate, onDelete, onEditingChange }: CommentItemProps) => {
+export const CommentItem = ({ comment, isAuthor, onUpdate, onDelete, onEditingChange, onEditStart }: CommentItemProps) => {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -55,6 +56,8 @@ export const CommentItem = ({ comment, isAuthor, onUpdate, onDelete, onEditingCh
     setEditText(comment.content);
     setIsEditing(true);
     onEditingChange?.(true);
+    // 편집 진입을 부모에 알려 해당 댓글을 키보드 위로 스크롤하도록 함
+    onEditStart?.();
     // Modal이 언마운트된 다음 프레임에 키보드 요청 (네이티브 Modal 완전 해제를 위해 200ms 대기)
     setTimeout(() => {
       inputRef.current?.focus();
