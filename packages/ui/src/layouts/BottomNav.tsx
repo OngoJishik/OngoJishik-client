@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Text } from '../primitives/Text';
 import { Icon, IconProps } from '../primitives/Icon';
 import { useTheme } from '../../theme/useTheme';
@@ -23,9 +24,10 @@ interface BottomNavProps {
  */
 export const BottomNav: React.FC<BottomNavProps> = ({ items, activeKey, onSelect }) => {
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background, borderTopColor: colors.border }]}>
+    <View style={[styles.container, { backgroundColor: colors.background, borderTopColor: colors.border, paddingBottom: insets.bottom + spacing.sm }]}>
       {items.map((item) => {
         const isActive = item.key === activeKey;
         const color = isActive ? colors.primary : colors.textTertiary;
@@ -55,12 +57,11 @@ export const BottomNav: React.FC<BottomNavProps> = ({ items, activeKey, onSelect
 
 const styles = StyleSheet.create({
   container: {
-    height: 64,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
     borderTopWidth: 1,
-    paddingBottom: spacing.sm,
+    paddingTop: spacing.sm,
   },
   tab: {
     alignItems: 'center',
