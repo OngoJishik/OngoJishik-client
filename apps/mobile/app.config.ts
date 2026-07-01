@@ -6,7 +6,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     name: '온고지식',
     slug: 'ongo-jishik',
     owner: 'ongosub',
-    version: '1.2.3',
+    version: '1.2.4',
     orientation: 'portrait',
     icon: './assets/icons/icon.png',
     userInterfaceStyle: 'automatic',
@@ -18,15 +18,16 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ios: {
         supportsTablet: true,
         bundleIdentifier: 'com.ongo.jishik',
-        buildNumber: '6',
+        buildNumber: '7',
     },
     android: {
+        softwareKeyboardLayoutMode: 'resize',
         adaptiveIcon: {
             foregroundImage: './assets/icons/adaptive-icon.png',
             backgroundColor: '#FAFAF8',
         },
         package: 'com.ongo.jishik',
-        versionCode: 6,
+        versionCode: 7,
     },
     web: {
         favicon: './assets/icons/favicon.png',
