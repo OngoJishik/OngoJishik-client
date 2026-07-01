@@ -33,7 +33,8 @@ export const refreshTokenAtom = atomWithStorage<string | null>(
 export const userProfileAtom = atomWithStorage<TUserProfile | null>(
   'ongo_user_profile',
   null,
-  createJSONStorage(() => AsyncStorage)
+  createJSONStorage(() => AsyncStorage),
+  { getOnInit: true }
 );
 
 
