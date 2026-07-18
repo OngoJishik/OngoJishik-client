@@ -44,3 +44,4 @@
 - `rules/04-jotai.md` — Jotai atom 작성 규칙, 파일 구조, 사용 패턴
 - `rules/05-routing-i18n.md` — Expo Router 라우팅, 다국어 번역 키, 음식 이름 표시 규칙
 - `rules/06-git-checklist.md` — Commit 메시지 규칙, 새 패키지/화면/컴포넌트 생성 체크리스트
+- `rules/api-usage.md` — API 연동 예시, Query/Mutation 및 직접 호출 예시 코드

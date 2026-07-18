@@ -44,3 +44,4 @@
 @rules/04-jotai.md
 @rules/05-routing-i18n.md
 @rules/06-git-checklist.md
+@rules/api-usage.md
