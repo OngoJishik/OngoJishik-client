@@ -219,7 +219,7 @@ export const MyPageScreen = () => {
                     description={t('mypage.appInfoDesc')}
                     rightElement={
                         <Text variant="caption" style={{ color: colors.textSecondary }}>
-                            v1.2.4
+                            v2.1.0
                         </Text>
                     }
                     onPress={() => router.push('/settings/info' as Href)}

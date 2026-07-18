@@ -26,7 +26,7 @@ export const AppInfoScreen = () => {
                         온고지식 (溫故 지식)
                     </Text>
                     <Text variant="caption" style={{ color: colors.textSecondary, marginTop: 4 }}>
-                        {t('appInfo.version', '버전')} v1.2.4
+                        {t('appInfo.version', '버전')} v2.1.0
                     </Text>
                 </View>
 
