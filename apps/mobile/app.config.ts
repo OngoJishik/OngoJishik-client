@@ -1,4 +1,3 @@
-import path from 'path';
 import { ExpoConfig, ConfigContext } from 'expo/config';
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
@@ -6,7 +5,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     name: '온고지식',
     slug: 'ongo-jishik',
     owner: 'ongosub',
-    version: '1.2.4',
+    version: '2.1.0',
     orientation: 'portrait',
     icon: './assets/icons/icon.png',
     userInterfaceStyle: 'automatic',
@@ -18,7 +17,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ios: {
         supportsTablet: true,
         bundleIdentifier: 'com.ongo.jishik',
-        buildNumber: '7',
+        buildNumber: '10',
     },
     android: {
         softwareKeyboardLayoutMode: 'resize',
@@ -27,7 +26,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
             backgroundColor: '#FAFAF8',
         },
         package: 'com.ongo.jishik',
-        versionCode: 7,
+        versionCode: 10,
     },
     web: {
         favicon: './assets/icons/favicon.png',
@@ -61,9 +60,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
             projectId: '1f66cc22-71c5-4739-9581-289321418e67',
         },
         router: {
-            // Absolute path ensures Expo Router finds the app/ dir correctly regardless of
-            // which --project-root Expo CLI is invoked with (workspace root vs. apps/mobile).
-            root: path.resolve(__dirname, 'app'),
+            root: 'app',
         },
     },
 });

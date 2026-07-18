@@ -25,12 +25,15 @@ config.resolver.nodeModulesPaths = [
   path.resolve(workspaceRoot, 'node_modules'),
 ];
 
-// 5. Force all workspace packages to use the app-level react / react-native
-//    to prevent duplicate module instances in pnpm monorepos.
+// 5. Force all workspace packages to resolve a single copy of react / react-native
+//    to prevent duplicate module instances in pnpm monorepos. With node-linker=hoisted
+//    and unified dependency versions, these packages live only in the workspace root
+//    node_modules (no local apps/mobile copy), so point there rather than at
+//    apps/mobile/node_modules, which would resolve to a nonexistent path.
 config.resolver.extraNodeModules = {
-  'react': path.resolve(projectRoot, 'node_modules', 'react'),
-  'react-native': path.resolve(projectRoot, 'node_modules', 'react-native'),
-  'react-native-svg': path.resolve(projectRoot, 'node_modules', 'react-native-svg'),
+  'react': path.resolve(workspaceRoot, 'node_modules', 'react'),
+  'react-native': path.resolve(workspaceRoot, 'node_modules', 'react-native'),
+  'react-native-svg': path.resolve(workspaceRoot, 'node_modules', 'react-native-svg'),
 };
 
 // 6. SVG transformer — .svg files become React Native SVG components
