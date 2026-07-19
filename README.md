@@ -33,7 +33,7 @@
 | 영역 | 스택 |
 | --- | --- |
 | 모노레포 | Turborepo, pnpm workspace (catalog 버전 관리) |
-| 앱 프레임워크 | Expo SDK 52, React Native 0.76, Expo Router v4 (파일 기반 라우팅) |
+| 앱 프레임워크 | Expo SDK 54, React Native 0.81, Expo Router v6 (파일 기반 라우팅) |
 | 스타일링 | NativeWind v4 (Tailwind for RN) |
 | 서버 상태 | TanStack Query v5 (캐싱, 무한 스크롤, 낙관적 업데이트) |
 | 클라이언트 상태 | Jotai (atom 기반) |
@@ -56,7 +56,8 @@
 │           ├── community/   # 게시글 상세 · 작성
 │           ├── food/        # 음식 상세
 │           ├── search/      # 검색 결과
-│           └── settings/    # 언어 · 권한 · 서비스 정보
+│           ├── settings/    # 언어 · 권한 · 서비스 정보
+│           └── favorites.tsx, search-history.tsx, my-posts.tsx, my-comments.tsx  # 마이페이지 하위 화면
 ├── packages/
 │   ├── api-client/          # axios + TanStack Query 기반 API 훅, 엔드포인트, 타입
 │   ├── store/                # Jotai atom (클라이언트 상태)
@@ -151,3 +152,4 @@ pnpm ios           # iOS 실행
 - [`docs/android-local-build-guide.md`](./docs/android-local-build-guide.md) — Android 로컬 빌드 가이드
 - [`docs/apk-release-troubleshooting.md`](./docs/apk-release-troubleshooting.md) — APK 릴리즈 트러블슈팅
 - [`docs/login-auth-routing-fix.md`](./docs/login-auth-routing-fix.md) — 로그인/인증 라우팅 관련 수정 기록
+- [`docs/expo-sdk-54-upgrade.md`](./docs/expo-sdk-54-upgrade.md) — Expo SDK 52 → 54 업그레이드 기록 (16kb 페이지 사이즈 대응)
